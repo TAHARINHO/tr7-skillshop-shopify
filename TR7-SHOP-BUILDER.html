@@ -1689,12 +1689,15 @@ body {
                   </div>
                   <div class="settings-row-ctrl">
                     <div class="key-row">
-                      <input class="settings-input mono" id="s-anthropic-key" type="password" placeholder="sk-ant-api03-..." autocomplete="off">
+                      <div style="position:relative;display:flex;align-items:center">
+                        <input class="settings-input mono" id="s-anthropic-key" type="password" placeholder="sk-ant-api03-..." autocomplete="off" onfocus="clearIfMasked(this)" style="padding-right:32px">
+                        <button onclick="toggleKeyVisibility('s-anthropic-key',this)" style="position:absolute;right:8px;background:none;border:none;cursor:pointer;color:var(--muted);font-size:13px" title="Afficher/Masquer">👁</button>
+                      </div>
                       <span class="key-status-pill ksp-no" id="s-anthropic-status">Non configuré</span>
                     </div>
                     <div style="display:flex;gap:6px;margin-top:6px">
-                      <button class="btn-sm btn-ghost" style="font-size:11px" onclick="testAPIKey('anthropic')">🔌 Tester</button>
-                      <button class="btn-sm btn-ghost" style="font-size:11px" onclick="clearSettingKey('anthropic')">🗑</button>
+                      <button class="btn-sm btn-primary" style="font-size:11px" onclick="testAPIKey('anthropic')">🔌 Sauvegarder & Tester</button>
+                      <button class="btn-sm btn-ghost" style="font-size:11px" onclick="clearSettingKey('anthropic')" title="Effacer la clé">🗑</button>
                     </div>
                   </div>
                 </div>
@@ -1706,12 +1709,15 @@ body {
                   </div>
                   <div class="settings-row-ctrl">
                     <div class="key-row">
-                      <input class="settings-input mono" id="s-openai-key" type="password" placeholder="sk-proj-..." autocomplete="off">
+                      <div style="position:relative;display:flex;align-items:center">
+                        <input class="settings-input mono" id="s-openai-key" type="password" placeholder="sk-proj-..." autocomplete="off" onfocus="clearIfMasked(this)" style="padding-right:32px">
+                        <button onclick="toggleKeyVisibility('s-openai-key',this)" style="position:absolute;right:8px;background:none;border:none;cursor:pointer;color:var(--muted);font-size:13px" title="Afficher/Masquer">👁</button>
+                      </div>
                       <span class="key-status-pill ksp-no" id="s-openai-status">Non configuré</span>
                     </div>
                     <div style="display:flex;gap:6px;margin-top:6px">
-                      <button class="btn-sm btn-ghost" style="font-size:11px" onclick="testAPIKey('openai')">🔌 Tester</button>
-                      <button class="btn-sm btn-ghost" style="font-size:11px" onclick="clearSettingKey('openai')">🗑</button>
+                      <button class="btn-sm btn-primary" style="font-size:11px" onclick="testAPIKey('openai')">🔌 Sauvegarder & Tester</button>
+                      <button class="btn-sm btn-ghost" style="font-size:11px" onclick="clearSettingKey('openai')" title="Effacer la clé">🗑</button>
                     </div>
                   </div>
                 </div>
@@ -2447,27 +2453,107 @@ function toggleAnimations(on) {
 }
 
 async function testAPIKey(provider) {
-  const el = document.getElementById(`s-${provider}-key`);
+  const el     = document.getElementById(`s-${provider}-key`);
   const pillEl = document.getElementById(`s-${provider}-status`);
-  const key = (el?.value || '').trim();
-  const realKey = key.startsWith('•') ? appSettings[provider === 'anthropic' ? 'anthropicKey' : 'openaiKey'] : key;
-  if (!realKey) { if (pillEl) { pillEl.textContent = '⚠ Clé manquante'; pillEl.className = 'key-status-pill ksp-no'; } return; }
+  const key    = (el?.value || '').trim();
 
-  if (pillEl) { pillEl.textContent = '⏳ Test...'; pillEl.className = 'key-status-pill ksp-no'; }
+  // Extraire la vraie clé (champ masqué → utiliser la valeur sauvegardée)
+  const savedKey = appSettings[provider === 'anthropic' ? 'anthropicKey' : 'openaiKey'];
+  const realKey  = key.startsWith('•') ? savedKey : key;
+
+  if (!realKey) {
+    if (pillEl) { pillEl.textContent = '⚠ Entrez votre clé'; pillEl.className = 'key-status-pill ksp-no'; }
+    return;
+  }
+
+  // Sauvegarder la clé automatiquement avant de tester
+  if (!key.startsWith('•') && key) {
+    if (provider === 'anthropic') { appSettings.anthropicKey = key; aiState.anthropicKey = key; }
+    else                          { appSettings.openaiKey    = key; aiState.openaiKey    = key; }
+    localStorage.setItem('tr7_settings_v2', JSON.stringify(appSettings));
+    localStorage.setItem(`tr7_${provider}_key`, key);
+    if (el) el.value = '••••••••••••••••••••';
+  }
+
+  if (pillEl) { pillEl.textContent = '⏳ Test en cours...'; pillEl.className = 'key-status-pill ksp-no'; }
+
+  // Essai 1 : via le backend local (plus fiable, pas de CORS)
+  const backendOk = await checkBackend();
+  if (backendOk) {
+    try {
+      const r = await fetch(`${appSettings.backendUrl}/api/chat/models`);
+      if (r.ok) {
+        // Backend disponible — tester la clé via le backend proxy
+        const testResp = await fetch(`${appSettings.backendUrl}/api/chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            messages: [{ role: 'user', content: 'test' }],
+            model: provider === 'anthropic' ? 'claude-haiku-4-5-20251001' : 'gpt-4o-mini',
+            systemPrompt: 'Reply with only: ok',
+            apiKey: realKey
+          })
+        });
+        if (testResp.status === 200) {
+          if (pillEl) { pillEl.textContent = '✓ Clé valide'; pillEl.className = 'key-status-pill ksp-ok'; }
+          updateAllKeyStatuses(); return;
+        }
+      }
+    } catch {}
+  }
+
+  // Essai 2 : appel direct depuis le navigateur
   try {
     if (provider === 'anthropic') {
       const r = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
-        headers: { 'Content-Type':'application/json','x-api-key':realKey,'anthropic-version':'2023-06-01','anthropic-dangerous-allow-browser':'true' },
-        body: JSON.stringify({ model:'claude-haiku-4-5-20251001', max_tokens:10, messages:[{role:'user',content:'Hi'}] })
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': realKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-allow-browser': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 5,
+          messages: [{ role: 'user', content: 'Hi' }]
+        })
       });
-      const ok = r.status === 200 || r.status === 400;
-      if (pillEl) { pillEl.textContent = ok ? '✓ Valide' : `✗ Erreur ${r.status}`; pillEl.className = `key-status-pill ${ok ? 'ksp-ok' : 'ksp-no'}`; }
+      if (r.status === 200 || r.status === 400 || r.status === 529) {
+        // 400 = mauvais format mais clé OK, 529 = overloaded mais clé OK
+        if (pillEl) { pillEl.textContent = '✓ Clé valide'; pillEl.className = 'key-status-pill ksp-ok'; }
+      } else if (r.status === 401) {
+        if (pillEl) { pillEl.textContent = '✗ Clé incorrecte (401)'; pillEl.className = 'key-status-pill ksp-no'; }
+      } else if (r.status === 403) {
+        if (pillEl) { pillEl.textContent = '✗ Clé révoquée (403)'; pillEl.className = 'key-status-pill ksp-no'; }
+      } else if (r.status === 429) {
+        if (pillEl) { pillEl.textContent = '✓ Valide (limite débit)'; pillEl.className = 'key-status-pill ksp-ok'; }
+      } else {
+        if (pillEl) { pillEl.textContent = `? Statut ${r.status}`; pillEl.className = 'key-status-pill ksp-no'; }
+      }
     } else {
-      const r = await fetch('https://api.openai.com/v1/models', { headers: { 'Authorization': `Bearer ${realKey}` } });
-      if (pillEl) { pillEl.textContent = r.ok ? '✓ Valide' : `✗ Erreur ${r.status}`; pillEl.className = `key-status-pill ${r.ok ? 'ksp-ok' : 'ksp-no'}`; }
+      // OpenAI — CORS natif, pas de problème
+      const r = await fetch('https://api.openai.com/v1/models', {
+        headers: { 'Authorization': `Bearer ${realKey}` }
+      });
+      if (r.ok) {
+        if (pillEl) { pillEl.textContent = '✓ Clé valide'; pillEl.className = 'key-status-pill ksp-ok'; }
+      } else if (r.status === 401) {
+        if (pillEl) { pillEl.textContent = '✗ Clé incorrecte (401)'; pillEl.className = 'key-status-pill ksp-no'; }
+      } else {
+        if (pillEl) { pillEl.textContent = `✗ Erreur ${r.status}`; pillEl.className = 'key-status-pill ksp-no'; }
+      }
     }
-  } catch (e) { if (pillEl) { pillEl.textContent = '✗ Réseau'; pillEl.className = 'key-status-pill ksp-no'; } }
+  } catch (e) {
+    // CORS ou réseau bloqué (fréquent sur GitHub Pages pour Anthropic)
+    // La clé a déjà été sauvegardée — on la considère configurée
+    if (pillEl) {
+      pillEl.textContent = '⚠ CORS (clé enregistrée)';
+      pillEl.className = 'key-status-pill ksp-no';
+      pillEl.title = 'Test direct bloqué par CORS. Lancez le backend local (npm start) pour un vrai test, ou essayez directement le chat — la clé est enregistrée.';
+    }
+  }
+  updateAllKeyStatuses();
 }
 
 async function testBackendConn() {
@@ -2563,6 +2649,28 @@ function importAppSettings(input) {
     } catch { alert('Fichier JSON invalide'); }
   };
   reader.readAsText(file);
+}
+
+// Vide le champ si masqué (pour retaper une nouvelle clé)
+function clearIfMasked(el) {
+  if (el.value.startsWith('•')) {
+    el.value = '';
+    el.type = 'text';
+    el.placeholder = 'Saisissez votre nouvelle clé API...';
+  }
+}
+
+// Afficher / masquer la clé
+function toggleKeyVisibility(inputId, btn) {
+  const el = document.getElementById(inputId);
+  if (!el) return;
+  if (el.type === 'password') {
+    el.type = 'text';
+    btn.textContent = '🙈';
+  } else {
+    el.type = 'password';
+    btn.textContent = '👁';
+  }
 }
 
 function scrollToGroup(id) {

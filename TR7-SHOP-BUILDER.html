@@ -108,6 +108,10 @@ body {
 .btn-ghost:hover { border-color: var(--p1); color: var(--text); }
 .btn-primary { background: linear-gradient(135deg, var(--p1), var(--p2)); color: #fff; box-shadow: 0 0 14px rgba(99,102,241,.3); }
 .btn-primary:hover { opacity: .9; transform: translateY(-1px); }
+.btn-success { background: linear-gradient(135deg, #22c55e, #16a34a); color: #fff; box-shadow: 0 0 14px rgba(34,197,94,.3); font-size: 13px; padding: 8px 18px; }
+.btn-success:hover { opacity: .9; transform: translateY(-1px); }
+.btn-warning { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; box-shadow: 0 0 14px rgba(245,158,11,.3); }
+.btn-warning:hover { opacity: .9; transform: translateY(-1px); }
 
 /* ─── LAYOUT ─── */
 .main { display: flex; flex: 1; height: calc(100vh - 56px); overflow: hidden; }
@@ -1624,6 +1628,20 @@ body.density-compact { font-size: 13px; }
 
     <div class="sb-section">
       <div class="sb-label">Avancement</div>
+      <!-- Mini Donut Progress -->
+      <div id="sidebar-progress-widget" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 0 4px 0;">
+        <svg id="sidebar-donut-svg" width="80" height="80" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="30" fill="none" stroke="#2d2d3a" stroke-width="10"/>
+          <circle id="sidebar-donut-fill" cx="40" cy="40" r="30" fill="none" stroke="#22c55e" stroke-width="10"
+            stroke-dasharray="0 188.5" stroke-dashoffset="47.1" stroke-linecap="round"
+            style="transition:stroke-dasharray .6s cubic-bezier(.4,0,.2,1)"/>
+          <text x="40" y="45" text-anchor="middle" font-size="14" font-weight="700" fill="#e2e8f0" id="sidebar-donut-pct">0%</text>
+        </svg>
+        <div style="text-align:center;font-size:11px;color:var(--muted2);line-height:1.6;">
+          <div id="sidebar-agents-done" style="color:#94a3b8;">0/7 agents terminés</div>
+          <div id="sidebar-score-global" style="color:#a5b4fc;font-weight:600;">Score global : —/10</div>
+        </div>
+      </div>
       <div class="phase-list">
         <div class="phase-item phase-done"><div class="phase-dot"></div><span class="phase-label">Phase 1 — Fondations</span></div>
         <div class="phase-item phase-done"><div class="phase-dot"></div><span class="phase-label">Phase 2 — Dashboard</span></div>
@@ -1674,12 +1692,12 @@ body.density-compact { font-size: 13px; }
       <div class="store-header-top">
         <div class="store-hero-icon" style="background:linear-gradient(135deg,#667eea,#764ba2)">💼</div>
         <div class="store-meta">
-          <div class="store-title-main">Succespro 2.0</div>
-          <div class="store-title-sub">Thème ByMade v1.2.0 · 85 sections · 70+ snippets · iCart intégré</div>
+          <div class="store-title-main" id="main-store-name">Succespro 2.0</div>
+          <div class="store-title-sub" id="main-store-niche">Thème ByMade v1.2.0 · 85 sections · 70+ snippets · iCart intégré</div>
         </div>
         <div class="store-score-area">
           <div class="score-circle">
-            <div class="score-number" id="current-score">5.8</div>
+            <div class="score-number" id="main-store-score">5.8</div>
             <div class="score-out">/10</div>
             <div class="score-label-sm">Score NOE</div>
           </div>
@@ -3076,6 +3094,15 @@ function connectMCP() {
 function selectStore(id) {
   document.querySelectorAll('.store-card').forEach(c => c.classList.remove('active'));
   event.currentTarget.classList.add('active');
+  // Remettre le header aux valeurs statiques de Succespro
+  const headerName = document.getElementById('main-store-name');
+  const headerScore = document.getElementById('main-store-score');
+  const headerNiche = document.getElementById('main-store-niche');
+  if (headerName) headerName.textContent = 'Succespro 2.0';
+  if (headerScore) headerScore.textContent = '5.8';
+  if (headerNiche) headerNiche.textContent = 'Thème ByMade v1.2.0 · 85 sections · 70+ snippets · iCart intégré';
+  // Réinitialiser le donut sidebar
+  resetSidebarProgress();
 }
 
 // ─── AGENT SCROLL ───
@@ -5128,15 +5155,79 @@ function duplicateStore(storeId) {
     agents: {},
     score: null
   });
+  // S'assurer que tous les agents sont en waiting dans la copie
+  const agentKeys = PIPELINE_AGENTS ? PIPELINE_AGENTS.map(a => a.key) : ['NOE','BRAND','SEO','CRO','ADS','TECH','DATA'];
+  copy.agents = {};
+  agentKeys.forEach(k => { copy.agents[k] = { status: 'waiting' }; });
   stores.push(copy);
   localStorage.setItem('tr7_stores', JSON.stringify(stores));
   addStoreToSidebar(copy);
   showToast('📋 Boutique "' + copy.name + '" créée !');
+  // Sélectionner automatiquement la nouvelle boutique
+  setTimeout(() => selectSavedStore(copy.id, false), 150);
+}
+
+// ══════════════════════════════════════════
+// ─── SIDEBAR PROGRESS (DONUT) ──────────────
+// ══════════════════════════════════════════
+
+function updateSidebarProgress(storeId) {
+  const stores = getSavedStores();
+  const store = storeId ? stores.find(s => s.id === storeId) : null;
+  const agents = store ? (store.agents || {}) : {};
+  const agentKeys = PIPELINE_AGENTS ? PIPELINE_AGENTS.map(a => a.key) : ['NOE','BRAND','SEO','CRO','ADS','TECH','DATA'];
+  const total = agentKeys.length;
+  const doneCount = agentKeys.filter(k => agents[k]?.status === 'done').length;
+  const pct = total > 0 ? Math.round((doneCount / total) * 100) : 0;
+  const score = doneCount > 0 ? ((doneCount / total) * 10).toFixed(1) : '—';
+
+  // Donut SVG — circonférence = 2π×30 ≈ 188.5
+  const circumference = 2 * Math.PI * 30;
+  const filled = (pct / 100) * circumference;
+  const donutFill = document.getElementById('sidebar-donut-fill');
+  const donutPct = document.getElementById('sidebar-donut-pct');
+  const agentsDoneEl = document.getElementById('sidebar-agents-done');
+  const scoreGlobalEl = document.getElementById('sidebar-score-global');
+
+  if (donutFill) {
+    donutFill.setAttribute('stroke-dasharray', filled.toFixed(1) + ' ' + circumference.toFixed(1));
+    donutFill.setAttribute('stroke', pct === 100 ? '#22c55e' : pct > 0 ? '#6366f1' : '#2d2d3a');
+  }
+  if (donutPct) donutPct.textContent = pct + '%';
+  if (agentsDoneEl) agentsDoneEl.textContent = doneCount + '/' + total + ' agents terminés';
+  if (scoreGlobalEl) scoreGlobalEl.textContent = 'Score global : ' + score + '/10';
+}
+
+function resetSidebarProgress() {
+  const donutFill = document.getElementById('sidebar-donut-fill');
+  const donutPct = document.getElementById('sidebar-donut-pct');
+  const agentsDoneEl = document.getElementById('sidebar-agents-done');
+  const scoreGlobalEl = document.getElementById('sidebar-score-global');
+  if (donutFill) { donutFill.setAttribute('stroke-dasharray', '0 188.5'); donutFill.setAttribute('stroke', '#2d2d3a'); }
+  if (donutPct) donutPct.textContent = '0%';
+  if (agentsDoneEl) agentsDoneEl.textContent = '0/7 agents terminés';
+  if (scoreGlobalEl) scoreGlobalEl.textContent = 'Score global : —/10';
 }
 
 // ══════════════════════════════════════════
 // ─── DASHBOARD DYNAMIQUE ───────────────────
 // ══════════════════════════════════════════
+
+function getNicheIcons(niche) {
+  if (!niche) return ['🛍️','✨','💎','🌟','🎯','💡','🚀','👑'];
+  const n = niche.toLowerCase();
+  if (/fitness|sport|gym|muscl|health|santé/.test(n))   return ['💪','🏋️','🏃','🔥','⚡','🎯','🏆','💯'];
+  if (/mode|fashion|vetement|cloth|style|luxe/.test(n)) return ['👗','👠','💅','✨','👜','💎','🪞','🧣'];
+  if (/beauty|beauté|cosmé|skin|makeup|maquill/.test(n))return ['💄','🌸','✨','🪷','💅','🧴','💆','🌺'];
+  if (/tech|gadget|électro|phone|computer/.test(n))     return ['💻','📱','⚡','🔌','🖥️','🎮','🤖','🔧'];
+  if (/food|cuisine|coffee|café|snack|nutri/.test(n))   return ['🍕','☕','🥗','🍽️','🔥','🌿','🥑','🍜'];
+  if (/bébé|baby|enfant|kid|jouet|toy/.test(n))        return ['🍼','👶','🧸','🎠','🌈','⭐','🎀','🦄'];
+  if (/animal|pet|chien|chat|dog|cat/.test(n))         return ['🐾','🐶','🐱','❤️','🦴','🌿','🏠','✨'];
+  if (/maison|home|déco|garden|jardín/.test(n))        return ['🏠','🌿','✨','🕯️','🪴','🛋️','🔑','💡'];
+  if (/voyage|travel|outdoor|aventure|camping/.test(n))return ['✈️','🏔️','🌍','🧭','⛺','🎒','🌅','🗺️'];
+  if (/art|creative|design|photo|music/.test(n))       return ['🎨','✏️','🎵','📸','🖌️','🎭','✨','💡'];
+  return ['🛍️','✨','💎','🌟','🎯','💡','🚀','👑'];
+}
 
 function refreshDashboardForStore(storeId) {
   const stores = getSavedStores();
@@ -5146,6 +5237,20 @@ function refreshDashboardForStore(storeId) {
   const agentKeys = PIPELINE_AGENTS ? PIPELINE_AGENTS.map(a => a.key) : ['NOE','BRAND','SEO','CRO','ADS','TECH','DATA'];
   const doneAgents = agentKeys.filter(k => agents[k]?.status === 'done');
   const total = agentKeys.length;
+
+  // ─── HEADER DYNAMIQUE ───
+  const headerName = document.getElementById('main-store-name');
+  const headerScore = document.getElementById('main-store-score');
+  const headerNiche = document.getElementById('main-store-niche');
+  if (headerName) headerName.textContent = store.name || 'Boutique';
+  if (headerNiche) headerNiche.textContent = store.niche || store.name || '';
+  if (headerScore) {
+    const score = doneAgents.length > 0 ? ((doneAgents.length / total) * 10).toFixed(1) : '—';
+    headerScore.textContent = score;
+  }
+
+  // ─── SIDEBAR PROGRESS ───
+  updateSidebarProgress(storeId);
 
   // ─── OVERVIEW panel ───
   const overviewPanel = document.getElementById('panel-overview');
@@ -5238,24 +5343,78 @@ function refreshDashboardForStore(storeId) {
       ? hexMatches.map(h => `<div class="color-swatch-wrap"><div class="color-swatch" style="background:${h}"></div><div class="color-hex">${h}</div></div>`).join('')
       : '<div style="color:var(--muted);font-size:12px">Aucune couleur détectée</div>';
 
+    // Load Google Font if detected
+    const googleFontLink = fontName ? (() => {
+      const existingLink = document.getElementById('design-google-font');
+      if (existingLink) existingLink.remove();
+      const link = document.createElement('link');
+      link.id = 'design-google-font';
+      link.rel = 'stylesheet';
+      const encoded = encodeURIComponent(fontName.trim());
+      link.href = `https://fonts.googleapis.com/css2?family=${encoded.replace(/%20/g,'+')}:wght@400;700&display=swap`;
+      document.head.appendChild(link);
+      return fontName.trim();
+    })() : null;
+
+    const primaryColor  = hexMatches[0] || '#6366f1';
+    const secondaryColor = hexMatches[1] || '#8b5cf6';
+    const nicheIcons = getNicheIcons(store.niche || '');
+
     dynamicDesign.innerHTML = `
       <div class="sec-title">🎨 Design System — ${store.name}</div>
       <div class="info-banner ib-blue" style="margin-bottom:14px">
         <span>✅</span><span>Généré automatiquement depuis le résultat de l'agent BRAND</span>
       </div>
+
       ${hexMatches.length > 0 ? `<div class="sec-title" style="font-size:11px">Palette de couleurs</div>
       <div class="color-row" style="margin-bottom:16px">${colorsHtml}</div>` : ''}
-      ${fontName ? `<div class="sec-title" style="font-size:11px">Typographie recommandée</div>
-      <div class="font-preview" style="margin-bottom:16px">
-        <div class="font-big">${fontName}</div>
-        ${tagline ? `<div class="font-sm">${tagline}</div>` : ''}
+
+      ${googleFontLink ? `<div class="sec-title" style="font-size:11px">Typographie — ${googleFontLink}</div>
+      <div style="background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:18px;margin-bottom:16px">
+        <div style="font-family:'${googleFontLink}',sans-serif;font-size:48px;font-weight:700;color:var(--text1);line-height:1.1;margin-bottom:8px">${googleFontLink}</div>
+        <div style="font-family:'${googleFontLink}',sans-serif;font-size:13px;color:var(--muted2);margin-bottom:16px;font-style:italic">Le vif renard brun saute par-dessus le chien paresseux</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="font-family:'${googleFontLink}',sans-serif;font-size:32px;font-weight:700;color:var(--text1)">H1 — Titre principal (32px)</div>
+          <div style="font-family:'${googleFontLink}',sans-serif;font-size:24px;font-weight:600;color:var(--text2)">H2 — Sous-titre (24px)</div>
+          <div style="font-family:'${googleFontLink}',sans-serif;font-size:16px;color:var(--text2)">Body — Texte courant (16px). Lisibilité et confort de lecture.</div>
+          <div style="font-family:'${googleFontLink}',sans-serif;font-size:12px;color:var(--muted2)">Small — Notes et métadonnées (12px)</div>
+        </div>
       </div>` : ''}
+
       ${tagline || usp || tone ? `<div class="sec-title" style="font-size:11px">Identité de marque</div>
       <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
         ${tagline ? `<div class="card card-sm"><div class="card-title">Tagline</div><div style="font-size:12px;color:var(--muted2)">${tagline}</div></div>` : ''}
         ${usp ? `<div class="card card-sm"><div class="card-title">USP</div><div style="font-size:12px;color:var(--muted2)">${usp}</div></div>` : ''}
         ${tone ? `<div class="card card-sm"><div class="card-title">Tone of Voice</div><div style="font-size:12px;color:var(--muted2)">${tone}</div></div>` : ''}
       </div>` : ''}
+
+      <div class="sec-title" style="font-size:11px">🖼️ Brand Board</div>
+      <div style="background:var(--surface2);border:1px solid var(--border2);border-radius:12px;padding:20px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+          ${hexMatches.slice(0,5).map(h => `<div title="${h}" style="width:40px;height:40px;border-radius:8px;background:${h};box-shadow:0 2px 8px rgba(0,0,0,.3);flex-shrink:0"></div>`).join('')}
+          ${hexMatches.length === 0 ? `<span style="font-size:12px;color:var(--muted)">Pas de couleurs détectées</span>` : ''}
+        </div>
+        <div style="font-family:'${googleFontLink || 'inherit'}',sans-serif;font-size:28px;font-weight:700;color:var(--text1);margin-bottom:4px">${store.name}</div>
+        ${tagline ? `<div style="font-family:'${googleFontLink || 'inherit'}',sans-serif;font-size:14px;color:var(--muted2);margin-bottom:16px;font-style:italic">${tagline}</div>` : '<div style="margin-bottom:16px"></div>'}
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button style="padding:10px 22px;border-radius:8px;border:none;background:${primaryColor};color:#fff;font-family:'${googleFontLink || 'inherit'}',sans-serif;font-size:14px;font-weight:600;cursor:pointer">Acheter maintenant</button>
+          <button style="padding:10px 22px;border-radius:8px;border:none;background:${secondaryColor};color:#fff;font-family:'${googleFontLink || 'inherit'}',sans-serif;font-size:14px;font-weight:600;cursor:pointer">En savoir plus</button>
+          <button style="padding:10px 22px;border-radius:8px;border:2px solid ${primaryColor};background:transparent;color:${primaryColor};font-family:'${googleFontLink || 'inherit'}',sans-serif;font-size:14px;font-weight:600;cursor:pointer">Voir la collection</button>
+        </div>
+      </div>
+
+      <div class="sec-title" style="font-size:11px">🎯 Icônes recommandées</div>
+      <div style="background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:16px;margin-bottom:16px">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+          ${nicheIcons.map(ic => `<span style="font-size:28px;cursor:default" title="${ic}">${ic}</span>`).join('')}
+        </div>
+        <div style="font-size:11px;color:var(--muted2);margin-bottom:10px">Bibliothèques d'icônes recommandées :</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <a href="https://lucide.dev" target="_blank" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:6px;background:var(--surface3,#1e2030);border:1px solid var(--border2);color:var(--text2);font-size:11px;text-decoration:none">⚡ Lucide Icons</a>
+          <a href="https://heroicons.com" target="_blank" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:6px;background:var(--surface3,#1e2030);border:1px solid var(--border2);color:var(--text2);font-size:11px;text-decoration:none">🦸 Heroicons</a>
+          <a href="https://phosphoricons.com" target="_blank" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:6px;background:var(--surface3,#1e2030);border:1px solid var(--border2);color:var(--text2);font-size:11px;text-decoration:none">🔷 Phosphor Icons</a>
+        </div>
+      </div>
     `;
   }
 }
@@ -5496,27 +5655,27 @@ function getPipelinePrompts(store) {
   return {
     NOE: {
       system: 'Tu es NOE, orchestrateur expert e-commerce. Analyse ce brief et produis un plan d\'action structuré pour créer cette boutique Shopify.',
-      user: `Nouvelle boutique: ${name}. Niche: ${niche || 'générale'}. Produit: ${link || 'non spécifié'}. Template: ${template || 'standard'}. Brief: ${prompt || 'pas de brief'}.${inspirationSuffix} Produis un plan d\'action détaillé en 6 étapes pour chaque agent spécialisé (BRAND, SEO, CRO, ADS, TECH, DATA).`
+      user: `Nouvelle boutique: ${name}. Niche: ${niche || 'générale'}. Produit: ${link || 'non spécifié'}. Template: ${template || 'standard'}. Brief: ${prompt || 'pas de brief'}.${inspirationSuffix} Produis un plan d\'action détaillé en 6 étapes pour chaque agent spécialisé (BRAND, SEO, CRO, ADS, TECH, DATA).${link ? `\n\nPRODUIT SOURCE : ${link}\nAnalyse ce produit en détail : type, caractéristiques probables, fourchette de prix, marge potentielle, public cible, arguments de vente. Identifie les forces et faiblesses du listing d'origine.` : ''}${inspiration ? `\n\nBOUTIQUE D'INSPIRATION : ${inspiration}\nAnalyse cette boutique : design, structure, points forts UX, palette de couleurs, positionnement, ce qu'on peut améliorer. L'objectif n'est PAS de copier mais de s'inspirer du meilleur et de surpasser.` : ''}`
     },
     BRAND: {
       system: 'Tu es un expert en branding et copywriting e-commerce. Tu es direct et créatif.',
-      user: `Boutique: ${name}. Niche: ${niche || 'générale'}. Produit: ${link || 'non spécifié'}.${inspirationSuffix} Crée l\'identité de marque : nom justifié, tagline, palette de couleurs (3-5 couleurs hex), typographies recommandées, tone of voice, et proposition de valeur unique (USP).`
+      user: `Boutique: ${name}. Niche: ${niche || 'générale'}. Produit: ${link || 'non spécifié'}.${inspirationSuffix} Crée l\'identité de marque : nom justifié, tagline, palette de couleurs (3-5 couleurs hex), typographies recommandées, tone of voice, et proposition de valeur unique (USP).${link ? `\nProduit source : ${link}. Analyse le produit et propose un branding qui le positionne en premium par rapport au listing d'origine.` : ''}${inspiration ? `\nBoutique d'inspiration : ${inspiration}. Analyse son identité visuelle, sa palette de couleurs, ses polices, et propose quelque chose de mieux — plus professionnel, plus impactant.` : ''}`
     },
     SEO: {
       system: 'Tu es un expert SEO/GEO spécialisé e-commerce Shopify.',
-      user: `Boutique: ${name}. Niche: ${niche || 'générale'}. Produit: ${link || 'non spécifié'}.${inspirationSuffix} Génère : 10 mots-clés principaux, title tag + meta description pour la homepage, structure H1/H2, et 3 idées d\'articles blog pour le SEO.`
+      user: `Boutique: ${name}. Niche: ${niche || 'générale'}. Produit: ${link || 'non spécifié'}.${inspirationSuffix} Génère : 10 mots-clés principaux, title tag + meta description pour la homepage, structure H1/H2, et 3 idées d\'articles blog pour le SEO.${link ? `\nProduit source : ${link}. Analyse les mots-clés potentiels liés à ce produit. Trouve les opportunités SEO que les concurrents ratent.` : ''}${inspiration ? `\nBoutique d'inspiration : ${inspiration}. Analyse son SEO : titles, meta, structure, schema markup. Identifie leurs lacunes pour les surpasser.` : ''}`
     },
     CRO: {
       system: 'Tu es un expert CRO et UX spécialisé Shopify.',
-      user: `Boutique: ${name}. Niche: ${niche || 'générale'}.${inspirationSuffix} Recommande : structure homepage optimale (sections), wireframe PDP (éléments clés), trust signals à intégrer, et 3 A/B tests prioritaires.`
+      user: `Boutique: ${name}. Niche: ${niche || 'générale'}.${inspirationSuffix} Recommande : structure homepage optimale (sections), wireframe PDP (éléments clés), trust signals à intégrer, et 3 A/B tests prioritaires.${inspiration ? `\nBoutique d'inspiration : ${inspiration}. Analyse son parcours utilisateur : structure homepage, PDP, checkout flow. Identifie les frictions UX et propose des améliorations.` : ''}`
     },
     ADS: {
       system: 'Tu es un expert en performance marketing et publicité digitale.',
-      user: `Boutique: ${name}. Niche: ${niche || 'générale'}. Produit: ${link || 'non spécifié'}.${inspirationSuffix} Propose : stratégie Meta Ads (3 hooks, audiences, structure campagne), stratégie email (welcome flow 3 emails), et budget recommandé pour le lancement.`
+      user: `Boutique: ${name}. Niche: ${niche || 'générale'}. Produit: ${link || 'non spécifié'}.${inspirationSuffix} Propose : stratégie Meta Ads (3 hooks, audiences, structure campagne), stratégie email (welcome flow 3 emails), et budget recommandé pour le lancement.${link ? `\nProduit source : ${link}. Analyse le potentiel publicitaire de ce produit : angles, hooks, pain points du client, USP exploitables dans les ads.` : ''}${inspiration ? `\nBoutique d'inspiration : ${inspiration}. Analyse leur stratégie marketing visible : réseaux sociaux, types de contenus, angles publicitaires.` : ''}`
     },
     TECH: {
       system: 'Tu es un expert technique Shopify et intégration e-commerce.',
-      user: `Boutique: ${name}. Niche: ${niche || 'générale'}. Template: ${template || 'standard'}.${inspirationSuffix} Recommande : apps Shopify essentielles (top 5), configuration technique prioritaire, checklist de lancement, et optimisations de performance.`
+      user: `Boutique: ${name}. Niche: ${niche || 'générale'}. Template: ${template || 'standard'}.${inspirationSuffix} Recommande : apps Shopify essentielles (top 5), configuration technique prioritaire, checklist de lancement, et optimisations de performance.${inspiration ? `\nBoutique d'inspiration : ${inspiration}. Analyse les technologies utilisées : thème Shopify, apps, vitesse, mobile. Recommande ce qui est pertinent à reproduire.` : ''}`
     },
     DATA: {
       system: 'Tu es un expert en analytics e-commerce et tracking Shopify.',
@@ -5594,14 +5753,20 @@ function showStoreWorkspace(store, autoRun) {
           <div class="log-line log-info">🖥️ Console pipeline — prête.</div>
         </div>
         <div class="ws-actions">
-          <button class="btn-sm btn-primary" id="ws-run-btn" onclick="runStorePipeline('${store.id}')" ${doneCount === total ? '' : ''}>
-            ${doneCount === total ? '🔄 Relancer le pipeline' : doneCount > 0 ? '▶️ Continuer le pipeline' : '🚀 Lancer le pipeline'}
+          <button class="btn-sm btn-primary" id="ws-run-btn" onclick="runStorePipeline('${store.id}')">
+            ${doneCount === total ? '🔄 Tout relancer' : doneCount === 0 ? '▶️ Démarrer le pipeline' : '🔄 Reprendre le pipeline'}
           </button>
-          ${doneCount === total ? `<button class="btn-sm btn-ghost" onclick="resetStorePipeline('${store.id}')">🗑️ Réinitialiser</button>` : ''}
+          <button class="btn-sm btn-ghost" onclick="resetStorePipeline('${store.id}')">🗑️ Réinitialiser</button>
         </div>
       </div>
     </div>
   `;
+
+  // Initialiser le bouton avec le bon état
+  setTimeout(() => {
+    updatePipelineRunBtn(store.id, doneCount, total);
+    updateSidebarProgress(store.id);
+  }, 50);
 
   if (autoRun) {
     setTimeout(() => runStorePipeline(store.id), 400);
@@ -5810,7 +5975,7 @@ async function runStoreAgent(storeId, agentKey, systemPrompt, userMessage) {
   return fullText;
 }
 
-async function runStorePipeline(storeId) {
+async function runStorePipeline(storeId, resumeMode = false) {
   if (pipelineRunning) {
     showToast('⚠️ Pipeline déjà en cours…');
     return;
@@ -5832,16 +5997,19 @@ async function runStorePipeline(storeId) {
   if (runBtn) { runBtn.disabled = true; runBtn.textContent = '⏳ Pipeline en cours…'; }
 
   const prompts = getPipelinePrompts(store);
-  addPipelineLog('🚀 Pipeline démarré pour "' + store.name + '"', 'info');
+  const logLabel = resumeMode ? '▶️ Reprise du pipeline pour "' + store.name + '"' : '🚀 Pipeline démarré pour "' + store.name + '"';
+  addPipelineLog(logLabel, 'info');
 
   for (const agent of PIPELINE_AGENTS) {
     const { key, emoji, name } = agent;
-    // Check if already done
+    // En mode resume, sauter uniquement les agents "done"
     const existingAgents = getSavedStores().find(s => s.id === storeId)?.agents || {};
     if (existingAgents[key]?.status === 'done') {
       addPipelineLog(`${emoji} ${name} — déjà terminé, skippé.`, 'success');
       continue;
     }
+    // Sans resumeMode, on ne saute rien (on relance tout ce qui n'est pas done)
+    // Avec resumeMode, on relance les erreurs ET les waiting
 
     try {
       addPipelineLog(`${emoji} ${name} — démarrage…`, 'running');
@@ -5871,9 +6039,59 @@ async function runStorePipeline(storeId) {
   }
 
   pipelineRunning = false;
-  if (runBtn) { runBtn.disabled = false; runBtn.textContent = '🔄 Relancer le pipeline'; }
+  if (runBtn) {
+    const st = getSavedStores().find(s => s.id === storeId);
+    if (st) {
+      const agents = st.agents || {};
+      const doneCount = Object.values(agents).filter(a => a.status === 'done').length;
+      const total = PIPELINE_AGENTS.length;
+      updatePipelineRunBtn(storeId, doneCount, total);
+    } else {
+      runBtn.disabled = false; runBtn.textContent = '🔄 Relancer le pipeline';
+    }
+  }
   addPipelineLog('🏁 Pipeline terminé !', 'success');
   showToast('🎉 Pipeline terminé pour "' + store.name + '"');
+  if (currentStoreId === storeId) updateSidebarProgress(storeId);
+}
+
+function updatePipelineRunBtn(storeId, doneCount, total) {
+  const runBtn = document.getElementById('ws-run-btn');
+  if (!runBtn) return;
+  runBtn.disabled = false;
+  const allDone = doneCount === total;
+  const noneStarted = doneCount === 0;
+  // Vérifier s'il y a des erreurs
+  const st = getSavedStores().find(s => s.id === storeId);
+  const agents = st ? (st.agents || {}) : {};
+  const hasError = PIPELINE_AGENTS.some(a => agents[a.key]?.status === 'error');
+
+  if (noneStarted) {
+    runBtn.textContent = '▶️ Démarrer le pipeline';
+    runBtn.className = 'btn-sm btn-success';
+    runBtn.onclick = () => runStorePipeline(storeId, false);
+  } else if (allDone) {
+    runBtn.textContent = '🔄 Tout relancer';
+    runBtn.className = 'btn-sm btn-ghost';
+    runBtn.style.fontSize = '11px';
+    runBtn.onclick = () => { if (confirm('Relancer tout le pipeline depuis le début ?')) { resetStorePipelineAgents(storeId); runStorePipeline(storeId, false); } };
+  } else if (hasError) {
+    runBtn.textContent = '🔄 Reprendre le pipeline';
+    runBtn.className = 'btn-sm btn-warning';
+    runBtn.onclick = () => runStorePipeline(storeId, true);
+  } else {
+    runBtn.textContent = '▶️ Continuer le pipeline';
+    runBtn.className = 'btn-sm btn-primary';
+    runBtn.onclick = () => runStorePipeline(storeId, true);
+  }
+}
+
+function resetStorePipelineAgents(storeId) {
+  const stores = getSavedStores();
+  const store = stores.find(s => s.id === storeId);
+  if (!store) return;
+  store.agents = {};
+  localStorage.setItem('tr7_stores', JSON.stringify(stores));
 }
 
 function resetStorePipeline(storeId) {

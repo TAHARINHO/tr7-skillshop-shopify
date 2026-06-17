@@ -541,6 +541,99 @@ body {
 .ib-orange { background: rgba(245,158,11,.07); border-color: rgba(245,158,11,.25); color: var(--orange); }
 .ib-green { background: rgba(16,185,129,.07); border-color: rgba(16,185,129,.25); color: var(--green); }
 
+/* ─── SETTINGS ─── */
+.settings-layout { display: grid; grid-template-columns: 220px 1fr; gap: 20px; }
+.settings-nav { position: sticky; top: 0; }
+.settings-nav-item {
+  display: flex; align-items: center; gap: 9px; padding: 9px 12px;
+  border-radius: var(--radius-sm); font-size: 13px; cursor: pointer;
+  color: var(--muted2); border: 1px solid transparent;
+  transition: all .12s; margin-bottom: 2px; font-family: var(--font);
+  background: none; width: 100%; text-align: left;
+}
+.settings-nav-item:hover { background: var(--card); color: var(--text); }
+.settings-nav-item.active { background: rgba(99,102,241,.1); border-color: rgba(99,102,241,.3); color: #a5b4fc; font-weight: 600; }
+.settings-sections { display: flex; flex-direction: column; gap: 20px; }
+.settings-group {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+}
+.settings-group-hd {
+  display: flex; align-items: center; gap: 10px; padding: 14px 18px;
+  border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 700;
+}
+.settings-group-hd .sg-icon { font-size: 16px; }
+.settings-body { padding: 6px 0; }
+.settings-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 18px; border-bottom: 1px solid rgba(30,45,69,.5);
+}
+.settings-row:last-child { border-bottom: none; }
+.settings-row-info { flex: 1; }
+.settings-row-label { font-size: 13px; font-weight: 500; }
+.settings-row-desc { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.settings-row-ctrl { margin-left: 16px; flex-shrink: 0; }
+.settings-input {
+  padding: 8px 12px; background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: var(--radius-sm); color: var(--text); font-size: 12px;
+  outline: none; font-family: var(--font); width: 260px; transition: border-color .15s;
+}
+.settings-input:focus { border-color: var(--p1); }
+.settings-input.mono { font-family: var(--mono); font-size: 11px; }
+.settings-input.sm { width: 140px; }
+.settings-select {
+  padding: 8px 10px; background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: var(--radius-sm); color: var(--text); font-size: 12px;
+  outline: none; font-family: var(--font); cursor: pointer; width: 200px;
+}
+.settings-select:focus { border-color: var(--p1); }
+.toggle-sw {
+  position: relative; width: 42px; height: 23px; flex-shrink: 0; cursor: pointer;
+}
+.toggle-sw input { opacity: 0; width: 0; height: 0; }
+.toggle-track {
+  position: absolute; inset: 0; background: var(--border2);
+  border-radius: 99px; transition: background .2s;
+}
+.toggle-sw input:checked + .toggle-track { background: var(--p1); }
+.toggle-thumb {
+  position: absolute; left: 3px; top: 3px;
+  width: 17px; height: 17px; background: #fff; border-radius: 50%;
+  transition: transform .2s; pointer-events: none;
+}
+.toggle-sw input:checked ~ .toggle-thumb { transform: translateX(19px); }
+.accent-swatches { display: flex; gap: 8px; }
+.accent-sw {
+  width: 28px; height: 28px; border-radius: 50%; cursor: pointer;
+  border: 2px solid transparent; transition: all .15s; flex-shrink: 0;
+}
+.accent-sw.selected { border-color: #fff; transform: scale(1.1); box-shadow: 0 0 0 2px rgba(255,255,255,.3); }
+.key-row { display: flex; gap: 8px; align-items: center; }
+.key-status-pill {
+  font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 99px; flex-shrink: 0;
+}
+.ksp-ok  { background: rgba(16,185,129,.12); color: var(--green); }
+.ksp-no  { background: rgba(100,116,139,.1); color: var(--muted); }
+.danger-zone { border-color: rgba(239,68,68,.25) !important; }
+.danger-zone .settings-group-hd { color: var(--red); border-bottom-color: rgba(239,68,68,.2); }
+.btn-danger {
+  padding: 7px 14px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600;
+  cursor: pointer; border: 1px solid rgba(239,68,68,.4); background: rgba(239,68,68,.08);
+  color: var(--red); font-family: var(--font); transition: all .15s;
+}
+.btn-danger:hover { background: rgba(239,68,68,.15); border-color: var(--red); }
+.sys-info-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 18px; font-size: 12px; border-bottom: 1px solid rgba(30,45,69,.5); }
+.sys-info-row:last-child { border-bottom: none; }
+.sys-info-label { color: var(--muted); }
+.sys-info-val { font-family: var(--mono); font-size: 11px; color: var(--muted2); }
+.save-banner {
+  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+  background: var(--green); color: #fff; padding: 10px 24px; border-radius: 99px;
+  font-size: 13px; font-weight: 700; z-index: 999; display: none;
+  box-shadow: 0 4px 20px rgba(16,185,129,.4); animation: slideUp .25s ease;
+}
+@keyframes slideUp { from { opacity:0; transform:translateX(-50%) translateY(10px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }
+
 /* ─── GLOW ACCENT ─── */
 .glow-p1 { box-shadow: 0 0 20px rgba(99,102,241,.2); }
 .grad-border {
@@ -793,6 +886,12 @@ body {
         </div>
       </div>
     </div>
+
+    <div class="sb-section" style="margin-top:auto">
+      <button onclick="openTab('settings')" style="display:flex;align-items:center;gap:8px;width:100%;padding:9px 10px;border-radius:var(--radius-sm);background:none;border:1px solid var(--border);color:var(--muted2);font-family:var(--font);font-size:12px;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='var(--p1)';this.style.color='#a5b4fc'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted2)'">
+        ⚙️ <span>Paramètres</span>
+      </button>
+    </div>
   </div>
 
   <!-- CONTENT -->
@@ -846,6 +945,7 @@ body {
         <div class="tab" onclick="openTab('deploy')"><span class="tab-icon">🚀</span>Déploiement</div>
         <div class="tab" onclick="openTab('ai')"><span class="tab-icon">💬</span>Assistant IA</div>
         <div class="tab" onclick="openTab('preview')"><span class="tab-icon">👁️</span>Preview Shop</div>
+        <div class="tab" onclick="openTab('settings')"><span class="tab-icon">⚙️</span>Paramètres</div>
       </div>
     </div>
 
@@ -1548,9 +1648,405 @@ body {
         </div>
       </div>
 
+
+      <!-- ══════════ TAB: PARAMÈTRES ══════════ -->
+      <div class="tab-panel" id="panel-settings">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+          <div>
+            <h2 style="font-size:16px;font-weight:800;margin-bottom:3px">⚙️ Paramètres</h2>
+            <p style="font-size:12px;color:var(--muted)">Configuration globale de l'outil · Clés API · Profil boutique · Préférences</p>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn-sm btn-ghost" onclick="exportAppSettings()" style="font-size:11px">📤 Exporter</button>
+            <button class="btn-sm btn-primary" onclick="saveAllSettings()" style="font-size:11px">💾 Sauvegarder</button>
+          </div>
+        </div>
+
+        <div class="settings-layout">
+          <!-- Nav settings -->
+          <div class="settings-nav">
+            <button class="settings-nav-item active" onclick="scrollToGroup('grp-keys')">🔑 Clés API</button>
+            <button class="settings-nav-item" onclick="scrollToGroup('grp-store')">🏪 Profil Boutique</button>
+            <button class="settings-nav-item" onclick="scrollToGroup('grp-ai')">🤖 Préférences IA</button>
+            <button class="settings-nav-item" onclick="scrollToGroup('grp-appearance')">🎨 Apparence</button>
+            <button class="settings-nav-item" onclick="scrollToGroup('grp-deploy')">🚀 Déploiement</button>
+            <button class="settings-nav-item" onclick="scrollToGroup('grp-data')">💾 Données</button>
+            <button class="settings-nav-item" onclick="scrollToGroup('grp-danger')" style="color:var(--red)">⚠️ Zone Danger</button>
+          </div>
+
+          <!-- Sections -->
+          <div class="settings-sections" id="settings-main">
+
+            <!-- CLÉS API -->
+            <div class="settings-group" id="grp-keys">
+              <div class="settings-group-hd"><span class="sg-icon">🔑</span> Clés API & Connexions</div>
+              <div class="settings-body">
+
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label">Anthropic (Claude)</div>
+                    <div class="settings-row-desc">Clé API pour Claude Sonnet, Opus, Haiku — <a href="https://console.anthropic.com" target="_blank" style="color:#a5b4fc">console.anthropic.com</a></div>
+                  </div>
+                  <div class="settings-row-ctrl">
+                    <div class="key-row">
+                      <input class="settings-input mono" id="s-anthropic-key" type="password" placeholder="sk-ant-api03-..." autocomplete="off">
+                      <span class="key-status-pill ksp-no" id="s-anthropic-status">Non configuré</span>
+                    </div>
+                    <div style="display:flex;gap:6px;margin-top:6px">
+                      <button class="btn-sm btn-ghost" style="font-size:11px" onclick="testAPIKey('anthropic')">🔌 Tester</button>
+                      <button class="btn-sm btn-ghost" style="font-size:11px" onclick="clearSettingKey('anthropic')">🗑</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label">OpenAI (GPT-4o)</div>
+                    <div class="settings-row-desc">Clé API pour GPT-4o et GPT-4o Mini — <a href="https://platform.openai.com/api-keys" target="_blank" style="color:#a5b4fc">platform.openai.com</a></div>
+                  </div>
+                  <div class="settings-row-ctrl">
+                    <div class="key-row">
+                      <input class="settings-input mono" id="s-openai-key" type="password" placeholder="sk-proj-..." autocomplete="off">
+                      <span class="key-status-pill ksp-no" id="s-openai-status">Non configuré</span>
+                    </div>
+                    <div style="display:flex;gap:6px;margin-top:6px">
+                      <button class="btn-sm btn-ghost" style="font-size:11px" onclick="testAPIKey('openai')">🔌 Tester</button>
+                      <button class="btn-sm btn-ghost" style="font-size:11px" onclick="clearSettingKey('openai')">🗑</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label">URL Backend TR7</div>
+                    <div class="settings-row-desc">URL du serveur backend (localhost ou Hostinger)</div>
+                  </div>
+                  <div class="settings-row-ctrl">
+                    <div class="key-row">
+                      <input class="settings-input mono" id="s-backend-url" type="text" value="http://localhost:3700" placeholder="http://localhost:3700">
+                      <span class="key-status-pill ksp-no" id="s-backend-status">Non testé</span>
+                    </div>
+                    <div style="display:flex;gap:6px;margin-top:6px">
+                      <button class="btn-sm btn-ghost" style="font-size:11px" onclick="testBackendConn()">🔌 Tester</button>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- PROFIL BOUTIQUE -->
+            <div class="settings-group" id="grp-store">
+              <div class="settings-group-hd"><span class="sg-icon">🏪</span> Profil Boutique</div>
+              <div class="settings-body">
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label">Nom de la boutique</div>
+                    <div class="settings-row-desc">Utilisé par les agents dans leurs livrables</div>
+                  </div>
+                  <div class="settings-row-ctrl">
+                    <input class="settings-input sm" id="s-store-name" type="text" value="Succespro 2.0">
+                  </div>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label">URL Shopify</div>
+                    <div class="settings-row-desc">Format : ma-boutique.myshopify.com</div>
+                  </div>
+                  <div class="settings-row-ctrl">
+                    <input class="settings-input mono" id="s-store-url" type="text" placeholder="succespro.myshopify.com">
+                  </div>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label">Niche / Secteur</div>
+                    <div class="settings-row-desc">Contexte pour les agents IA (ex: formation, mode, cosmétique)</div>
+                  </div>
+                  <div class="settings-row-ctrl">
+                    <input class="settings-input sm" id="s-store-niche" type="text" placeholder="Formation en ligne">
+                  </div>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label">Devise principale</div>
+                  </div>
+                  <div class="settings-row-ctrl">
+                    <select class="settings-select" id="s-currency" style="width:120px">
+                      <option value="EUR" selected>EUR €</option>
+                      <option value="USD">USD $</option>
+                      <option value="GBP">GBP £</option>
+                      <option value="CAD">CAD $</option>
+                      <option value="CHF">CHF</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label">Objectif CVR cible</div>
+                    <div class="settings-row-desc">Taux de conversion visé (contextualise les recommandations)</div>
+                  </div>
+                  <div class="settings-row-ctrl">
+                    <select class="settings-select" id="s-cvr-target" style="width:140px">
+                      <option value="2">Standard (1-2%)</option>
+                      <option value="3" selected>Bon (2-3%)</option>
+                      <option value="4">Avancé (3-4%)</option>
+                      <option value="5">Top 10% (4%+)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- PRÉFÉRENCES IA -->
+            <div class="settings-group" id="grp-ai">
+              <div class="settings-group-hd"><span class="sg-icon">🤖</span> Préférences IA</div>
+              <div class="settings-body">
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label">Modèle par défaut</div>
+                    <div class="settings-row-desc">Modèle LLM sélectionné à l'ouverture de l'Assistant IA</div>
+                  </div>
+                  <div class="settings-row-ctrl">
+                    <select class="settings-select" id="s-default-model">
+                      <option value="claude-sonnet-4-6" selected>Claude Sonnet 4.6 (Recommandé)</option>
+                      <option value="claude-opus-4-8">Claude Opus 4.8 (Puissant)</option>
+                      <option value="claude-haiku-4-5-20251001">Claude Haiku 4.5 (Rapide)</option>
+                      <option value="gpt-4o">GPT-4o</option>
+                      <option value="gpt-4o-mini">GPT-4o Mini</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label">Agent par défaut</div>
+                    <div class="settings-row-desc">Agent chargé à l'ouverture de l'Assistant IA</div>
+                  </div>
+                  <div class="settings-row-ctrl">
+                    <select class="settings-select" id="s-default-agent" style="width:200px">
+                      <option value="NOE" selected>🧠 NOE — Orchestrateur</option>
+                      <option value="BRAND">🎨 BRAND & COPY</option>
+                      <option value="SEO">🔍 SEO & GEO</option>
+                      <option value="CRO">📈 CRO & UX</option>
+                      <option value="ADS">📣 ADS & MARKETING</option>
+                      <option value="TECH">⚙️ TECH & SHOPIFY</option>
+                      <option value="DATA">📊 ANALYTICS & DATA</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label">Streaming temps réel</div>
+                    <div class="settings-row-desc">Afficher les réponses lettre par lettre pendant la génération</div>
+                  </div>
+                  <div class="settings-row-ctrl">
+                    <label class="toggle-sw"><input type="checkbox" id="s-streaming" checked onchange="appSettings.streaming=this.checked"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+                  </div>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label">Max tokens par réponse</div>
+                    <div class="settings-row-desc">Limite la longueur des réponses IA (4096 recommandé)</div>
+                  </div>
+                  <div class="settings-row-ctrl">
+                    <select class="settings-select" id="s-max-tokens" style="width:120px">
+                      <option value="1024">1024 — Court</option>
+                      <option value="2048">2048 — Moyen</option>
+                      <option value="4096" selected>4096 — Long</option>
+                      <option value="8192">8192 — Très long</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label">Langue interface agents</div>
+                    <div class="settings-row-desc">Langue des system prompts agents</div>
+                  </div>
+                  <div class="settings-row-ctrl">
+                    <select class="settings-select" id="s-language" style="width:120px">
+                      <option value="fr" selected>🇫🇷 Français</option>
+                      <option value="en">🇬🇧 English</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- APPARENCE -->
+            <div class="settings-group" id="grp-appearance">
+              <div class="settings-group-hd"><span class="sg-icon">🎨</span> Apparence</div>
+              <div class="settings-body">
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label">Couleur accent</div>
+                    <div class="settings-row-desc">Couleur principale de l'interface (appliquée instantanément)</div>
+                  </div>
+                  <div class="settings-row-ctrl">
+                    <div class="accent-swatches">
+                      <div class="accent-sw selected" data-color="#6366f1" style="background:#6366f1" onclick="applyAccent('#6366f1',this)" title="Indigo (défaut)"></div>
+                      <div class="accent-sw" data-color="#ec4899" style="background:#ec4899" onclick="applyAccent('#ec4899',this)" title="Rose"></div>
+                      <div class="accent-sw" data-color="#06b6d4" style="background:#06b6d4" onclick="applyAccent('#06b6d4',this)" title="Cyan"></div>
+                      <div class="accent-sw" data-color="#10b981" style="background:#10b981" onclick="applyAccent('#10b981',this)" title="Vert"></div>
+                      <div class="accent-sw" data-color="#f59e0b" style="background:#f59e0b" onclick="applyAccent('#f59e0b',this)" title="Ambre"></div>
+                      <div class="accent-sw" data-color="#a855f7" style="background:#a855f7" onclick="applyAccent('#a855f7',this)" title="Violet"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label">Densité interface</div>
+                    <div class="settings-row-desc">Espacement des éléments dans le dashboard</div>
+                  </div>
+                  <div class="settings-row-ctrl">
+                    <select class="settings-select" id="s-density" style="width:140px" onchange="applyDensity(this.value)">
+                      <option value="comfortable">Confortable</option>
+                      <option value="normal" selected>Normal</option>
+                      <option value="compact">Compact</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label">Animations</div>
+                    <div class="settings-row-desc">Transitions et effets visuels</div>
+                  </div>
+                  <div class="settings-row-ctrl">
+                    <label class="toggle-sw"><input type="checkbox" id="s-animations" checked onchange="toggleAnimations(this.checked)"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- DÉPLOIEMENT -->
+            <div class="settings-group" id="grp-deploy">
+              <div class="settings-group-hd"><span class="sg-icon">🚀</span> Configuration Déploiement</div>
+              <div class="settings-body">
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label">URL Serveur Hostinger</div>
+                    <div class="settings-row-desc">Domaine ou IP du backend en production</div>
+                  </div>
+                  <div class="settings-row-ctrl">
+                    <input class="settings-input mono" id="s-prod-url" type="text" placeholder="https://tr7-shopbuilder.votredomaine.com">
+                  </div>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label">Environnement actif</div>
+                    <div class="settings-row-desc">Bascule entre localhost et production</div>
+                  </div>
+                  <div class="settings-row-ctrl">
+                    <select class="settings-select" id="s-env" style="width:180px" onchange="switchEnv(this.value)">
+                      <option value="local" selected>🖥 Local (localhost:3700)</option>
+                      <option value="prod">🌐 Production (Hostinger)</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label">Port backend</div>
+                    <div class="settings-row-desc">Port du serveur Express (3700 par défaut)</div>
+                  </div>
+                  <div class="settings-row-ctrl">
+                    <input class="settings-input sm" id="s-port" type="number" value="3700" style="width:90px">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- DONNÉES -->
+            <div class="settings-group" id="grp-data">
+              <div class="settings-group-hd"><span class="sg-icon">💾</span> Données & Export</div>
+              <div class="settings-body">
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label">Exporter la configuration</div>
+                    <div class="settings-row-desc">Sauvegarde toute la config (sans les clés API) en JSON</div>
+                  </div>
+                  <div class="settings-row-ctrl">
+                    <button class="btn-sm btn-ghost" onclick="exportAppSettings()" style="font-size:11px">📤 Exporter JSON</button>
+                  </div>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label">Importer une configuration</div>
+                    <div class="settings-row-desc">Charge une config exportée précédemment</div>
+                  </div>
+                  <div class="settings-row-ctrl">
+                    <label class="btn-sm btn-ghost" style="cursor:pointer;font-size:11px">
+                      📥 Importer JSON
+                      <input type="file" accept=".json" style="display:none" onchange="importAppSettings(this)">
+                    </label>
+                  </div>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label">Historique sessions IA</div>
+                    <div class="settings-row-desc">Conserver l'historique des conversations entre sessions</div>
+                  </div>
+                  <div class="settings-row-ctrl">
+                    <label class="toggle-sw"><input type="checkbox" id="s-save-history" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- INFORMATIONS SYSTÈME -->
+            <div class="settings-group" id="grp-sysinfo">
+              <div class="settings-group-hd"><span class="sg-icon">ℹ️</span> Informations Système</div>
+              <div class="settings-body" style="padding:0">
+                <div class="sys-info-row"><span class="sys-info-label">Version</span><span class="sys-info-val">TR7 Shop Builder v1.2.0</span></div>
+                <div class="sys-info-row"><span class="sys-info-label">Backend</span><span class="sys-info-val" id="sys-backend-status">En cours de vérification...</span></div>
+                <div class="sys-info-row"><span class="sys-info-label">Storage utilisé</span><span class="sys-info-val" id="sys-storage-size">Calcul...</span></div>
+                <div class="sys-info-row"><span class="sys-info-label">GitHub Repo</span><span class="sys-info-val"><a href="https://github.com/TAHARINHO/tr7-skillshop-shopify" target="_blank" style="color:#a5b4fc">TAHARINHO/tr7-skillshop-shopify</a></span></div>
+                <div class="sys-info-row"><span class="sys-info-label">GitHub Pages</span><span class="sys-info-val"><a href="https://taharinho.github.io/tr7-skillshop-shopify/" target="_blank" style="color:#a5b4fc">tr7-skillshop-shopify</a></span></div>
+                <div class="sys-info-row"><span class="sys-info-label">Dernière mise à jour</span><span class="sys-info-val">2026-06-17</span></div>
+                <div class="sys-info-row"><span class="sys-info-label">Agents disponibles</span><span class="sys-info-val">7 (NOE + 6 spécialisés)</span></div>
+              </div>
+            </div>
+
+            <!-- ZONE DANGER -->
+            <div class="settings-group danger-zone" id="grp-danger">
+              <div class="settings-group-hd"><span class="sg-icon">⚠️</span> Zone Danger</div>
+              <div class="settings-body">
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label">Effacer les clés API</div>
+                    <div class="settings-row-desc">Supprime toutes les clés API du stockage local</div>
+                  </div>
+                  <div class="settings-row-ctrl">
+                    <button class="btn-danger" onclick="if(confirm('Effacer toutes les clés API ?')) clearAllKeys()">Effacer les clés</button>
+                  </div>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label">Réinitialiser tous les paramètres</div>
+                    <div class="settings-row-desc">Remet la configuration d'usine (clés API conservées)</div>
+                  </div>
+                  <div class="settings-row-ctrl">
+                    <button class="btn-danger" onclick="if(confirm('Réinitialiser tous les paramètres ?')) resetAllSettings()">Réinitialiser</button>
+                  </div>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label">Vider tout le localStorage</div>
+                    <div class="settings-row-desc">Supprime absolument toutes les données (clés + config + preview)</div>
+                  </div>
+                  <div class="settings-row-ctrl">
+                    <button class="btn-danger" onclick="if(confirm('⚠️ Vider TOUT le localStorage ? Cette action est irréversible.')) { localStorage.clear(); location.reload(); }">Vider tout</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /settings-sections -->
+        </div><!-- /settings-layout -->
+      </div>
+
     </div><!-- /panel -->
   </div><!-- /content -->
 </div><!-- /main -->
+
+<div class="save-banner" id="save-banner">✅ Paramètres sauvegardés</div>
 
 <script>
 // ─── TABS ───
@@ -1751,8 +2247,9 @@ document.addEventListener('DOMContentLoaded', () => {
       el.style.transition = 'width 1.2s cubic-bezier(.4,0,.2,1)';
     });
   }, 300);
-  loadApiKeys();
+  loadSettings();
   renderPreviewPage('home');
+  checkSysInfo();
 });
 
 // ══════════════════════════════════════════
@@ -1798,6 +2295,327 @@ const AGENT_PROMPTS = {
   }
 };
 
+// ══════════════════════════════════════════
+// ─── SETTINGS MANAGER ─────────────────────
+// ══════════════════════════════════════════
+
+const DEFAULT_SETTINGS = {
+  anthropicKey: '', openaiKey: '',
+  backendUrl: 'http://localhost:3700', prodUrl: '',
+  env: 'local', port: 3700,
+  storeName: 'Succespro 2.0', storeUrl: '', storeNiche: '', currency: 'EUR', cvrTarget: '3',
+  defaultModel: 'claude-sonnet-4-6', defaultAgent: 'NOE',
+  language: 'fr', streaming: true, maxTokens: 4096,
+  accentColor: '#6366f1', density: 'normal', animations: true, saveHistory: true
+};
+
+let appSettings = { ...DEFAULT_SETTINGS };
+
+function loadSettings() {
+  const saved = localStorage.getItem('tr7_settings_v2');
+  if (saved) {
+    try { Object.assign(appSettings, JSON.parse(saved)); } catch {}
+  }
+  // Migration depuis anciens localStorage
+  const legacyA = localStorage.getItem('tr7_anthropic_key');
+  const legacyO = localStorage.getItem('tr7_openai_key');
+  if (legacyA && !appSettings.anthropicKey) appSettings.anthropicKey = legacyA;
+  if (legacyO && !appSettings.openaiKey)    appSettings.openaiKey    = legacyO;
+
+  aiState.anthropicKey = appSettings.anthropicKey;
+  aiState.openaiKey    = appSettings.openaiKey;
+
+  populateSettingsForm();
+  applyAppearance();
+  updateAllKeyStatuses();
+}
+
+function saveAllSettings() {
+  // Lire les valeurs du form
+  const read = (id) => { const el = document.getElementById(id); return el ? el.value : ''; };
+  const readCheck = (id) => { const el = document.getElementById(id); return el ? el.checked : true; };
+
+  const rawAnthropicKey = read('s-anthropic-key');
+  const rawOpenaiKey    = read('s-openai-key');
+
+  if (rawAnthropicKey && !rawAnthropicKey.startsWith('•')) appSettings.anthropicKey = rawAnthropicKey;
+  if (rawOpenaiKey    && !rawOpenaiKey.startsWith('•'))    appSettings.openaiKey    = rawOpenaiKey;
+
+  appSettings.backendUrl    = read('s-backend-url')    || 'http://localhost:3700';
+  appSettings.prodUrl       = read('s-prod-url')       || '';
+  appSettings.env           = read('s-env')            || 'local';
+  appSettings.port          = parseInt(read('s-port'))  || 3700;
+  appSettings.storeName     = read('s-store-name')     || 'Succespro 2.0';
+  appSettings.storeUrl      = read('s-store-url')      || '';
+  appSettings.storeNiche    = read('s-store-niche')    || '';
+  appSettings.currency      = read('s-currency')       || 'EUR';
+  appSettings.cvrTarget     = read('s-cvr-target')     || '3';
+  appSettings.defaultModel  = read('s-default-model')  || 'claude-sonnet-4-6';
+  appSettings.defaultAgent  = read('s-default-agent')  || 'NOE';
+  appSettings.language      = read('s-language')       || 'fr';
+  appSettings.streaming     = readCheck('s-streaming');
+  appSettings.maxTokens     = parseInt(read('s-max-tokens')) || 4096;
+  appSettings.density       = read('s-density')        || 'normal';
+  appSettings.animations    = readCheck('s-animations');
+  appSettings.saveHistory   = readCheck('s-save-history');
+
+  localStorage.setItem('tr7_settings_v2', JSON.stringify(appSettings));
+  localStorage.setItem('tr7_anthropic_key', appSettings.anthropicKey);
+  localStorage.setItem('tr7_openai_key',    appSettings.openaiKey);
+
+  aiState.anthropicKey = appSettings.anthropicKey;
+  aiState.openaiKey    = appSettings.openaiKey;
+  aiState.model        = appSettings.defaultModel;
+
+  // Masquer les clés après sauvegarde
+  const a = document.getElementById('s-anthropic-key');
+  const o = document.getElementById('s-openai-key');
+  if (a && appSettings.anthropicKey) a.value = '••••••••••••••••••••';
+  if (o && appSettings.openaiKey)    o.value = '••••••••••••••••••••';
+
+  applyAppearance();
+  updateAllKeyStatuses();
+  showSaveBanner();
+}
+
+function populateSettingsForm() {
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+  const setCheck = (id, val) => { const el = document.getElementById(id); if (el) el.checked = val; };
+  if (appSettings.anthropicKey) set('s-anthropic-key', '••••••••••••••••••••');
+  if (appSettings.openaiKey)    set('s-openai-key',    '••••••••••••••••••••');
+  set('s-backend-url',    appSettings.backendUrl);
+  set('s-prod-url',       appSettings.prodUrl);
+  set('s-env',            appSettings.env);
+  set('s-port',           appSettings.port);
+  set('s-store-name',     appSettings.storeName);
+  set('s-store-url',      appSettings.storeUrl);
+  set('s-store-niche',    appSettings.storeNiche);
+  set('s-currency',       appSettings.currency);
+  set('s-cvr-target',     appSettings.cvrTarget);
+  set('s-default-model',  appSettings.defaultModel);
+  set('s-default-agent',  appSettings.defaultAgent);
+  set('s-language',       appSettings.language);
+  setCheck('s-streaming', appSettings.streaming);
+  set('s-max-tokens',     appSettings.maxTokens);
+  set('s-density',        appSettings.density);
+  setCheck('s-animations', appSettings.animations);
+  setCheck('s-save-history', appSettings.saveHistory);
+
+  // Sync Assistant IA sidebar
+  const ak = document.getElementById('anthropic-key-input');
+  const ok = document.getElementById('openai-key-input');
+  if (ak && appSettings.anthropicKey) ak.value = '••••••••••••••••••••';
+  if (ok && appSettings.openaiKey)    ok.value = '••••••••••••••••••••';
+}
+
+function updateAllKeyStatuses() {
+  const setStatus = (pillId, sideId, ok) => {
+    const pill = document.getElementById(pillId);
+    const side = document.getElementById(sideId);
+    if (pill) { pill.textContent = ok ? 'Configuré ✓' : 'Non configuré'; pill.className = `key-status-pill ${ok ? 'ksp-ok' : 'ksp-no'}`; }
+    if (side) side.innerHTML = ok ? '<span style="color:var(--green)">● Connecté</span>' : '<span style="color:var(--muted)">○ Non configuré</span>';
+  };
+  setStatus('s-anthropic-status', 'anthropic-key-status', !!appSettings.anthropicKey);
+  setStatus('s-openai-status',    'openai-key-status',    !!appSettings.openaiKey);
+}
+
+function applyAppearance() {
+  const color = appSettings.accentColor || '#6366f1';
+  document.documentElement.style.setProperty('--p1', color);
+  // Sync accent swatches
+  document.querySelectorAll('.accent-sw').forEach(sw => {
+    sw.classList.toggle('selected', sw.dataset.color === color);
+  });
+}
+
+function applyAccent(color, el) {
+  appSettings.accentColor = color;
+  document.documentElement.style.setProperty('--p1', color);
+  document.querySelectorAll('.accent-sw').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function applyDensity(val) {
+  appSettings.density = val;
+  const factor = val === 'compact' ? '10px' : val === 'comfortable' ? '18px' : '14px';
+  document.documentElement.style.setProperty('font-size', factor);
+}
+
+function toggleAnimations(on) {
+  appSettings.animations = on;
+  document.documentElement.style.setProperty('--anim-dur', on ? '.2s' : '0s');
+}
+
+async function testAPIKey(provider) {
+  const el = document.getElementById(`s-${provider}-key`);
+  const pillEl = document.getElementById(`s-${provider}-status`);
+  const key = (el?.value || '').trim();
+  const realKey = key.startsWith('•') ? appSettings[provider === 'anthropic' ? 'anthropicKey' : 'openaiKey'] : key;
+  if (!realKey) { if (pillEl) { pillEl.textContent = '⚠ Clé manquante'; pillEl.className = 'key-status-pill ksp-no'; } return; }
+
+  if (pillEl) { pillEl.textContent = '⏳ Test...'; pillEl.className = 'key-status-pill ksp-no'; }
+  try {
+    if (provider === 'anthropic') {
+      const r = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json','x-api-key':realKey,'anthropic-version':'2023-06-01','anthropic-dangerous-allow-browser':'true' },
+        body: JSON.stringify({ model:'claude-haiku-4-5-20251001', max_tokens:10, messages:[{role:'user',content:'Hi'}] })
+      });
+      const ok = r.status === 200 || r.status === 400;
+      if (pillEl) { pillEl.textContent = ok ? '✓ Valide' : `✗ Erreur ${r.status}`; pillEl.className = `key-status-pill ${ok ? 'ksp-ok' : 'ksp-no'}`; }
+    } else {
+      const r = await fetch('https://api.openai.com/v1/models', { headers: { 'Authorization': `Bearer ${realKey}` } });
+      if (pillEl) { pillEl.textContent = r.ok ? '✓ Valide' : `✗ Erreur ${r.status}`; pillEl.className = `key-status-pill ${r.ok ? 'ksp-ok' : 'ksp-no'}`; }
+    }
+  } catch (e) { if (pillEl) { pillEl.textContent = '✗ Réseau'; pillEl.className = 'key-status-pill ksp-no'; } }
+}
+
+async function testBackendConn() {
+  const url = document.getElementById('s-backend-url')?.value.trim() || appSettings.backendUrl;
+  const pill = document.getElementById('s-backend-status');
+  if (pill) { pill.textContent = '⏳ Test...'; pill.className = 'key-status-pill ksp-no'; }
+  try {
+    const r = await fetch(`${url}/api/health`, { signal: AbortSignal.timeout(3000) });
+    const data = await r.json();
+    if (pill) { pill.textContent = `✓ v${data.version}`; pill.className = 'key-status-pill ksp-ok'; }
+    appSettings.backendUrl = url;
+  } catch { if (pill) { pill.textContent = '✗ Hors ligne'; pill.className = 'key-status-pill ksp-no'; } }
+}
+
+function switchEnv(env) {
+  appSettings.env = env;
+  const prodUrl = document.getElementById('s-prod-url')?.value || appSettings.prodUrl;
+  if (env === 'prod' && prodUrl) {
+    appSettings.backendUrl = prodUrl;
+    const el = document.getElementById('s-backend-url');
+    if (el) el.value = prodUrl;
+  } else {
+    const port = document.getElementById('s-port')?.value || 3700;
+    appSettings.backendUrl = `http://localhost:${port}`;
+    const el = document.getElementById('s-backend-url');
+    if (el) el.value = appSettings.backendUrl;
+  }
+}
+
+function clearSettingKey(provider) {
+  if (provider === 'anthropic') {
+    appSettings.anthropicKey = '';
+    aiState.anthropicKey = '';
+    localStorage.removeItem('tr7_anthropic_key');
+    const el = document.getElementById('s-anthropic-key');
+    if (el) el.value = '';
+  } else {
+    appSettings.openaiKey = '';
+    aiState.openaiKey = '';
+    localStorage.removeItem('tr7_openai_key');
+    const el = document.getElementById('s-openai-key');
+    if (el) el.value = '';
+  }
+  updateAllKeyStatuses();
+}
+
+function clearAllKeys() {
+  appSettings.anthropicKey = ''; appSettings.openaiKey = '';
+  aiState.anthropicKey = '';    aiState.openaiKey = '';
+  localStorage.removeItem('tr7_anthropic_key');
+  localStorage.removeItem('tr7_openai_key');
+  const a = document.getElementById('s-anthropic-key');
+  const o = document.getElementById('s-openai-key');
+  if (a) a.value = ''; if (o) o.value = '';
+  const ai1 = document.getElementById('anthropic-key-input');
+  const ai2 = document.getElementById('openai-key-input');
+  if (ai1) ai1.value = ''; if (ai2) ai2.value = '';
+  updateAllKeyStatuses();
+  showSaveBanner('🗑 Clés effacées');
+}
+
+function resetAllSettings() {
+  const keys = { anthropicKey: appSettings.anthropicKey, openaiKey: appSettings.openaiKey };
+  appSettings = { ...DEFAULT_SETTINGS, ...keys };
+  localStorage.setItem('tr7_settings_v2', JSON.stringify(appSettings));
+  populateSettingsForm();
+  applyAppearance();
+  showSaveBanner('↩ Paramètres réinitialisés');
+}
+
+function exportAppSettings() {
+  const safe = { ...appSettings, anthropicKey: appSettings.anthropicKey ? '[HIDDEN]' : '', openaiKey: appSettings.openaiKey ? '[HIDDEN]' : '' };
+  const blob = new Blob([JSON.stringify(safe, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `tr7-settings-${Date.now()}.json`;
+  a.click();
+}
+
+function importAppSettings(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      delete data.anthropicKey; delete data.openaiKey;
+      Object.assign(appSettings, data);
+      localStorage.setItem('tr7_settings_v2', JSON.stringify(appSettings));
+      populateSettingsForm();
+      applyAppearance();
+      showSaveBanner('📥 Config importée');
+    } catch { alert('Fichier JSON invalide'); }
+  };
+  reader.readAsText(file);
+}
+
+function scrollToGroup(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.querySelectorAll('.settings-nav-item').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('onclick')?.includes(id));
+  });
+}
+
+function showSaveBanner(msg = '✅ Paramètres sauvegardés') {
+  const el = document.getElementById('save-banner');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, 2500);
+}
+
+async function checkSysInfo() {
+  // Backend status
+  const backendEl = document.getElementById('sys-backend-status');
+  const sideEl    = document.getElementById('s-backend-status');
+  try {
+    const r = await fetch(`${appSettings.backendUrl}/api/health`, { signal: AbortSignal.timeout(2000) });
+    const d = await r.json();
+    if (backendEl) { backendEl.innerHTML = `<span style="color:var(--green)">● En ligne v${d.version}</span>`; }
+    if (sideEl)    { sideEl.textContent = `✓ v${d.version}`; sideEl.className = 'key-status-pill ksp-ok'; }
+  } catch {
+    if (backendEl) { backendEl.innerHTML = `<span style="color:var(--muted)">○ Hors ligne (mode statique)</span>`; }
+    if (sideEl)    { sideEl.textContent = '○ Hors ligne'; sideEl.className = 'key-status-pill ksp-no'; }
+  }
+  // Storage size
+  const storageEl = document.getElementById('sys-storage-size');
+  if (storageEl) {
+    let total = 0;
+    for (const k in localStorage) { if (localStorage.hasOwnProperty(k)) total += localStorage[k].length + k.length; }
+    storageEl.textContent = `${(total / 1024).toFixed(1)} KB`;
+  }
+}
+
+// ─── Legacy shims (pour compatibilité avec l'onglet Assistant IA) ───
+function saveApiKey(provider) {
+  const inputId = provider === 'anthropic' ? 'anthropic-key-input' : 'openai-key-input';
+  const val = document.getElementById(inputId)?.value.trim();
+  if (!val || val.startsWith('•')) return;
+  if (provider === 'anthropic') { appSettings.anthropicKey = val; aiState.anthropicKey = val; }
+  else                          { appSettings.openaiKey    = val; aiState.openaiKey    = val; }
+  saveAllSettings();
+  document.getElementById(inputId).value = '••••••••••••••••••••';
+  updateAllKeyStatuses();
+}
+function updateKeyStatuses() { updateAllKeyStatuses(); }
+
 let aiState = {
   model: 'claude-sonnet-4-6',
   agent: 'NOE',
@@ -1806,57 +2624,6 @@ let aiState = {
   anthropicKey: '',
   openaiKey: ''
 };
-
-function loadApiKeys() {
-  aiState.anthropicKey = localStorage.getItem('tr7_anthropic_key') || '';
-  aiState.openaiKey    = localStorage.getItem('tr7_openai_key') || '';
-  const el1 = document.getElementById('anthropic-key-input');
-  const el2 = document.getElementById('openai-key-input');
-  if (el1) el1.value = aiState.anthropicKey ? '••••••••••••••••' : '';
-  if (el2) el2.value = aiState.openaiKey ? '••••••••••••••••' : '';
-  updateKeyStatuses();
-}
-
-function saveApiKey(provider) {
-  if (provider === 'anthropic') {
-    const val = document.getElementById('anthropic-key-input').value.trim();
-    if (val && !val.startsWith('•')) {
-      localStorage.setItem('tr7_anthropic_key', val);
-      aiState.anthropicKey = val;
-      document.getElementById('anthropic-key-input').value = '••••••••••••••••';
-    }
-  } else {
-    const val = document.getElementById('openai-key-input').value.trim();
-    if (val && !val.startsWith('•')) {
-      localStorage.setItem('tr7_openai_key', val);
-      aiState.openaiKey = val;
-      document.getElementById('openai-key-input').value = '••••••••••••••••';
-    }
-  }
-  updateKeyStatuses();
-}
-
-function clearApiKey(provider) {
-  if (provider === 'anthropic') {
-    localStorage.removeItem('tr7_anthropic_key');
-    aiState.anthropicKey = '';
-    document.getElementById('anthropic-key-input').value = '';
-  } else {
-    localStorage.removeItem('tr7_openai_key');
-    aiState.openaiKey = '';
-    document.getElementById('openai-key-input').value = '';
-  }
-  updateKeyStatuses();
-}
-
-function updateKeyStatuses() {
-  const claudeOk  = !!aiState.anthropicKey;
-  const openaiOk  = !!aiState.openaiKey;
-  const el1 = document.getElementById('anthropic-key-status');
-  const el2 = document.getElementById('openai-key-status');
-  if (el1) el1.innerHTML = claudeOk ? '<span style="color:var(--green)">● Connecté</span>' : '<span style="color:var(--muted)">○ Non configuré</span>';
-  if (el2) el2.innerHTML = openaiOk  ? '<span style="color:var(--green)">● Connecté</span>' : '<span style="color:var(--muted)">○ Non configuré</span>';
-}
 
 function selectAIModel(modelId) {
   aiState.model = modelId;
@@ -1957,7 +2724,7 @@ async function sendAIMessage() {
   try {
     if (useBackend) {
       msgId = appendAIMessage('assistant', '...', true);
-      const resp = await fetch('http://localhost:3700/api/chat', {
+      const resp = await fetch(`${appSettings.backendUrl}/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: aiState.messages, model, systemPrompt, apiKey })
@@ -2068,7 +2835,7 @@ async function sendAIMessage() {
 
 async function checkBackend() {
   try {
-    const resp = await fetch('http://localhost:3700/api/health', { signal: AbortSignal.timeout(1500) });
+    const resp = await fetch(`${appSettings.backendUrl}/api/health`, { signal: AbortSignal.timeout(1500) });
     return resp.ok;
   } catch { return false; }
 }

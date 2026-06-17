@@ -3,284 +3,575 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TR7 Shop Builder — Powered by NOE</title>
+<title>TR7 Shop Builder — Powered by NOE v2.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0a0a0f;
-    --bg2: #111118;
-    --bg3: #1a1a24;
-    --border: #2a2a38;
-    --accent: #6c5ce7;
-    --accent2: #a29bfe;
-    --green: #00cec9;
-    --orange: #fd7b2e;
-    --red: #e84393;
-    --text: #e8e8f0;
-    --muted: #6b6b80;
-    --card: #16161f;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+:root {
+  --bg:      #080b14;
+  --bg2:     #0d1220;
+  --bg3:     #131929;
+  --card:    #111827;
+  --border:  #1e2d45;
+  --border2: #243352;
+  --p1:      #6366f1;
+  --p2:      #8b5cf6;
+  --p3:      #a855f7;
+  --pink:    #ec4899;
+  --cyan:    #06b6d4;
+  --green:   #10b981;
+  --orange:  #f59e0b;
+  --red:     #ef4444;
+  --text:    #f1f5f9;
+  --muted:   #64748b;
+  --muted2:  #94a3b8;
+  --font:    'Plus Jakarta Sans', system-ui, sans-serif;
+  --mono:    'JetBrains Mono', monospace;
+  --radius:  12px;
+  --radius-sm: 8px;
+  --shadow:  0 4px 24px rgba(0,0,0,.4);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
 
-  /* TOP BAR */
-  .topbar {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 24px; height: 56px;
-    background: var(--bg2); border-bottom: 1px solid var(--border);
-    position: sticky; top: 0; z-index: 100;
-  }
-  .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; }
-  .logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, var(--accent), var(--red)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
-  .noe-badge { background: linear-gradient(90deg, var(--accent), var(--red)); padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; }
-  .topbar-right { display: flex; align-items: center; gap: 12px; }
-  .shopify-status { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
-  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); }
-  .dot.offline { background: var(--muted); box-shadow: none; }
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
 
-  /* MAIN LAYOUT */
-  .main { display: flex; flex: 1; overflow: hidden; height: calc(100vh - 56px); }
+/* ─── TOPBAR ─── */
+.topbar {
+  height: 56px;
+  background: rgba(13,18,32,.9);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: -.3px;
+}
+.logo-mark {
+  width: 34px; height: 34px;
+  background: linear-gradient(135deg, var(--p1), var(--pink));
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  box-shadow: 0 0 18px rgba(99,102,241,.35);
+}
+.logo-name { background: linear-gradient(90deg,#e2e8f0,#94a3b8); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.noe-chip {
+  background: linear-gradient(90deg, var(--p1), var(--pink));
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  color: #fff;
+}
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+.status-dot {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--muted2);
+}
+.dot { width: 7px; height: 7px; border-radius: 50%; }
+.dot-green { background: var(--green); box-shadow: 0 0 6px var(--green); animation: pulse 2s infinite; }
+.dot-gray { background: var(--muted); }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+.btn-sm {
+  padding: 6px 14px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600;
+  cursor: pointer; border: none; transition: all .2s; font-family: var(--font);
+}
+.btn-ghost { background: transparent; color: var(--muted2); border: 1px solid var(--border2); }
+.btn-ghost:hover { border-color: var(--p1); color: var(--text); }
+.btn-primary { background: linear-gradient(135deg, var(--p1), var(--p2)); color: #fff; box-shadow: 0 0 14px rgba(99,102,241,.3); }
+.btn-primary:hover { opacity: .9; transform: translateY(-1px); }
 
-  /* SIDEBAR */
-  .sidebar {
-    width: 260px; min-width: 260px;
-    background: var(--bg2); border-right: 1px solid var(--border);
-    display: flex; flex-direction: column; overflow-y: auto;
-  }
-  .sidebar-section { padding: 16px; border-bottom: 1px solid var(--border); }
-  .sidebar-label { font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
-  .store-item {
-    display: flex; align-items: center; gap: 10px; padding: 10px 12px;
-    border-radius: 8px; cursor: pointer; transition: all 0.15s;
-    margin-bottom: 4px; border: 1px solid transparent;
-  }
-  .store-item:hover { background: var(--bg3); }
-  .store-item.active { background: var(--bg3); border-color: var(--accent); }
-  .store-icon { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
-  .store-info { flex: 1; min-width: 0; }
-  .store-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .store-phase { font-size: 11px; color: var(--muted); }
-  .score-pill { font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 10px; flex-shrink: 0; }
-  .score-mid { background: rgba(253,123,46,0.15); color: var(--orange); }
-  .score-low { background: rgba(232,67,147,0.15); color: var(--red); }
-  .score-high { background: rgba(0,206,201,0.15); color: var(--green); }
+/* ─── LAYOUT ─── */
+.main { display: flex; flex: 1; height: calc(100vh - 56px); overflow: hidden; }
 
-  .add-btn {
-    display: flex; align-items: center; gap: 8px; padding: 10px 12px;
-    border-radius: 8px; cursor: pointer; color: var(--muted); font-size: 13px;
-    border: 1px dashed var(--border); transition: all 0.15s; width: 100%; background: none;
-    margin-top: 4px;
-  }
-  .add-btn:hover { border-color: var(--accent); color: var(--accent2); }
+/* ─── SIDEBAR ─── */
+.sidebar {
+  width: 252px; min-width: 252px;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  overflow-y: auto;
+}
+.sb-section { padding: 14px 12px; border-bottom: 1px solid var(--border); }
+.sb-label {
+  font-size: 9px; font-weight: 700; letter-spacing: 1.2px;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 8px; padding: 0 4px;
+}
+.store-card {
+  display: flex; align-items: center; gap: 9px;
+  padding: 9px 10px; border-radius: var(--radius-sm);
+  cursor: pointer; transition: all .15s;
+  border: 1px solid transparent; margin-bottom: 3px;
+}
+.store-card:hover { background: var(--bg3); }
+.store-card.active { background: var(--bg3); border-color: rgba(99,102,241,.4); }
+.store-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0;
+}
+.store-info { flex: 1; min-width: 0; }
+.store-name { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.store-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.score-pill {
+  font-size: 10px; font-weight: 700; padding: 2px 7px;
+  border-radius: 99px; flex-shrink: 0;
+}
+.pill-orange { background: rgba(245,158,11,.12); color: var(--orange); }
+.pill-green  { background: rgba(16,185,129,.12); color: var(--green); }
+.pill-red    { background: rgba(239,68,68,.12);  color: var(--red); }
+.pill-blue   { background: rgba(99,102,241,.12); color: #a5b4fc; }
 
-  /* CONTENT AREA */
-  .content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.add-store-btn {
+  display: flex; align-items: center; gap: 8px; padding: 9px 10px;
+  border: 1px dashed var(--border2); border-radius: var(--radius-sm);
+  cursor: pointer; color: var(--muted); font-size: 12px;
+  background: none; width: 100%; font-family: var(--font);
+  transition: all .15s; margin-top: 3px;
+}
+.add-store-btn:hover { border-color: var(--p1); color: #a5b4fc; }
 
-  /* STORE HEADER */
-  .store-header {
-    padding: 20px 24px 0; border-bottom: 1px solid var(--border);
-    background: var(--bg2);
-  }
-  .store-title-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-  .store-emoji { font-size: 28px; }
-  .store-title { font-size: 20px; font-weight: 700; }
-  .store-subtitle { font-size: 13px; color: var(--muted); margin-top: 2px; }
-  .score-bar-wrap { display: flex; align-items: center; gap: 10px; margin-left: auto; }
-  .score-label { font-size: 12px; color: var(--muted); }
-  .score-big { font-size: 22px; font-weight: 800; color: var(--orange); }
-  .score-max { font-size: 13px; color: var(--muted); }
+.phase-list { display: flex; flex-direction: column; gap: 4px; }
+.phase-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 7px 10px; border-radius: var(--radius-sm); font-size: 12px;
+}
+.phase-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.phase-done .phase-dot { background: var(--green); }
+.phase-active .phase-dot { background: var(--p1); animation: pulse 2s infinite; }
+.phase-pending .phase-dot { background: var(--border2); }
+.phase-label { flex: 1; }
+.phase-done .phase-label { color: var(--green); }
+.phase-active .phase-label { color: #a5b4fc; font-weight: 600; }
+.phase-pending .phase-label { color: var(--muted); }
 
-  /* TABS */
-  .tabs { display: flex; gap: 2px; padding: 0 24px; }
-  .tab {
-    padding: 10px 16px; font-size: 13px; cursor: pointer; border-radius: 6px 6px 0 0;
-    color: var(--muted); transition: all 0.15s; white-space: nowrap; border: 1px solid transparent;
-    border-bottom: none; position: relative; top: 1px;
-  }
-  .tab:hover { color: var(--text); background: var(--bg3); }
-  .tab.active { color: var(--text); background: var(--bg); border-color: var(--border); font-weight: 600; }
-  .tab-icon { margin-right: 6px; }
+.agent-nav { display: flex; flex-direction: column; gap: 2px; }
+.agent-nav-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 10px; border-radius: var(--radius-sm);
+  cursor: pointer; font-size: 12px; transition: all .15s;
+  color: var(--muted2);
+}
+.agent-nav-item:hover { background: var(--bg3); color: var(--text); }
+.agent-nav-item .a-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
 
-  /* PANEL */
-  .panel { flex: 1; overflow-y: auto; padding: 24px; background: var(--bg); }
-  .tab-panel { display: none; }
-  .tab-panel.active { display: block; }
+/* ─── CONTENT ─── */
+.content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
-  /* CARDS */
-  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
-  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px; }
-  .card {
-    background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px;
-  }
-  .card-title { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
-  .card-value { font-size: 26px; font-weight: 800; }
-  .card-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
-  .card-accent { color: var(--accent2); }
-  .card-green { color: var(--green); }
-  .card-orange { color: var(--orange); }
-  .card-red { color: var(--red); }
+/* ─── STORE HEADER ─── */
+.store-header {
+  padding: 18px 24px 0;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+}
+.store-header-top { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 16px; }
+.store-hero-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;
+}
+.store-meta { flex: 1; }
+.store-title-main { font-size: 18px; font-weight: 800; letter-spacing: -.3px; }
+.store-title-sub { font-size: 12px; color: var(--muted2); margin-top: 3px; }
+.store-score-area { display: flex; align-items: center; gap: 16px; }
+.score-circle {
+  display: flex; flex-direction: column; align-items: center;
+  background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: 12px; padding: 10px 16px;
+}
+.score-number { font-size: 26px; font-weight: 800; color: var(--orange); line-height: 1; }
+.score-out { font-size: 11px; color: var(--muted); }
+.score-label-sm { font-size: 10px; color: var(--muted); margin-top: 2px; }
+.progress-col { display: flex; flex-direction: column; gap: 6px; min-width: 140px; }
+.progress-row { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--muted2); }
+.progress-bar { height: 4px; background: var(--border2); border-radius: 99px; flex: 1; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 99px; transition: width 1s ease; }
+.pf-green { background: linear-gradient(90deg,var(--green),#34d399); }
+.pf-blue  { background: linear-gradient(90deg,var(--p1),var(--cyan)); }
+.pf-orange{ background: linear-gradient(90deg,var(--orange),#fbbf24); }
 
-  /* AUDIT SECTION */
-  .audit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
-  .audit-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
-  .audit-row:last-child { border-bottom: none; }
-  .audit-label { font-size: 13px; }
-  .audit-score { display: flex; align-items: center; gap: 8px; }
-  .bar { height: 6px; border-radius: 3px; background: var(--border); width: 80px; overflow: hidden; }
-  .bar-fill { height: 100%; border-radius: 3px; transition: width 0.5s; }
-  .bar-fill.high { background: var(--green); }
-  .bar-fill.mid { background: var(--orange); }
-  .bar-fill.low { background: var(--red); }
-  .score-num { font-size: 12px; font-weight: 700; width: 30px; text-align: right; }
+/* ─── TABS ─── */
+.tabs-row {
+  display: flex; gap: 2px; padding: 0 24px;
+  overflow-x: auto; scrollbar-width: none;
+}
+.tabs-row::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 9px 14px; font-size: 12px; font-weight: 500; color: var(--muted);
+  cursor: pointer; border-radius: 6px 6px 0 0;
+  border: 1px solid transparent; border-bottom: none;
+  transition: all .15s; white-space: nowrap;
+  position: relative; top: 1px;
+  font-family: var(--font);
+}
+.tab:hover { color: var(--text); background: var(--bg3); }
+.tab.active { color: var(--text); background: var(--bg); border-color: var(--border); font-weight: 600; }
+.tab-icon { margin-right: 5px; }
 
-  /* PRIORITY LIST */
-  .priority-list { list-style: none; }
-  .priority-item {
-    display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px;
-    background: var(--card); border: 1px solid var(--border); border-radius: 8px;
-    margin-bottom: 8px;
-  }
-  .priority-num { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
-  .p1 { background: rgba(232,67,147,0.2); color: var(--red); }
-  .p2 { background: rgba(253,123,46,0.2); color: var(--orange); }
-  .p3 { background: rgba(108,92,231,0.2); color: var(--accent2); }
-  .priority-text { font-size: 13px; line-height: 1.5; flex: 1; }
-  .priority-tag { font-size: 10px; color: var(--muted); margin-top: 3px; }
-  .check-btn { width: 20px; height: 20px; border: 1px solid var(--border); border-radius: 4px; cursor: pointer; flex-shrink: 0; background: transparent; display: flex; align-items: center; justify-content: center; transition: all 0.15s; color: transparent; font-size: 12px; }
-  .check-btn:hover { border-color: var(--green); color: var(--green); }
-  .check-btn.done { background: rgba(0,206,201,0.1); border-color: var(--green); color: var(--green); }
+/* ─── PANEL ─── */
+.panel { flex: 1; overflow-y: auto; padding: 24px; background: var(--bg); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; animation: fadeIn .2s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
 
-  /* PROMPT AREA */
-  .prompt-wrap {
-    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-    overflow: hidden; margin-bottom: 20px;
-  }
-  .prompt-header { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
-  .noe-avatar { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--red)); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
-  .prompt-header-text { font-size: 13px; font-weight: 600; }
-  .prompt-header-sub { font-size: 11px; color: var(--muted); }
-  .shortcuts-bar { display: flex; gap: 6px; padding: 10px 16px; flex-wrap: wrap; border-bottom: 1px solid var(--border); }
-  .shortcut {
-    padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
-    background: var(--bg3); border: 1px solid var(--border); cursor: pointer;
-    transition: all 0.15s; color: var(--muted); font-family: monospace;
-  }
-  .shortcut:hover { border-color: var(--accent2); color: var(--accent2); background: rgba(108,92,231,0.1); }
-  textarea.prompt-input {
-    width: 100%; padding: 14px 16px; background: transparent; border: none;
-    color: var(--text); font-size: 14px; resize: none; outline: none;
-    font-family: inherit; line-height: 1.6; min-height: 100px;
-  }
-  textarea.prompt-input::placeholder { color: var(--muted); }
-  .prompt-footer { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-top: 1px solid var(--border); }
-  .prompt-actions { display: flex; gap: 8px; }
-  .btn {
-    padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600;
-    cursor: pointer; border: none; transition: all 0.15s;
-  }
-  .btn-primary { background: linear-gradient(135deg, var(--accent), #8b5cf6); color: white; }
-  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
-  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
-  .btn-ghost:hover { border-color: var(--accent2); color: var(--text); }
-  .char-count { font-size: 11px; color: var(--muted); }
+/* ─── GRIDS ─── */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+.grid4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 20px; }
 
-  /* CHAT HISTORY */
-  .chat-history { margin-bottom: 20px; }
-  .chat-msg { display: flex; gap: 10px; margin-bottom: 14px; }
-  .chat-msg.noe { flex-direction: row; }
-  .chat-msg.user { flex-direction: row-reverse; }
-  .msg-bubble {
-    max-width: 80%; padding: 12px 14px; border-radius: 12px; font-size: 13px; line-height: 1.6;
-  }
-  .noe .msg-bubble { background: var(--card); border: 1px solid var(--border); border-radius: 4px 12px 12px 12px; }
-  .user .msg-bubble { background: rgba(108,92,231,0.15); border: 1px solid rgba(108,92,231,0.3); border-radius: 12px 4px 12px 12px; }
-  .msg-time { font-size: 10px; color: var(--muted); margin-top: 4px; }
+/* ─── CARDS ─── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+.card:hover { border-color: var(--border2); }
+.card-sm { padding: 12px 14px; }
+.card-title { font-size: 10px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.card-value { font-size: 28px; font-weight: 800; line-height: 1.1; }
+.card-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+.cv-indigo { color: #a5b4fc; }
+.cv-green  { color: var(--green); }
+.cv-orange { color: var(--orange); }
+.cv-red    { color: var(--red); }
+.cv-cyan   { color: var(--cyan); }
+.cv-pink   { color: var(--pink); }
 
-  /* UPLOAD ZONE */
-  .upload-zone {
-    border: 2px dashed var(--border); border-radius: 12px; padding: 32px;
-    text-align: center; cursor: pointer; transition: all 0.2s;
-    background: var(--card); margin-bottom: 20px;
-  }
-  .upload-zone:hover { border-color: var(--accent); background: rgba(108,92,231,0.05); }
-  .upload-zone.dragover { border-color: var(--accent); background: rgba(108,92,231,0.08); }
-  .upload-icon { font-size: 36px; margin-bottom: 12px; }
-  .upload-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
-  .upload-sub { font-size: 12px; color: var(--muted); }
+/* ─── SECTION TITLE ─── */
+.sec-title {
+  font-size: 13px; font-weight: 700; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px; color: var(--muted2);
+}
+.sec-title::after { content:''; flex:1; height:1px; background:var(--border); }
 
-  /* DESIGN SYSTEM PREVIEW */
-  .color-row { display: flex; gap: 8px; margin-bottom: 16px; }
-  .color-swatch { width: 44px; height: 44px; border-radius: 8px; border: 1px solid var(--border); position: relative; cursor: pointer; }
-  .color-label { font-size: 10px; color: var(--muted); margin-top: 4px; text-align: center; font-family: monospace; }
-  .color-wrap { text-align: center; }
-  .font-preview { padding: 14px; background: var(--bg3); border-radius: 8px; margin-bottom: 8px; }
-  .font-headline { font-size: 22px; font-weight: 700; }
-  .font-body-preview { font-size: 14px; color: var(--muted); margin-top: 4px; }
+/* ─── QUICK WINS ─── */
+.qw-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+.qw-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 14px; background: var(--card);
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  transition: all .15s;
+}
+.qw-item:hover { border-color: var(--border2); }
+.qw-item.done { opacity: .5; }
+.qw-num {
+  width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; flex-shrink: 0; margin-top: 1px;
+}
+.qwn-1 { background: rgba(239,68,68,.15); color: var(--red); }
+.qwn-2 { background: rgba(245,158,11,.15); color: var(--orange); }
+.qwn-3 { background: rgba(99,102,241,.15); color: #a5b4fc; }
+.qw-body { flex: 1; }
+.qw-title { font-size: 13px; font-weight: 600; }
+.qw-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.qw-check {
+  width: 20px; height: 20px; border: 1px solid var(--border2);
+  border-radius: 5px; cursor: pointer; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; color: transparent; background: transparent;
+  transition: all .15s;
+}
+.qw-check:hover { border-color: var(--green); color: var(--green); }
+.qw-check.checked { background: rgba(16,185,129,.12); border-color: var(--green); color: var(--green); }
 
-  /* QA CHECKLIST */
-  .qa-category { margin-bottom: 20px; }
-  .qa-cat-title { font-size: 13px; font-weight: 700; color: var(--accent2); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
-  .qa-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 6px; margin-bottom: 4px; transition: background 0.15s; }
-  .qa-item:hover { background: var(--card); }
-  .qa-check { width: 18px; height: 18px; border: 1px solid var(--border); border-radius: 4px; flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; transition: all 0.15s; }
-  .qa-check.ok { background: rgba(0,206,201,0.15); border-color: var(--green); color: var(--green); }
-  .qa-check.fail { background: rgba(232,67,147,0.15); border-color: var(--red); color: var(--red); }
-  .qa-text { font-size: 13px; flex: 1; }
-  .qa-status { font-size: 11px; padding: 2px 8px; border-radius: 10px; }
-  .status-ok { background: rgba(0,206,201,0.1); color: var(--green); }
-  .status-warn { background: rgba(253,123,46,0.1); color: var(--orange); }
-  .status-fail { background: rgba(232,67,147,0.1); color: var(--red); }
-  .status-todo { background: rgba(255,255,255,0.05); color: var(--muted); }
+/* ─── AGENTS GRID ─── */
+.agents-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 20px; }
+.agent-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 18px;
+  cursor: pointer; transition: all .2s; position: relative; overflow: hidden;
+}
+.agent-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  opacity: 0; transition: opacity .2s;
+}
+.agent-card:hover { border-color: var(--border2); transform: translateY(-2px); box-shadow: var(--shadow); }
+.agent-card:hover::before { opacity: 1; }
+.agent-icon { font-size: 26px; margin-bottom: 10px; }
+.agent-name { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+.agent-role { font-size: 11px; color: var(--muted); margin-bottom: 12px; }
+.agent-shortcuts { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 12px; }
+.shortcut-chip {
+  font-size: 10px; padding: 2px 7px; border-radius: 99px;
+  background: var(--bg3); color: var(--muted2); border: 1px solid var(--border);
+  font-family: var(--mono); cursor: pointer; transition: all .1s;
+}
+.shortcut-chip:hover { border-color: var(--border2); color: var(--text); }
+.agent-status {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 10px; font-weight: 600; color: var(--green);
+}
+.agent-status .dot-green { width: 6px; height: 6px; }
 
-  /* DEPLOY */
-  .deploy-step { display: flex; gap: 12px; padding: 14px; border-radius: 8px; margin-bottom: 8px; background: var(--card); border: 1px solid var(--border); }
-  .step-num { width: 28px; height: 28px; border-radius: 50%; background: var(--bg3); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
-  .step-num.done { background: rgba(0,206,201,0.15); border-color: var(--green); color: var(--green); }
-  .step-num.active { background: rgba(108,92,231,0.2); border-color: var(--accent); color: var(--accent2); }
-  .step-info { flex: 1; }
-  .step-title { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
-  .step-desc { font-size: 12px; color: var(--muted); }
+/* ─── AUDIT ─── */
+.audit-dim {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+}
+.audit-dim:last-child { border-bottom: none; }
+.audit-dim-name { font-size: 13px; }
+.audit-score-row { display: flex; align-items: center; gap: 10px; }
+.audit-bar { width: 90px; height: 5px; border-radius: 99px; background: var(--border2); overflow: hidden; }
+.audit-bar-fill { height: 100%; border-radius: 99px; }
+.audit-num { font-size: 12px; font-weight: 700; width: 28px; text-align: right; }
 
-  /* SECTION TITLES */
-  .section-title { font-size: 15px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
-  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+/* ─── QA CHECKLIST ─── */
+.qa-cat { margin-bottom: 20px; }
+.qa-cat-hd {
+  font-size: 11px; font-weight: 700; color: var(--muted2);
+  letter-spacing: .6px; text-transform: uppercase;
+  margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+}
+.qa-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 12px; border-radius: var(--radius-sm);
+  margin-bottom: 3px; transition: background .12s;
+}
+.qa-item:hover { background: var(--card); }
+.qa-cb {
+  width: 17px; height: 17px; border: 1px solid var(--border2);
+  border-radius: 4px; flex-shrink: 0; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; transition: all .12s; color: transparent;
+}
+.qa-cb.ok  { background: rgba(16,185,129,.12); border-color: var(--green); color: var(--green); }
+.qa-cb.fail{ background: rgba(239,68,68,.12); border-color: var(--red); color: var(--red); }
+.qa-cb:hover { border-color: var(--green); }
+.qa-text { font-size: 12px; flex: 1; }
+.qa-badge {
+  font-size: 10px; padding: 1px 7px; border-radius: 99px; font-weight: 600;
+}
+.qb-ok   { background: rgba(16,185,129,.1); color: var(--green); }
+.qb-warn { background: rgba(245,158,11,.1); color: var(--orange); }
+.qb-fail { background: rgba(239,68,68,.1); color: var(--red); }
+.qb-todo { background: rgba(255,255,255,.05); color: var(--muted); }
 
-  /* APPS GRID */
-  .apps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
-  .app-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
-  .app-icon { font-size: 24px; margin-bottom: 8px; }
-  .app-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
-  .app-desc { font-size: 11px; color: var(--muted); line-height: 1.4; }
-  .app-status { display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 10px; margin-top: 8px; font-weight: 600; }
-  .installed { background: rgba(0,206,201,0.1); color: var(--green); }
-  .recommended { background: rgba(108,92,231,0.1); color: var(--accent2); }
-  .replace { background: rgba(232,67,147,0.1); color: var(--red); }
+/* ─── DEPLOY PIPELINE ─── */
+.pipeline { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+.pipe-step {
+  display: flex; gap: 12px; padding: 14px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); align-items: flex-start;
+}
+.pipe-num {
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700;
+  background: var(--bg3); border: 1px solid var(--border2); color: var(--muted);
+}
+.pipe-num.done   { background: rgba(16,185,129,.12); border-color: var(--green); color: var(--green); }
+.pipe-num.active { background: rgba(99,102,241,.15); border-color: var(--p1); color: #a5b4fc; animation: pulse 2s infinite; }
+.pipe-body { flex: 1; }
+.pipe-title { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+.pipe-desc  { font-size: 11px; color: var(--muted); }
+.pipe-action { margin-left: auto; flex-shrink: 0; }
 
-  /* SCROLLBAR */
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+/* ─── NOE PROMPT ─── */
+.prompt-box {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden; margin-bottom: 20px;
+}
+.prompt-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px; border-bottom: 1px solid var(--border);
+}
+.noe-avatar {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: linear-gradient(135deg,var(--p1),var(--pink));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+}
+.prompt-head-info { flex: 1; }
+.prompt-head-name { font-size: 13px; font-weight: 700; }
+.prompt-head-sub  { font-size: 11px; color: var(--muted); }
+.shortcuts-wrap {
+  display: flex; gap: 5px; padding: 10px 16px;
+  flex-wrap: wrap; border-bottom: 1px solid var(--border);
+}
+.sc-btn {
+  padding: 3px 9px; border-radius: 99px; font-size: 11px; font-weight: 600;
+  font-family: var(--mono); background: var(--bg3); color: var(--muted2);
+  border: 1px solid var(--border2); cursor: pointer; transition: all .12s;
+}
+.sc-btn:hover { border-color: var(--p1); color: #a5b4fc; background: rgba(99,102,241,.08); }
+.prompt-textarea {
+  width: 100%; padding: 14px 16px; background: transparent;
+  border: none; color: var(--text); font-size: 13px;
+  resize: none; outline: none; font-family: var(--font);
+  line-height: 1.7; min-height: 120px;
+}
+.prompt-textarea::placeholder { color: var(--muted); }
+.prompt-foot {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px; border-top: 1px solid var(--border);
+}
+.char-cnt { font-size: 11px; color: var(--muted); font-family: var(--mono); }
+.prompt-actions { display: flex; gap: 8px; }
 
-  /* TAG */
-  .tag { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 10px; border: 1px solid var(--border); color: var(--muted); margin-right: 4px; }
+/* ─── CHAT ─── */
+.chat-wrap { margin-bottom: 20px; display: flex; flex-direction: column; gap: 12px; }
+.msg { display: flex; gap: 9px; }
+.msg.user { flex-direction: row-reverse; }
+.msg-bubble {
+  max-width: 80%; padding: 11px 14px;
+  font-size: 13px; line-height: 1.65; border-radius: 12px;
+}
+.msg.noe .msg-bubble {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 3px 12px 12px 12px;
+}
+.msg.user .msg-bubble {
+  background: rgba(99,102,241,.15); border: 1px solid rgba(99,102,241,.25);
+  border-radius: 12px 3px 12px 12px;
+}
+.msg-time { font-size: 10px; color: var(--muted); margin-top: 4px; }
 
-  /* THEME INFO */
-  .theme-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; font-size: 12px; margin-bottom: 16px; }
+/* ─── DESIGN SYSTEM ─── */
+.color-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.color-swatch-wrap { text-align: center; }
+.color-swatch { width: 44px; height: 44px; border-radius: 10px; border: 1px solid var(--border); cursor: pointer; }
+.color-hex { font-size: 10px; color: var(--muted); margin-top: 4px; font-family: var(--mono); }
+.font-preview { padding: 14px 16px; background: var(--bg3); border-radius: var(--radius-sm); margin-bottom: 8px; }
+.font-big { font-size: 22px; font-weight: 700; }
+.font-sm { font-size: 13px; color: var(--muted2); margin-top: 3px; }
+
+/* ─── APPS ─── */
+.apps-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+.app-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px;
+}
+.app-icon { font-size: 22px; margin-bottom: 8px; }
+.app-name { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+.app-desc { font-size: 11px; color: var(--muted); line-height: 1.45; }
+.app-tag {
+  display: inline-block; font-size: 10px; font-weight: 600;
+  padding: 2px 8px; border-radius: 99px; margin-top: 8px;
+}
+.at-installed  { background: rgba(16,185,129,.1); color: var(--green); }
+.at-recommend  { background: rgba(99,102,241,.1); color: #a5b4fc; }
+.at-replace    { background: rgba(239,68,68,.1); color: var(--red); }
+
+/* ─── UPLOAD ZONE ─── */
+.upload-zone {
+  border: 2px dashed var(--border2); border-radius: var(--radius);
+  padding: 36px; text-align: center; cursor: pointer;
+  background: var(--card); transition: all .2s; margin-bottom: 20px;
+}
+.upload-zone:hover, .upload-zone.drag { border-color: var(--p1); background: rgba(99,102,241,.05); }
+.upload-icon { font-size: 36px; margin-bottom: 10px; }
+.upload-title { font-size: 15px; font-weight: 700; margin-bottom: 5px; }
+.upload-sub { font-size: 12px; color: var(--muted); }
+
+/* ─── QA RUNNER ─── */
+.qa-run-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px; margin-bottom: 20px;
+}
+.qa-input-row { display: flex; gap: 10px; margin-bottom: 14px; }
+.qa-input {
+  flex: 1; padding: 9px 14px; background: var(--bg3);
+  border: 1px solid var(--border2); border-radius: var(--radius-sm);
+  color: var(--text); font-size: 13px; outline: none; font-family: var(--font);
+}
+.qa-input:focus { border-color: var(--p1); }
+.qa-checks-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.qa-check-toggle {
+  padding: 5px 12px; border-radius: 99px; font-size: 11px; font-weight: 600;
+  border: 1px solid var(--border2); background: var(--bg3); color: var(--muted2);
+  cursor: pointer; transition: all .12s;
+}
+.qa-check-toggle.on { background: rgba(99,102,241,.12); border-color: var(--p1); color: #a5b4fc; }
+.qa-result-item {
+  display: flex; align-items: flex-start; gap: 10px; padding: 9px 12px;
+  border-radius: var(--radius-sm); margin-bottom: 4px;
+}
+.qa-result-item:hover { background: var(--bg3); }
+.qa-ri-status { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+.qa-ri-label { font-size: 12px; font-weight: 600; }
+.qa-ri-detail { font-size: 11px; color: var(--muted); margin-top: 2px; font-family: var(--mono); }
+.qa-score-big { font-size: 52px; font-weight: 800; line-height: 1; }
+.qa-score-wrap { display: flex; align-items: center; gap: 20px; padding: 16px; background: var(--bg3); border-radius: var(--radius); margin-bottom: 16px; }
+
+/* ─── STAT CARDS ─── */
+.stat-row { display: flex; gap: 6px; margin-bottom: 8px; }
+.stat-badge {
+  font-size: 11px; padding: 3px 9px; border-radius: 99px;
+  background: rgba(16,185,129,.1); color: var(--green);
+  font-weight: 600;
+}
+.stat-badge.neg { background: rgba(239,68,68,.1); color: var(--red); }
+.stat-badge.neu { background: rgba(99,102,241,.1); color: #a5b4fc; }
+
+/* ─── BANNER ─── */
+.info-banner {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 14px 16px; border-radius: var(--radius);
+  border: 1px solid; margin-bottom: 20px; font-size: 13px;
+}
+.ib-blue { background: rgba(99,102,241,.07); border-color: rgba(99,102,241,.25); color: #a5b4fc; }
+.ib-orange { background: rgba(245,158,11,.07); border-color: rgba(245,158,11,.25); color: var(--orange); }
+.ib-green { background: rgba(16,185,129,.07); border-color: rgba(16,185,129,.25); color: var(--green); }
+
+/* ─── GLOW ACCENT ─── */
+.glow-p1 { box-shadow: 0 0 20px rgba(99,102,241,.2); }
+.grad-border {
+  position: relative; background: var(--card);
+  border-radius: var(--radius); padding: 16px;
+}
+.grad-border::before {
+  content:''; position:absolute; inset:0; border-radius: var(--radius);
+  padding: 1px;
+  background: linear-gradient(135deg,rgba(99,102,241,.4),rgba(236,72,153,.4));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude; pointer-events:none;
+}
 </style>
 </head>
 <body>
 
-<!-- TOP BAR -->
+<!-- TOPBAR -->
 <div class="topbar">
   <div class="logo">
-    <div class="logo-icon">🏪</div>
-    TR7 Shop Builder
-    <span class="noe-badge">✦ NOE v2.0</span>
+    <div class="logo-mark">🏪</div>
+    <span class="logo-name">TR7 Shop Builder</span>
+    <span class="noe-chip">NOE v2.0</span>
   </div>
   <div class="topbar-right">
-    <div class="shopify-status">
-      <div class="dot"></div>
-      MCP Shopify connecté
+    <div class="status-dot">
+      <div class="dot dot-gray" id="mcp-dot"></div>
+      <span id="mcp-label">MCP non connecté</span>
     </div>
+    <button class="btn-sm btn-ghost" onclick="connectMCP()">Connecter MCP</button>
+    <button class="btn-sm btn-primary" onclick="openTab('deploy')">🚀 Déployer</button>
   </div>
 </div>
 
@@ -289,588 +580,659 @@
 
   <!-- SIDEBAR -->
   <div class="sidebar">
-    <div class="sidebar-section">
-      <div class="sidebar-label">Mes Boutiques</div>
-
-      <div class="store-item active" onclick="selectStore('succespro')">
+    <div class="sb-section">
+      <div class="sb-label">Mes Boutiques</div>
+      <div class="store-card active" onclick="selectStore('succespro')">
         <div class="store-icon" style="background:linear-gradient(135deg,#667eea,#764ba2)">💼</div>
         <div class="store-info">
           <div class="store-name">Succespro 2.0</div>
-          <div class="store-phase">Audit · Base importée</div>
+          <div class="store-sub">ByMade · Audit complet</div>
         </div>
-        <span class="score-pill score-mid">5.8</span>
+        <span class="score-pill pill-orange">5.8</span>
       </div>
-
-      <button class="add-btn" onclick="showUpload()">
-        <span style="font-size:16px">＋</span> Nouvelle boutique
-      </button>
+      <button class="add-store-btn" onclick="openTab('noe')">+ Nouvelle boutique</button>
     </div>
 
-    <div class="sidebar-section">
-      <div class="sidebar-label">Agents Actifs</div>
-      <div style="font-size:12px;color:var(--muted);line-height:1.8">
-        <div>🧠 NOE — Orchestrateur</div>
-        <div style="color:var(--muted);opacity:0.5">✦ Brand &amp; Copy</div>
-        <div style="color:var(--muted);opacity:0.5">✦ SEO / GEO</div>
-        <div style="color:var(--muted);opacity:0.5">✦ CRO / UX</div>
-        <div style="color:var(--muted);opacity:0.5">✦ Tech / Shopify</div>
-        <div style="color:var(--muted);opacity:0.5">✦ Analytics</div>
+    <div class="sb-section">
+      <div class="sb-label">Avancement</div>
+      <div class="phase-list">
+        <div class="phase-item phase-done"><div class="phase-dot"></div><span class="phase-label">Phase 1 — Fondations</span></div>
+        <div class="phase-item phase-done"><div class="phase-dot"></div><span class="phase-label">Phase 2 — Dashboard</span></div>
+        <div class="phase-item phase-active"><div class="phase-dot"></div><span class="phase-label">Phase 3 — Agents</span></div>
+        <div class="phase-item phase-active"><div class="phase-dot"></div><span class="phase-label">Phase 4 — QA Auto</span></div>
+        <div class="phase-item phase-pending"><div class="phase-dot"></div><span class="phase-label">Phase 5 — MCP Deploy</span></div>
       </div>
     </div>
 
-    <div class="sidebar-section">
-      <div class="sidebar-label">Accès Rapide</div>
-      <div style="font-size:12px;color:var(--muted);line-height:2">
-        <div style="cursor:pointer" onclick="switchTab('prompt')">💬 Prompt NOE</div>
-        <div style="cursor:pointer" onclick="switchTab('audit')">🔍 Audit boutique</div>
-        <div style="cursor:pointer" onclick="switchTab('qa')">✅ Recette QA</div>
-        <div style="cursor:pointer" onclick="switchTab('deploy')">🚀 Déploiement</div>
+    <div class="sb-section">
+      <div class="sb-label">Agents</div>
+      <div class="agent-nav" id="agent-nav">
+        <div class="agent-nav-item" onclick="openTab('agents');scrollAgent('NOE')">
+          <div class="a-dot" style="background:#6366f1"></div>NOE — Orchestrateur
+        </div>
+        <div class="agent-nav-item" onclick="openTab('agents');scrollAgent('BRAND')">
+          <div class="a-dot" style="background:#ec4899"></div>BRAND & COPY
+        </div>
+        <div class="agent-nav-item" onclick="openTab('agents');scrollAgent('SEO')">
+          <div class="a-dot" style="background:#06b6d4"></div>SEO & GEO
+        </div>
+        <div class="agent-nav-item" onclick="openTab('agents');scrollAgent('CRO')">
+          <div class="a-dot" style="background:#f59e0b"></div>CRO & UX
+        </div>
+        <div class="agent-nav-item" onclick="openTab('agents');scrollAgent('ADS')">
+          <div class="a-dot" style="background:#fdcb6e"></div>ADS & MARKETING
+        </div>
+        <div class="agent-nav-item" onclick="openTab('agents');scrollAgent('TECH')">
+          <div class="a-dot" style="background:#a29bfe"></div>TECH & SHOPIFY
+        </div>
+        <div class="agent-nav-item" onclick="openTab('agents');scrollAgent('DATA')">
+          <div class="a-dot" style="background:#55efc4"></div>ANALYTICS & DATA
+        </div>
       </div>
     </div>
   </div>
 
   <!-- CONTENT -->
   <div class="content">
-
     <!-- STORE HEADER -->
     <div class="store-header">
-      <div class="store-title-row">
-        <span class="store-emoji">💼</span>
-        <div>
-          <div class="store-title">Succespro 2.0</div>
-          <div class="store-subtitle">Thème SuccessPro v1.2.0 · ByMade · Base importée · Juin 2026</div>
+      <div class="store-header-top">
+        <div class="store-hero-icon" style="background:linear-gradient(135deg,#667eea,#764ba2)">💼</div>
+        <div class="store-meta">
+          <div class="store-title-main">Succespro 2.0</div>
+          <div class="store-title-sub">Thème ByMade v1.2.0 · 85 sections · 70+ snippets · iCart intégré</div>
         </div>
-        <div class="score-bar-wrap">
-          <div>
-            <div class="score-label">Score NOE</div>
-            <div style="display:flex;align-items:baseline;gap:4px">
-              <span class="score-big">5.8</span><span class="score-max">/10</span>
+        <div class="store-score-area">
+          <div class="score-circle">
+            <div class="score-number" id="current-score">5.8</div>
+            <div class="score-out">/10</div>
+            <div class="score-label-sm">Score NOE</div>
+          </div>
+          <div class="progress-col">
+            <div class="progress-row">
+              <span>Technique</span>
+              <div class="progress-bar"><div class="progress-fill pf-blue" style="width:65%"></div></div>
+              <span>6.5</span>
+            </div>
+            <div class="progress-row">
+              <span>SEO</span>
+              <div class="progress-bar"><div class="progress-fill pf-orange" style="width:40%"></div></div>
+              <span>4.0</span>
+            </div>
+            <div class="progress-row">
+              <span>CRO</span>
+              <div class="progress-bar"><div class="progress-fill pf-green" style="width:55%"></div></div>
+              <span>5.5</span>
+            </div>
+            <div class="progress-row">
+              <span>Design</span>
+              <div class="progress-bar"><div class="progress-fill pf-blue" style="width:70%"></div></div>
+              <span>7.0</span>
             </div>
           </div>
         </div>
       </div>
-      <div class="tabs">
-        <div class="tab active" onclick="switchTab('overview')" data-tab="overview"><span class="tab-icon">📊</span>Vue d'ensemble</div>
-        <div class="tab" onclick="switchTab('prompt')" data-tab="prompt"><span class="tab-icon">💬</span>NOE Prompt</div>
-        <div class="tab" onclick="switchTab('audit')" data-tab="audit"><span class="tab-icon">🔍</span>Audit</div>
-        <div class="tab" onclick="switchTab('design')" data-tab="design"><span class="tab-icon">🎨</span>Design System</div>
-        <div class="tab" onclick="switchTab('apps')" data-tab="apps"><span class="tab-icon">📦</span>Apps Stack</div>
-        <div class="tab" onclick="switchTab('qa')" data-tab="qa"><span class="tab-icon">✅</span>Recette QA</div>
-        <div class="tab" onclick="switchTab('deploy')" data-tab="deploy"><span class="tab-icon">🚀</span>Déploiement</div>
+      <div class="tabs-row">
+        <div class="tab active" onclick="openTab('overview')"><span class="tab-icon">📊</span>Vue d'ensemble</div>
+        <div class="tab" onclick="openTab('agents')"><span class="tab-icon">🤖</span>Agents IA</div>
+        <div class="tab" onclick="openTab('noe')"><span class="tab-icon">💬</span>NOE Prompt</div>
+        <div class="tab" onclick="openTab('audit')"><span class="tab-icon">🔍</span>Audit</div>
+        <div class="tab" onclick="openTab('design')"><span class="tab-icon">🎨</span>Design System</div>
+        <div class="tab" onclick="openTab('apps')"><span class="tab-icon">📦</span>Apps Stack</div>
+        <div class="tab" onclick="openTab('qa')"><span class="tab-icon">✅</span>QA Auto</div>
+        <div class="tab" onclick="openTab('deploy')"><span class="tab-icon">🚀</span>Déploiement</div>
       </div>
     </div>
 
     <!-- PANEL -->
     <div class="panel">
 
-      <!-- OVERVIEW -->
-      <div class="tab-panel active" id="tab-overview">
+      <!-- ══════════ TAB: OVERVIEW ══════════ -->
+      <div class="tab-panel active" id="panel-overview">
+        <div class="grid4">
+          <div class="card card-sm">
+            <div class="card-title">Score global</div>
+            <div class="card-value cv-orange">5.8<span style="font-size:16px;color:var(--muted)">/10</span></div>
+            <div class="card-sub">Potentiel quick wins : 8.0+</div>
+          </div>
+          <div class="card card-sm">
+            <div class="card-title">Sections Liquid</div>
+            <div class="card-value cv-indigo">85</div>
+            <div class="card-sub">+ 70 snippets</div>
+          </div>
+          <div class="card card-sm">
+            <div class="card-title">Quick Wins</div>
+            <div class="card-value cv-green">8</div>
+            <div class="card-sub" id="qw-done-count">0 complétés</div>
+          </div>
+          <div class="card card-sm">
+            <div class="card-title">Phase actuelle</div>
+            <div class="card-value cv-cyan" style="font-size:18px">Phase 3-4</div>
+            <div class="card-sub">Agents + QA Auto</div>
+          </div>
+        </div>
+
+        <div class="info-banner ib-blue">
+          <span>⚡</span>
+          <span>Score potentiel après quick wins : <strong>~8.0/10</strong> — Implémentez les 8 actions ci-dessous pour maximiser la conversion avant le déploiement MCP.</span>
+        </div>
+
+        <div class="sec-title">🚀 Quick Wins à implémenter</div>
+        <div class="qw-list" id="qw-list">
+          <div class="qw-item">
+            <div class="qw-num qwn-1">1</div>
+            <div class="qw-body">
+              <div class="qw-title">Remplacer AliReviews → Loox (photos UGC)</div>
+              <div class="qw-meta">Impact CVR +15-20% · Urgence : Haute · 30 min</div>
+            </div>
+            <div class="qw-check" onclick="toggleCheck(this)">✓</div>
+          </div>
+          <div class="qw-item">
+            <div class="qw-num qwn-1">2</div>
+            <div class="qw-body">
+              <div class="qw-title">Exit-intent popup Klaviyo (-10% en échange email)</div>
+              <div class="qw-meta">Impact liste email +30% · Urgence : Haute · 45 min</div>
+            </div>
+            <div class="qw-check" onclick="toggleCheck(this)">✓</div>
+          </div>
+          <div class="qw-item">
+            <div class="qw-num qwn-1">3</div>
+            <div class="qw-body">
+              <div class="qw-title">Title tags + meta descriptions toutes les pages</div>
+              <div class="qw-meta">Impact SEO critique · Urgence : Haute · 2h</div>
+            </div>
+            <div class="qw-check" onclick="toggleCheck(this)">✓</div>
+          </div>
+          <div class="qw-item">
+            <div class="qw-num qwn-2">4</div>
+            <div class="qw-body">
+              <div class="qw-title">Social Proof Bar homepage (X clients, notes, presse)</div>
+              <div class="qw-meta">Impact confiance +25% · Urgence : Moyenne · 1h</div>
+            </div>
+            <div class="qw-check" onclick="toggleCheck(this)">✓</div>
+          </div>
+          <div class="qw-item">
+            <div class="qw-num qwn-2">5</div>
+            <div class="qw-body">
+              <div class="qw-title">Section Bestsellers homepage (4-6 produits phares)</div>
+              <div class="qw-meta">Impact AOV +10% · Urgence : Moyenne · 45 min</div>
+            </div>
+            <div class="qw-check" onclick="toggleCheck(this)">✓</div>
+          </div>
+          <div class="qw-item">
+            <div class="qw-num qwn-2">6</div>
+            <div class="qw-body">
+              <div class="qw-title">Klaviyo Welcome Flow (5 emails) + Abandoned Cart (3)</div>
+              <div class="qw-meta">Impact revenue email +25% · Urgence : Moyenne · 3h</div>
+            </div>
+            <div class="qw-check" onclick="toggleCheck(this)">✓</div>
+          </div>
+          <div class="qw-item">
+            <div class="qw-num qwn-3">7</div>
+            <div class="qw-body">
+              <div class="qw-title">Schema JSON-LD Product + FAQ (snippet Liquid)</div>
+              <div class="qw-meta">Impact SEO + GEO · Urgence : Standard · 2h</div>
+            </div>
+            <div class="qw-check" onclick="toggleCheck(this)">✓</div>
+          </div>
+          <div class="qw-item">
+            <div class="qw-num qwn-3">8</div>
+            <div class="qw-body">
+              <div class="qw-title">Installer Microsoft Clarity (heatmaps gratuits)</div>
+              <div class="qw-meta">Data UX indispensable · Urgence : Standard · 15 min</div>
+            </div>
+            <div class="qw-check" onclick="toggleCheck(this)">✓</div>
+          </div>
+        </div>
+
+        <div class="sec-title">📈 Données E-Commerce 2026</div>
         <div class="grid3">
           <div class="card">
-            <div class="card-title">Sections Liquid</div>
-            <div class="card-value card-accent">85</div>
-            <div class="card-sub">Sections dans le thème</div>
+            <div class="card-title">CVR Médian Shopify</div>
+            <div class="card-value cv-orange">1.4-2.5%</div>
+            <div class="card-sub">Top 10% : 4.7%+</div>
           </div>
           <div class="card">
-            <div class="card-title">Templates</div>
-            <div class="card-value card-green">18</div>
-            <div class="card-sub">Pages configurées</div>
+            <div class="card-title">AI Search Growth</div>
+            <div class="card-value cv-cyan">+1500%</div>
+            <div class="card-sub">vs début 2025</div>
           </div>
           <div class="card">
-            <div class="card-title">Apps détectées</div>
-            <div class="card-value card-orange">8</div>
-            <div class="card-sub">iCart, Bundles, Trustpilot...</div>
+            <div class="card-title">Trafic Mobile</div>
+            <div class="card-value cv-indigo">70-80%</div>
+            <div class="card-sub">Design mobile-first absolu</div>
           </div>
         </div>
-
-        <div class="section-title">🎯 Priorités NOE — Quick Wins</div>
-        <ul class="priority-list">
-          <li class="priority-item">
-            <div class="priority-num p1">1</div>
-            <div class="priority-text">
-              <strong>Remplacer AliReviews par Loox</strong> — Photos UGC sur les fiches produit = +15-25% CVR
-              <div class="priority-tag">Impact : MAXIMAL · Temps : 2h · KPI : Taux de conversion PDP</div>
-            </div>
-            <div class="check-btn" onclick="toggleCheck(this)">✓</div>
-          </li>
-          <li class="priority-item">
-            <div class="priority-num p1">2</div>
-            <div class="priority-text">
-              <strong>Ajouter exit-intent popup Klaviyo</strong> — Capture des emails quittants = +8-12% list growth
-              <div class="priority-tag">Impact : MAXIMAL · Temps : 1h · KPI : Taux de capture email</div>
-            </div>
-            <div class="check-btn" onclick="toggleCheck(this)">✓</div>
-          </li>
-          <li class="priority-item">
-            <div class="priority-num p1">3</div>
-            <div class="priority-text">
-              <strong>Configurer title tags + meta descriptions</strong> sur toutes les pages clés
-              <div class="priority-tag">Impact : FORT · Temps : 3h · KPI : CTR organic</div>
-            </div>
-            <div class="check-btn" onclick="toggleCheck(this)">✓</div>
-          </li>
-          <li class="priority-item">
-            <div class="priority-num p2">4</div>
-            <div class="priority-text">
-              <strong>Ajouter Social Proof Bar</strong> sur la homepage — Chiffres, étoiles Trustpilot
-              <div class="priority-tag">Impact : FORT · Temps : 1h · KPI : Taux de rebond homepage</div>
-            </div>
-            <div class="check-btn" onclick="toggleCheck(this)">✓</div>
-          </li>
-          <li class="priority-item">
-            <div class="priority-num p2">5</div>
-            <div class="priority-text">
-              <strong>Ajouter section Bestsellers</strong> sur la homepage — Manquant actuellement
-              <div class="priority-tag">Impact : FORT · Temps : 30min · KPI : Taux ajout panier</div>
-            </div>
-            <div class="check-btn" onclick="toggleCheck(this)">✓</div>
-          </li>
-          <li class="priority-item">
-            <div class="priority-num p2">6</div>
-            <div class="priority-text">
-              <strong>Configurer Klaviyo flows</strong> : Welcome (5 emails) + Abandoned Cart (3 messages)
-              <div class="priority-tag">Impact : FORT · Temps : 4h · KPI : Revenue email / Récupération panier</div>
-            </div>
-            <div class="check-btn" onclick="toggleCheck(this)">✓</div>
-          </li>
-          <li class="priority-item">
-            <div class="priority-num p3">7</div>
-            <div class="priority-text">
-              <strong>Ajouter Schema JSON-LD</strong> Product + FAQ via snippet Liquid custom
-              <div class="priority-tag">Impact : SEO · Temps : 2h · KPI : Rich results Google</div>
-            </div>
-            <div class="check-btn" onclick="toggleCheck(this)">✓</div>
-          </li>
-          <li class="priority-item">
-            <div class="priority-num p3">8</div>
-            <div class="priority-text">
-              <strong>Installer Hotjar</strong> → heatmaps + session recordings pour détecter frictions
-              <div class="priority-tag">Impact : CRO · Temps : 30min · KPI : Taux de complétion checkout</div>
-            </div>
-            <div class="check-btn" onclick="toggleCheck(this)">✓</div>
-          </li>
-        </ul>
       </div>
 
-      <!-- NOE PROMPT -->
-      <div class="tab-panel" id="tab-prompt">
-        <div class="section-title">💬 Espace NOE — Prompt Personnalisé</div>
+      <!-- ══════════ TAB: AGENTS ══════════ -->
+      <div class="tab-panel" id="panel-agents">
+        <div class="info-banner ib-blue">
+          <span>🤖</span>
+          <span>7 agents IA spécialisés, orchestrés par NOE. Cliquez sur un agent pour voir son system prompt complet et ses commandes shortcuts.</span>
+        </div>
+        <div class="agents-grid">
+          <div class="agent-card grad-border" id="agent-NOE" style="--ac:#6366f1">
+            <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#6366f1,#8b5cf6);border-radius:12px 12px 0 0"></div>
+            <div class="agent-icon">🧠</div>
+            <div class="agent-name">NOE</div>
+            <div class="agent-role">Orchestrateur Principal</div>
+            <div class="agent-shortcuts">
+              <span class="shortcut-chip">/audit</span><span class="shortcut-chip">/brief</span><span class="shortcut-chip">/seo</span><span class="shortcut-chip">/cro</span><span class="shortcut-chip">/roadmap</span><span class="shortcut-chip">/deploy</span>
+            </div>
+            <div class="agent-status"><div class="dot dot-green"></div>Actif · v2.0 · 14 modules</div>
+          </div>
+          <div class="agent-card" id="agent-BRAND">
+            <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#ec4899,#f43f5e);border-radius:12px 12px 0 0"></div>
+            <div class="agent-icon">🎨</div>
+            <div class="agent-name">BRAND & COPY</div>
+            <div class="agent-role">Identité de marque & Copywriting</div>
+            <div class="agent-shortcuts">
+              <span class="shortcut-chip">/brand-foundation</span><span class="shortcut-chip">/pdp-copy</span><span class="shortcut-chip">/taglines</span><span class="shortcut-chip">/naming</span>
+            </div>
+            <div class="agent-status"><div class="dot dot-green"></div>Actif · v1.0 · 4 modules</div>
+          </div>
+          <div class="agent-card" id="agent-SEO">
+            <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#06b6d4,#0ea5e9);border-radius:12px 12px 0 0"></div>
+            <div class="agent-icon">🔍</div>
+            <div class="agent-name">SEO & GEO</div>
+            <div class="agent-role">SEO · GEO/AEO · AI Search</div>
+            <div class="agent-shortcuts">
+              <span class="shortcut-chip">/seo-audit</span><span class="shortcut-chip">/schema-product</span><span class="shortcut-chip">/geo-audit</span><span class="shortcut-chip">/llms-txt</span>
+            </div>
+            <div class="agent-status"><div class="dot dot-green"></div>Actif · v1.0 · 6 modules</div>
+          </div>
+          <div class="agent-card" id="agent-CRO">
+            <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#f59e0b,#f97316);border-radius:12px 12px 0 0"></div>
+            <div class="agent-icon">📈</div>
+            <div class="agent-name">CRO & UX</div>
+            <div class="agent-role">Conversion · A/B Tests · Mobile UX</div>
+            <div class="agent-shortcuts">
+              <span class="shortcut-chip">/cro-audit</span><span class="shortcut-chip">/wireframe</span><span class="shortcut-chip">/ab-tests</span><span class="shortcut-chip">/cwv-check</span>
+            </div>
+            <div class="agent-status"><div class="dot dot-green"></div>Actif · v1.0 · 5 modules</div>
+          </div>
+          <div class="agent-card" id="agent-ADS">
+            <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#fdcb6e,#e17055);border-radius:12px 12px 0 0"></div>
+            <div class="agent-icon">📣</div>
+            <div class="agent-name">ADS & MARKETING</div>
+            <div class="agent-role">Meta · Google · TikTok · Email</div>
+            <div class="agent-shortcuts">
+              <span class="shortcut-chip">/ads-strategy</span><span class="shortcut-chip">/hooks</span><span class="shortcut-chip">/email-strategy</span><span class="shortcut-chip">/budget-split</span>
+            </div>
+            <div class="agent-status"><div class="dot dot-green"></div>Actif · v1.0 · 5 modules</div>
+          </div>
+          <div class="agent-card" id="agent-TECH">
+            <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#a29bfe,#6c5ce7);border-radius:12px 12px 0 0"></div>
+            <div class="agent-icon">⚙️</div>
+            <div class="agent-name">TECH & SHOPIFY</div>
+            <div class="agent-role">Liquid · MCP Pipeline · Apps</div>
+            <div class="agent-shortcuts">
+              <span class="shortcut-chip">/deploy-plan</span><span class="shortcut-chip">/schema-install</span><span class="shortcut-chip">/graphql</span><span class="shortcut-chip">/perf-audit</span>
+            </div>
+            <div class="agent-status"><div class="dot dot-green"></div>Actif · v1.0 · 5 modules</div>
+          </div>
+          <div class="agent-card" id="agent-DATA">
+            <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#55efc4,#00b894);border-radius:12px 12px 0 0"></div>
+            <div class="agent-icon">📊</div>
+            <div class="agent-name">ANALYTICS & DATA</div>
+            <div class="agent-role">GA4 · Meta Pixel · Attribution</div>
+            <div class="agent-shortcuts">
+              <span class="shortcut-chip">/analytics-setup</span><span class="shortcut-chip">/weekly-report</span><span class="shortcut-chip">/ltv-calc</span><span class="shortcut-chip">/rfm-segment</span>
+            </div>
+            <div class="agent-status"><div class="dot dot-green"></div>Actif · v1.0 · 5 modules</div>
+          </div>
+        </div>
+        <div class="info-banner ib-orange">
+          <span>💡</span>
+          <span>Pour utiliser un agent : ouvrez Claude, copiez le contenu de <code style="font-family:var(--mono);font-size:11px">_AGENT-NOE/AGENT-[NOM].md</code> et collez-le en début de conversation.</span>
+        </div>
+      </div>
 
-        <!-- CHAT HISTORY -->
-        <div class="chat-history">
-          <div class="chat-msg noe">
-            <div class="noe-avatar">N</div>
+      <!-- ══════════ TAB: NOE PROMPT ══════════ -->
+      <div class="tab-panel" id="panel-noe">
+        <div class="chat-wrap" id="chat-history">
+          <div class="msg noe">
+            <div class="noe-avatar">🧠</div>
             <div>
               <div class="msg-bubble">
-                👋 Bonjour ! Je suis <strong>NOE</strong>, ton agent Shopify. J'ai analysé ta boutique <strong>Succespro 2.0</strong> et généré un audit complet.<br><br>
-                Score actuel : <strong>5.8/10</strong> — bonne base avec un potentiel élevé. J'ai identifié <strong>8 quick wins</strong> pour booster tes performances rapidement.<br><br>
-                Que veux-tu faire en premier ? Tu peux utiliser les commandes ci-dessous ou me donner une instruction libre.
+                Bonjour ! Je suis <strong>NOE</strong>, votre Navigateur des Opportunités E-Commerce. Je pilote 6 agents spécialisés pour construire votre boutique Shopify de A à Z.<br><br>
+                Boutique active : <strong>Succespro 2.0</strong> (score 5.8/10)<br>
+                Utilisez les shortcuts ou tapez librement votre demande.
               </div>
-              <div class="msg-time">Aujourd'hui · 09:43</div>
+              <div class="msg-time">Aujourd'hui · prêt</div>
             </div>
           </div>
         </div>
 
-        <!-- SHORTCUTS -->
-        <div class="prompt-wrap">
-          <div class="prompt-header">
-            <div class="noe-avatar">N</div>
-            <div>
-              <div class="prompt-header-text">NOE — Instructions</div>
-              <div class="prompt-header-sub">Donne une instruction libre ou utilise une commande rapide</div>
+        <div class="prompt-box">
+          <div class="prompt-head">
+            <div class="noe-avatar">🧠</div>
+            <div class="prompt-head-info">
+              <div class="prompt-head-name">NOE v2.0</div>
+              <div class="prompt-head-sub">Navigateur des Opportunités E-Commerce</div>
             </div>
           </div>
-          <div class="shortcuts-bar">
-            <span class="shortcut" onclick="insertShortcut('/audit')">/audit</span>
-            <span class="shortcut" onclick="insertShortcut('/copy ')">/copy [produit]</span>
-            <span class="shortcut" onclick="insertShortcut('/seo ')">/seo [page]</span>
-            <span class="shortcut" onclick="insertShortcut('/geo ')">/geo [page]</span>
-            <span class="shortcut" onclick="insertShortcut('/ads meta')">/ads meta</span>
-            <span class="shortcut" onclick="insertShortcut('/cro')">/cro</span>
-            <span class="shortcut" onclick="insertShortcut('/brand')">/brand</span>
-            <span class="shortcut" onclick="insertShortcut('/email welcome')">/email welcome</span>
-            <span class="shortcut" onclick="insertShortcut('/blog ')">/blog [sujet]</span>
-            <span class="shortcut" onclick="insertShortcut('/homepage')">/homepage</span>
-            <span class="shortcut" onclick="insertShortcut('/pdp ')">/pdp [produit]</span>
-            <span class="shortcut" onclick="insertShortcut('/roadmap')">/roadmap</span>
-            <span class="shortcut" onclick="insertShortcut('/qa')">/qa</span>
-            <span class="shortcut" onclick="insertShortcut('/deploy')">/deploy</span>
-            <span class="shortcut" onclick="insertShortcut('/legal')">/legal</span>
+          <div class="shortcuts-wrap">
+            <span class="sc-btn" onclick="insertShortcut('/audit')">/audit</span>
+            <span class="sc-btn" onclick="insertShortcut('/brief')">/brief</span>
+            <span class="sc-btn" onclick="insertShortcut('/seo')">/seo</span>
+            <span class="sc-btn" onclick="insertShortcut('/cro')">/cro</span>
+            <span class="sc-btn" onclick="insertShortcut('/copy')">/copy</span>
+            <span class="sc-btn" onclick="insertShortcut('/ads')">/ads</span>
+            <span class="sc-btn" onclick="insertShortcut('/email')">/email</span>
+            <span class="sc-btn" onclick="insertShortcut('/brand')">/brand</span>
+            <span class="sc-btn" onclick="insertShortcut('/roadmap')">/roadmap</span>
+            <span class="sc-btn" onclick="insertShortcut('/qa')">/qa</span>
+            <span class="sc-btn" onclick="insertShortcut('/deploy')">/deploy</span>
+            <span class="sc-btn" onclick="insertShortcut('/geo')">/geo</span>
+            <span class="sc-btn" onclick="insertShortcut('/pdp')">/pdp</span>
+            <span class="sc-btn" onclick="insertShortcut('/competitor')">/competitor</span>
+            <span class="sc-btn" onclick="insertShortcut('/kpis')">/kpis</span>
           </div>
-          <textarea class="prompt-input" id="promptInput" placeholder="Ex : Crée la fiche produit complète de mon produit principal en ciblant les femmes 25-45 ans CSP+, avec un copywriting premium orienté résultat...
-
-Ou : Génère les 5 emails du welcome flow Klaviyo avec un ton direct et chaleureux, offre de bienvenue -15%...
-
-Ou : Fais l'audit SEO complet de ma page collection principale et donne-moi les 5 actions prioritaires..." rows="5"></textarea>
-          <div class="prompt-footer">
-            <span class="char-count" id="charCount">0 caractères</span>
+          <textarea class="prompt-textarea" id="noe-input" placeholder="Tapez votre demande ou utilisez un shortcut... ex: /audit Succespro 2.0" oninput="updateCharCount(this)"></textarea>
+          <div class="prompt-foot">
+            <span class="char-cnt" id="char-count">0 / 2000</span>
             <div class="prompt-actions">
-              <button class="btn btn-ghost" onclick="clearPrompt()">Effacer</button>
-              <button class="btn btn-primary" onclick="sendPrompt()">✦ Envoyer à NOE</button>
+              <button class="btn-sm btn-ghost" onclick="clearPrompt()">Effacer</button>
+              <button class="btn-sm btn-primary" onclick="sendPrompt()">Envoyer à NOE →</button>
             </div>
           </div>
         </div>
 
-        <!-- UPLOAD -->
-        <div class="section-title">📎 Import Boutique ZIP</div>
-        <div class="upload-zone" id="uploadZone" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="handleDrop(event)" onclick="document.getElementById('fileInput').click()">
+        <div class="upload-zone" id="upload-zone"
+          ondragover="event.preventDefault();this.classList.add('drag')"
+          ondragleave="this.classList.remove('drag')"
+          ondrop="handleDrop(event)"
+          onclick="document.getElementById('file-input').click()">
+          <input type="file" id="file-input" style="display:none" accept=".zip,.json,.csv" onchange="handleFile(this)">
           <div class="upload-icon">📦</div>
-          <div class="upload-title">Glisser-déposer un fichier .zip</div>
-          <div class="upload-sub">Ou cliquer pour sélectionner · NOE analyse automatiquement la structure du thème</div>
-          <input type="file" id="fileInput" accept=".zip" style="display:none" onchange="handleFile(event)">
+          <div class="upload-title">Importer une boutique ZIP</div>
+          <div class="upload-sub">Glissez un export thème Shopify (.zip) ou cliquez pour sélectionner</div>
         </div>
       </div>
 
-      <!-- AUDIT -->
-      <div class="tab-panel" id="tab-audit">
-        <div class="section-title">🔍 Audit Succespro 2.0 — Scores par Dimension</div>
-
-        <div class="audit-grid">
+      <!-- ══════════ TAB: AUDIT ══════════ -->
+      <div class="tab-panel" id="panel-audit">
+        <div class="grid2">
           <div class="card">
-            <div class="card-title">Scores Détaillés</div>
-            <div class="audit-row">
-              <span class="audit-label">Structure boutique</span>
-              <div class="audit-score">
-                <div class="bar"><div class="bar-fill mid" style="width:70%"></div></div>
-                <span class="score-num" style="color:var(--orange)">7/10</span>
+            <div class="sec-title" style="margin-bottom:12px">Scores par dimension</div>
+            <div class="audit-dim">
+              <span class="audit-dim-name">Design & Branding</span>
+              <div class="audit-score-row">
+                <div class="audit-bar"><div class="audit-bar-fill" style="width:70%;background:var(--green)"></div></div>
+                <span class="audit-num" style="color:var(--green)">7.0</span>
               </div>
             </div>
-            <div class="audit-row">
-              <span class="audit-label">Design System</span>
-              <div class="audit-score">
-                <div class="bar"><div class="bar-fill mid" style="width:60%"></div></div>
-                <span class="score-num" style="color:var(--orange)">6/10</span>
+            <div class="audit-dim">
+              <span class="audit-dim-name">Technique & Performance</span>
+              <div class="audit-score-row">
+                <div class="audit-bar"><div class="audit-bar-fill" style="width:65%;background:var(--cyan)"></div></div>
+                <span class="audit-num" style="color:var(--cyan)">6.5</span>
               </div>
             </div>
-            <div class="audit-row">
-              <span class="audit-label">SEO Technique</span>
-              <div class="audit-score">
-                <div class="bar"><div class="bar-fill low" style="width:40%"></div></div>
-                <span class="score-num" style="color:var(--red)">4/10</span>
+            <div class="audit-dim">
+              <span class="audit-dim-name">CRO & Conversion</span>
+              <div class="audit-score-row">
+                <div class="audit-bar"><div class="audit-bar-fill" style="width:55%;background:var(--orange)"></div></div>
+                <span class="audit-num" style="color:var(--orange)">5.5</span>
               </div>
             </div>
-            <div class="audit-row">
-              <span class="audit-label">CRO</span>
-              <div class="audit-score">
-                <div class="bar"><div class="bar-fill mid" style="width:70%"></div></div>
-                <span class="score-num" style="color:var(--orange)">7/10</span>
+            <div class="audit-dim">
+              <span class="audit-dim-name">SEO & Visibilité</span>
+              <div class="audit-score-row">
+                <div class="audit-bar"><div class="audit-bar-fill" style="width:40%;background:var(--red)"></div></div>
+                <span class="audit-num" style="color:var(--red)">4.0</span>
               </div>
             </div>
-            <div class="audit-row">
-              <span class="audit-label">Apps Stack</span>
-              <div class="audit-score">
-                <div class="bar"><div class="bar-fill mid" style="width:50%"></div></div>
-                <span class="score-num" style="color:var(--orange)">5/10</span>
+            <div class="audit-dim">
+              <span class="audit-dim-name">Apps & Intégrations</span>
+              <div class="audit-score-row">
+                <div class="audit-bar"><div class="audit-bar-fill" style="width:60%;background:var(--orange)"></div></div>
+                <span class="audit-num" style="color:var(--orange)">6.0</span>
+              </div>
+            </div>
+            <div class="audit-dim">
+              <span class="audit-dim-name">Mobile Experience</span>
+              <div class="audit-score-row">
+                <div class="audit-bar"><div class="audit-bar-fill" style="width:55%;background:var(--orange)"></div></div>
+                <span class="audit-num" style="color:var(--orange)">5.5</span>
               </div>
             </div>
           </div>
-
           <div class="card">
-            <div class="card-title">Infos Thème Détectées</div>
-            <div style="font-size:13px;line-height:2.2;color:var(--muted)">
-              <div><span style="color:var(--text)">Thème</span> · SuccessPro v1.2.0</div>
-              <div><span style="color:var(--text)">Auteur</span> · ByMade (bymade.com)</div>
-              <div><span style="color:var(--text)">Taille</span> · 6.5 MB</div>
-              <div><span style="color:var(--text)">Sections</span> · 85 sections Liquid</div>
-              <div><span style="color:var(--text)">Langues</span> · 20+ locales</div>
-              <div><span style="color:var(--text)">iCart</span> · Intégré natif ✅</div>
+            <div class="sec-title" style="margin-bottom:12px">Thème détecté</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;justify-content:space-between;font-size:12px;padding:8px 0;border-bottom:1px solid var(--border)">
+                <span style="color:var(--muted)">Nom thème</span><span style="font-weight:600">SuccessPro</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;padding:8px 0;border-bottom:1px solid var(--border)">
+                <span style="color:var(--muted)">Version</span><span style="font-weight:600">1.2.0</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;padding:8px 0;border-bottom:1px solid var(--border)">
+                <span style="color:var(--muted)">Auteur</span><span style="font-weight:600">ByMade</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;padding:8px 0;border-bottom:1px solid var(--border)">
+                <span style="color:var(--muted)">Sections</span><span style="font-weight:600">85</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;padding:8px 0;border-bottom:1px solid var(--border)">
+                <span style="color:var(--muted)">Snippets</span><span style="font-weight:600">70+</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;padding:8px 0">
+                <span style="color:var(--muted)">Apps détectées</span><span style="font-weight:600">iCart, Bundles, Loox, Trustpilot</span>
+              </div>
             </div>
           </div>
         </div>
+        <div class="sec-title">Points forts & axes d'amélioration</div>
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title" style="color:var(--green)">✅ Points forts</div>
+            <div style="display:flex;flex-direction:column;gap:7px;margin-top:8px">
+              <div style="font-size:12px;display:flex;gap:8px"><span style="color:var(--green)">✓</span>iCart intégré (cart drawer optimisé)</div>
+              <div style="font-size:12px;display:flex;gap:8px"><span style="color:var(--green)">✓</span>Bundles & Quantity Breaks disponibles</div>
+              <div style="font-size:12px;display:flex;gap:8px"><span style="color:var(--green)">✓</span>20+ langues supportées</div>
+              <div style="font-size:12px;display:flex;gap:8px"><span style="color:var(--green)">✓</span>Palette épurée noir/blanc/bleu pastel</div>
+              <div style="font-size:12px;display:flex;gap:8px"><span style="color:var(--green)">✓</span>Structure sections modulaire complète</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title" style="color:var(--red)">⚠️ Axes d'amélioration</div>
+            <div style="display:flex;flex-direction:column;gap:7px;margin-top:8px">
+              <div style="font-size:12px;display:flex;gap:8px"><span style="color:var(--red)">✗</span>Aucun schema JSON-LD Product/FAQ</div>
+              <div style="font-size:12px;display:flex;gap:8px"><span style="color:var(--red)">✗</span>Title tags / meta descriptions vides</div>
+              <div style="font-size:12px;display:flex;gap:8px"><span style="color:var(--red)">✗</span>AliReviews sans photos UGC</div>
+              <div style="font-size:12px;display:flex;gap:8px"><span style="color:var(--red)">✗</span>Pas de social proof bar homepage</div>
+              <div style="font-size:12px;display:flex;gap:8px"><span style="color:var(--red)">✗</span>Klaviyo flows non configurés</div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-        <div class="section-title">🏗️ Structure Homepage — Blocs Détectés</div>
-        <div class="card" style="margin-bottom:20px">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-            <div class="audit-row"><span class="audit-label">✅ Hero (image-banner)</span><span class="qa-status status-ok">Présent</span></div>
-            <div class="audit-row"><span class="audit-label">✅ Image slider</span><span class="qa-status status-ok">Présent</span></div>
-            <div class="audit-row"><span class="audit-label">✅ Trust badges (icon-bar)</span><span class="qa-status status-ok">Présent</span></div>
-            <div class="audit-row"><span class="audit-label">✅ Témoignages</span><span class="qa-status status-ok">Présent</span></div>
-            <div class="audit-row"><span class="audit-label">✅ FAQ collapsible</span><span class="qa-status status-ok">Présent</span></div>
-            <div class="audit-row"><span class="audit-label">⚠️ Bestsellers</span><span class="qa-status status-fail">Manquant</span></div>
-            <div class="audit-row"><span class="audit-label">⚠️ Social Proof Bar</span><span class="qa-status status-fail">Manquant</span></div>
-            <div class="audit-row"><span class="audit-label">⚠️ Newsletter capture</span><span class="qa-status status-warn">À ajouter</span></div>
-            <div class="audit-row"><span class="audit-label">⚠️ UGC / Instagram Wall</span><span class="qa-status status-fail">Manquant</span></div>
+      <!-- ══════════ TAB: DESIGN ══════════ -->
+      <div class="tab-panel" id="panel-design">
+        <div class="sec-title">Palette couleurs détectée</div>
+        <div class="color-row">
+          <div class="color-swatch-wrap"><div class="color-swatch" style="background:#ffffff;border:1px solid #333"></div><div class="color-hex">#ffffff</div></div>
+          <div class="color-swatch-wrap"><div class="color-swatch" style="background:#9ed3ff"></div><div class="color-hex">#9ed3ff</div></div>
+          <div class="color-swatch-wrap"><div class="color-swatch" style="background:#fffced"></div><div class="color-hex">#fffced</div></div>
+          <div class="color-swatch-wrap"><div class="color-swatch" style="background:#000000"></div><div class="color-hex">#000000</div></div>
+        </div>
+        <div class="sec-title">Typographie</div>
+        <div class="font-preview">
+          <div class="font-big" style="font-family:'Poppins',sans-serif">Poppins Regular</div>
+          <div class="font-sm">Body text — La collection printemps est disponible dès maintenant</div>
+        </div>
+        <div class="info-banner ib-orange">
+          <span>💡</span>
+          <span><strong>Recommandation NOE :</strong> Ajouter une police display pour les headlines. Suggestion : <strong>Playfair Display</strong> (premium) ou <strong>Bebas Neue</strong> (sport/lifestyle). Garder Poppins pour le body.</span>
+        </div>
+        <div class="sec-title">Assets branding détectés</div>
+        <div class="grid3">
+          <div class="card card-sm"><div class="card-title">Logo noir</div><div style="font-size:12px;color:var(--muted2)">logo_noir.png · 200px desktop</div></div>
+          <div class="card card-sm"><div class="card-title">Logo blanc</div><div style="font-size:12px;color:var(--muted2)">logo_blanc.png · 140px mobile</div></div>
+          <div class="card card-sm"><div class="card-title">Image checkout</div><div style="font-size:12px;color:var(--muted2)">6-2.jpg · fond checkout</div></div>
+        </div>
+      </div>
+
+      <!-- ══════════ TAB: APPS ══════════ -->
+      <div class="tab-panel" id="panel-apps">
+        <div class="sec-title">Apps détectées (thème)</div>
+        <div class="apps-grid">
+          <div class="app-card"><div class="app-icon">🛒</div><div class="app-name">iCart</div><div class="app-desc">Cart drawer optimisé avec progress bar</div><span class="app-tag at-installed">Installée</span></div>
+          <div class="app-card"><div class="app-icon">📦</div><div class="app-name">Bundle Deals</div><div class="app-desc">Offres groupées sur fiches produit</div><span class="app-tag at-installed">Installée</span></div>
+          <div class="app-card"><div class="app-icon">🔢</div><div class="app-name">Quantity Breaks</div><div class="app-desc">Réductions par volume</div><span class="app-tag at-installed">Installée</span></div>
+          <div class="app-card"><div class="app-icon">⭐</div><div class="app-name">AliReviews</div><div class="app-desc">Avis produits sans photos UGC</div><span class="app-tag at-replace">À remplacer</span></div>
+          <div class="app-card"><div class="app-icon">⭐</div><div class="app-name">Trustpilot</div><div class="app-desc">Widget avis Trustpilot</div><span class="app-tag at-installed">Installée</span></div>
+          <div class="app-card"><div class="app-icon">🔼</div><div class="app-name">Upsell Blocks</div><div class="app-desc">Produits complémentaires PDP</div><span class="app-tag at-installed">Installée</span></div>
+        </div>
+        <div class="sec-title">Apps recommandées</div>
+        <div class="apps-grid">
+          <div class="app-card"><div class="app-icon">📸</div><div class="app-name">Loox</div><div class="app-desc">Avis photos UGC. Remplace AliReviews. +15-20% CVR.</div><span class="app-tag at-recommend">Recommandée</span></div>
+          <div class="app-card"><div class="app-icon">📧</div><div class="app-name">Klaviyo</div><div class="app-desc">Email + SMS. Welcome flow, abandoned cart, winback.</div><span class="app-tag at-recommend">Recommandée</span></div>
+          <div class="app-card"><div class="app-icon">🔥</div><div class="app-name">Microsoft Clarity</div><div class="app-desc">Heatmaps + enregistrements sessions. Gratuit.</div><span class="app-tag at-recommend">Recommandée</span></div>
+          <div class="app-card"><div class="app-icon">🔄</div><div class="app-name">ReConvert</div><div class="app-desc">Post-purchase upsell 1-click. +15-25% AOV.</div><span class="app-tag at-recommend">Recommandée</span></div>
+          <div class="app-card"><div class="app-icon">🔍</div><div class="app-name">Smart SEO</div><div class="app-desc">Alt texts auto, sitemap, structured data.</div><span class="app-tag at-recommend">Recommandée</span></div>
+          <div class="app-card"><div class="app-icon">📦</div><div class="app-name">AfterShip</div><div class="app-desc">Page tracking branded. Réduit tickets support.</div><span class="app-tag at-recommend">Recommandée</span></div>
+        </div>
+      </div>
+
+      <!-- ══════════ TAB: QA AUTO ══════════ -->
+      <div class="tab-panel" id="panel-qa">
+        <div class="qa-run-card">
+          <div class="sec-title" style="margin-bottom:14px">🔬 Lancer une vérification automatique</div>
+          <div class="qa-input-row">
+            <input class="qa-input" id="qa-url" placeholder="https://ma-boutique.myshopify.com" type="url">
+            <button class="btn-sm btn-primary" onclick="runQA()">Analyser →</button>
+          </div>
+          <div class="qa-checks-row">
+            <div class="qa-check-toggle on" data-check="links" onclick="toggleQACheck(this)">🔗 Liens</div>
+            <div class="qa-check-toggle on" data-check="seo" onclick="toggleQACheck(this)">🔍 SEO</div>
+            <div class="qa-check-toggle on" data-check="schema" onclick="toggleQACheck(this)">📋 Schema</div>
+            <div class="qa-check-toggle on" data-check="performance" onclick="toggleQACheck(this)">⚡ Performance</div>
+          </div>
+          <div id="qa-running" style="display:none;padding:12px 0;font-size:13px;color:var(--muted2)">
+            ⏳ Analyse en cours... <span id="qa-progress"></span>
           </div>
         </div>
 
-        <div class="section-title">📱 Fiche Produit — Blocs Détectés</div>
+        <div id="qa-results-wrap" style="display:none">
+          <div class="qa-score-wrap">
+            <div>
+              <div class="qa-score-big" id="qa-score-num" style="color:var(--orange)">—</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:4px">Score QA / 100</div>
+            </div>
+            <div style="flex:1">
+              <div id="qa-score-summary" style="font-size:13px;color:var(--muted2)"></div>
+            </div>
+            <button class="btn-sm btn-ghost" onclick="exportQAReport()">📄 Exporter rapport</button>
+          </div>
+          <div id="qa-results-list"></div>
+        </div>
+
+        <div class="sec-title">Checklist manuelle (25 points)</div>
+        <div class="qa-cat">
+          <div class="qa-cat-hd">⚙️ Technique</div>
+          <div class="qa-item"><div class="qa-cb" onclick="toggleQACB(this)">✓</div><span class="qa-text">HTTPS actif et certificat SSL valide</span><span class="qa-badge qb-todo">À vérifier</span></div>
+          <div class="qa-item"><div class="qa-cb" onclick="toggleQACB(this)">✓</div><span class="qa-text">Temps de chargement < 3s (mobile)</span><span class="qa-badge qb-todo">À vérifier</span></div>
+          <div class="qa-item"><div class="qa-cb" onclick="toggleQACB(this)">✓</div><span class="qa-text">Core Web Vitals — LCP < 2.5s, CLS < 0.1</span><span class="qa-badge qb-todo">À vérifier</span></div>
+          <div class="qa-item"><div class="qa-cb" onclick="toggleQACB(this)">✓</div><span class="qa-text">0 liens cassés (404) sur les pages clés</span><span class="qa-badge qb-todo">À vérifier</span></div>
+          <div class="qa-item"><div class="qa-cb" onclick="toggleQACB(this)">✓</div><span class="qa-text">Sitemap XML accessible et soumis à GSC</span><span class="qa-badge qb-todo">À vérifier</span></div>
+        </div>
+        <div class="qa-cat">
+          <div class="qa-cat-hd">🛒 Parcours d'achat</div>
+          <div class="qa-item"><div class="qa-cb" onclick="toggleQACB(this)">✓</div><span class="qa-text">Checkout complet testé (produit → paiement → confirmation)</span><span class="qa-badge qb-todo">À tester</span></div>
+          <div class="qa-item"><div class="qa-cb" onclick="toggleQACB(this)">✓</div><span class="qa-text">Guest checkout disponible (pas de compte obligatoire)</span><span class="qa-badge qb-todo">À vérifier</span></div>
+          <div class="qa-item"><div class="qa-cb" onclick="toggleQACB(this)">✓</div><span class="qa-text">Apple Pay / Google Pay activés</span><span class="qa-badge qb-todo">À vérifier</span></div>
+          <div class="qa-item"><div class="qa-cb" onclick="toggleQACB(this)">✓</div><span class="qa-text">Email de confirmation commande reçu</span><span class="qa-badge qb-todo">À tester</span></div>
+          <div class="qa-item"><div class="qa-cb" onclick="toggleQACB(this)">✓</div><span class="qa-text">Mobile — CTA sticky visible + swipe galerie</span><span class="qa-badge qb-todo">À tester</span></div>
+        </div>
+        <div class="qa-cat">
+          <div class="qa-cat-hd">🔍 SEO & Tracking</div>
+          <div class="qa-item"><div class="qa-cb" onclick="toggleQACB(this)">✓</div><span class="qa-text">Title tags < 60 car. sur toutes les pages</span><span class="qa-badge qb-warn">En cours</span></div>
+          <div class="qa-item"><div class="qa-cb" onclick="toggleQACB(this)">✓</div><span class="qa-text">Meta descriptions < 155 car. sur toutes les pages</span><span class="qa-badge qb-warn">En cours</span></div>
+          <div class="qa-item"><div class="qa-cb" onclick="toggleQACB(this)">✓</div><span class="qa-text">Schema JSON-LD Product sur toutes les fiches</span><span class="qa-badge qb-fail">À faire</span></div>
+          <div class="qa-item"><div class="qa-cb" onclick="toggleQACB(this)">✓</div><span class="qa-text">Google Analytics 4 + Meta Pixel installés</span><span class="qa-badge qb-todo">À vérifier</span></div>
+          <div class="qa-item"><div class="qa-cb" onclick="toggleQACB(this)">✓</div><span class="qa-text">Événement Purchase tracké correctement</span><span class="qa-badge qb-todo">À tester</span></div>
+        </div>
+        <div class="qa-cat">
+          <div class="qa-cat-hd">⚖️ Légal & Confiance</div>
+          <div class="qa-item"><div class="qa-cb" onclick="toggleQACB(this)">✓</div><span class="qa-text">CGV / Politique de retour accessibles</span><span class="qa-badge qb-todo">À vérifier</span></div>
+          <div class="qa-item"><div class="qa-cb" onclick="toggleQACB(this)">✓</div><span class="qa-text">Politique confidentialité RGPD conforme</span><span class="qa-badge qb-todo">À vérifier</span></div>
+          <div class="qa-item"><div class="qa-cb" onclick="toggleQACB(this)">✓</div><span class="qa-text">Bandeau cookies (RGPD)</span><span class="qa-badge qb-todo">À vérifier</span></div>
+          <div class="qa-item"><div class="qa-cb" onclick="toggleQACB(this)">✓</div><span class="qa-text">Mentions légales complètes</span><span class="qa-badge qb-todo">À vérifier</span></div>
+          <div class="qa-item"><div class="qa-cb" onclick="toggleQACB(this)">✓</div><span class="qa-text">Politique livraison visible (délais + tarifs)</span><span class="qa-badge qb-todo">À vérifier</span></div>
+        </div>
+      </div>
+
+      <!-- ══════════ TAB: DEPLOY ══════════ -->
+      <div class="tab-panel" id="panel-deploy">
+        <div class="info-banner ib-orange">
+          <span>⚠️</span>
+          <span>Le déploiement MCP Shopify nécessite une connexion active. Validez la QA complète avant de procéder.</span>
+        </div>
+        <div class="sec-title">Pipeline de déploiement MCP</div>
+        <div class="pipeline">
+          <div class="pipe-step">
+            <div class="pipe-num done">1</div>
+            <div class="pipe-body">
+              <div class="pipe-title">Vérification pré-déploiement</div>
+              <div class="pipe-desc">Confirmer la boutique cible via get-shop-info() · Inventaire produits existants</div>
+            </div>
+            <div class="pipe-action"><span class="qa-badge qb-ok">Validé</span></div>
+          </div>
+          <div class="pipe-step">
+            <div class="pipe-num active">2</div>
+            <div class="pipe-body">
+              <div class="pipe-title">QA Automatisée</div>
+              <div class="pipe-desc">Liens · SEO · Schema · Performance — Score minimum 70/100 requis</div>
+            </div>
+            <div class="pipe-action"><button class="btn-sm btn-ghost" onclick="openTab('qa')">Lancer QA →</button></div>
+          </div>
+          <div class="pipe-step">
+            <div class="pipe-num">3</div>
+            <div class="pipe-body">
+              <div class="pipe-title">Création collections</div>
+              <div class="pipe-desc">create-collection() × N · Vérification IDs · Publication</div>
+            </div>
+            <div class="pipe-action"><span class="qa-badge qb-todo">En attente</span></div>
+          </div>
+          <div class="pipe-step">
+            <div class="pipe-num">4</div>
+            <div class="pipe-body">
+              <div class="pipe-title">Création & mise à jour produits</div>
+              <div class="pipe-desc">create-product() · Images · Variantes · Stock · add-to-collection()</div>
+            </div>
+            <div class="pipe-action"><span class="qa-badge qb-todo">En attente</span></div>
+          </div>
+          <div class="pipe-step">
+            <div class="pipe-num">5</div>
+            <div class="pipe-body">
+              <div class="pipe-title">Injection SEO & Schema</div>
+              <div class="pipe-desc">Title tags · Meta · JSON-LD Product/FAQ via metafields GraphQL</div>
+            </div>
+            <div class="pipe-action"><span class="qa-badge qb-todo">En attente</span></div>
+          </div>
+          <div class="pipe-step">
+            <div class="pipe-num">6</div>
+            <div class="pipe-body">
+              <div class="pipe-title">Vérification post-déploiement</div>
+              <div class="pipe-desc">Check collections publiées · Parcours d'achat complet · QA finale</div>
+            </div>
+            <div class="pipe-action"><span class="qa-badge qb-todo">En attente</span></div>
+          </div>
+        </div>
+
+        <div class="sec-title">Connexion MCP Shopify</div>
         <div class="card">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-            <div class="audit-row"><span class="audit-label">✅ Rating stars</span><span class="qa-status status-ok">Présent</span></div>
-            <div class="audit-row"><span class="audit-label">✅ Sticky ATC</span><span class="qa-status status-ok">Présent</span></div>
-            <div class="audit-row"><span class="audit-label">✅ Payment badges</span><span class="qa-status status-ok">Présent</span></div>
-            <div class="audit-row"><span class="audit-label">✅ Sizing chart</span><span class="qa-status status-ok">Présent</span></div>
-            <div class="audit-row"><span class="audit-label">✅ Quantity breaks</span><span class="qa-status status-ok">Présent</span></div>
-            <div class="audit-row"><span class="audit-label">✅ Upsell block</span><span class="qa-status status-ok">Présent</span></div>
-            <div class="audit-row"><span class="audit-label">✅ Related products</span><span class="qa-status status-ok">Présent</span></div>
-            <div class="audit-row"><span class="audit-label">⚠️ Avis photos UGC</span><span class="qa-status status-fail">Remplacer</span></div>
-            <div class="audit-row"><span class="audit-label">⚠️ Schema JSON-LD</span><span class="qa-status status-fail">Manquant</span></div>
-            <div class="audit-row"><span class="audit-label">⚠️ FAQ schema</span><span class="qa-status status-fail">Manquant</span></div>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+            <div class="dot dot-gray" id="deploy-mcp-dot" style="width:10px;height:10px"></div>
+            <span id="deploy-mcp-status" style="font-size:13px">Non connecté</span>
           </div>
-        </div>
-      </div>
-
-      <!-- DESIGN SYSTEM -->
-      <div class="tab-panel" id="tab-design">
-        <div class="section-title">🎨 Design System Détecté</div>
-
-        <div class="theme-badge">
-          📐 Thème SuccessPro v1.2.0 · ByMade
-        </div>
-
-        <div class="card" style="margin-bottom:20px">
-          <div class="card-title">Palette de Couleurs</div>
-          <div class="color-row">
-            <div class="color-wrap">
-              <div class="color-swatch" style="background:#ffffff;border:1px solid #333"></div>
-              <div class="color-label">#ffffff</div>
-              <div style="font-size:10px;color:var(--muted);text-align:center">Background</div>
-            </div>
-            <div class="color-wrap">
-              <div class="color-swatch" style="background:#9ed3ff"></div>
-              <div class="color-label">#9ed3ff</div>
-              <div style="font-size:10px;color:var(--muted);text-align:center">Accent</div>
-            </div>
-            <div class="color-wrap">
-              <div class="color-swatch" style="background:#fffced"></div>
-              <div class="color-label">#fffced</div>
-              <div style="font-size:10px;color:var(--muted);text-align:center">Accent 2</div>
-            </div>
-            <div class="color-wrap">
-              <div class="color-swatch" style="background:#000000"></div>
-              <div class="color-label">#000000</div>
-              <div style="font-size:10px;color:var(--muted);text-align:center">Texte</div>
-            </div>
+          <div class="qa-input-row" style="margin-bottom:0">
+            <input class="qa-input" id="shopify-url" placeholder="https://ma-boutique.myshopify.com" type="url">
+            <button class="btn-sm btn-primary" onclick="connectMCP()">Connecter</button>
           </div>
-          <div style="font-size:12px;color:var(--muted);margin-top:8px">
-            💡 <strong>NOE recommande</strong> : Palette épurée noir/blanc avec accent bleu pastel. Ajouter une police display distincte pour les headlines (Playfair pour premium ou Bebas Neue pour lifestyle).
-          </div>
-        </div>
-
-        <div class="card" style="margin-bottom:20px">
-          <div class="card-title">Typographie</div>
-          <div class="font-preview">
-            <div class="font-headline" style="font-family:'Poppins',sans-serif">Headline Display</div>
-            <div class="font-body-preview" style="font-family:'Poppins',sans-serif">Body text — Poppins Regular · Très bonne lisibilité</div>
-          </div>
-          <div style="font-size:12px;color:var(--muted);margin-top:8px">
-            📝 Body : <strong>Poppins (n4)</strong> · Header : <strong>Sans-serif système</strong>
-          </div>
-        </div>
-
-        <div class="card" style="margin-bottom:20px">
-          <div class="card-title">Branding Assets</div>
-          <div style="font-size:13px;line-height:2.2">
-            <div>🖤 <strong>Logo noir</strong> : logo_noir.png (200px desktop, 140px mobile)</div>
-            <div>🤍 <strong>Logo blanc</strong> : logo_blanc.png (version fond sombre)</div>
-            <div>🛒 <strong>Image checkout</strong> : 6-2.jpg configurée</div>
-            <div>🔘 <strong>Boutons</strong> : border-radius 6px · shadow activé · noir sur fond blanc</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- APPS STACK -->
-      <div class="tab-panel" id="tab-apps">
-        <div class="section-title">📦 Apps Détectées dans le Thème</div>
-        <div class="apps-grid">
-          <div class="app-card">
-            <div class="app-icon">🛒</div>
-            <div class="app-name">iCart (Cart Drawer)</div>
-            <div class="app-desc">Panier drawer avancé avec progress bar, upsell, gifts</div>
-            <span class="app-status installed">✅ Intégré natif</span>
-          </div>
-          <div class="app-card">
-            <div class="app-icon">⭐</div>
-            <div class="app-name">Trustpilot</div>
-            <div class="app-desc">Widget avis Trustpilot sur homepage et PDP</div>
-            <span class="app-status installed">✅ Snippet présent</span>
-          </div>
-          <div class="app-card">
-            <div class="app-icon">📦</div>
-            <div class="app-name">Bundle Deals</div>
-            <div class="app-desc">Section bundles et offres groupées (+20-35% AOV)</div>
-            <span class="app-status installed">✅ Section native</span>
-          </div>
-          <div class="app-card">
-            <div class="app-icon">📏</div>
-            <div class="app-name">Quantity Breaks</div>
-            <div class="app-desc">Paliers de remise selon quantité commandée</div>
-            <span class="app-status installed">✅ Snippet natif</span>
-          </div>
-          <div class="app-card">
-            <div class="app-icon">⬆️</div>
-            <div class="app-name">Upsell Block</div>
-            <div class="app-desc">Cross-sell et upsell sur fiche produit</div>
-            <span class="app-status installed">✅ Snippet natif</span>
-          </div>
-          <div class="app-card" style="border-color:rgba(232,67,147,0.3)">
-            <div class="app-icon">⚠️</div>
-            <div class="app-name">AliReviews</div>
-            <div class="app-desc">Système d'avis — qualité limitée, pas de photos UGC</div>
-            <span class="app-status replace">⚠️ À remplacer</span>
-          </div>
-        </div>
-
-        <div class="section-title">🔧 Apps Recommandées à Ajouter</div>
-        <div class="apps-grid">
-          <div class="app-card">
-            <div class="app-icon">📸</div>
-            <div class="app-name">Loox</div>
-            <div class="app-desc">Avis photos UGC · +15-25% CVR sur PDP · 49$/mois</div>
-            <span class="app-status recommended">⭐ Priorité 1</span>
-          </div>
-          <div class="app-card">
-            <div class="app-icon">📧</div>
-            <div class="app-name">Klaviyo</div>
-            <div class="app-desc">Email + SMS · Welcome / Cart / Post-Purchase flows</div>
-            <span class="app-status recommended">⭐ Priorité 1</span>
-          </div>
-          <div class="app-card">
-            <div class="app-icon">💬</div>
-            <div class="app-name">Tidio</div>
-            <div class="app-desc">Live chat + chatbot IA · réduit abandons -5-15%</div>
-            <span class="app-status recommended">⭐ Priorité 2</span>
-          </div>
-          <div class="app-card">
-            <div class="app-icon">🔥</div>
-            <div class="app-name">Hotjar</div>
-            <div class="app-desc">Heatmaps + session recordings · identifier frictions</div>
-            <span class="app-status recommended">⭐ Priorité 2</span>
-          </div>
-          <div class="app-card">
-            <div class="app-icon">📈</div>
-            <div class="app-name">ReConvert</div>
-            <div class="app-desc">Post-purchase upsell · +15-30% AOV</div>
-            <span class="app-status recommended">⭐ Priorité 2</span>
-          </div>
-          <div class="app-card">
-            <div class="app-icon">📡</div>
-            <div class="app-name">AfterShip</div>
-            <div class="app-desc">Tracking livraison · réduit contacts SAV</div>
-            <span class="app-status recommended">⭐ Priorité 3</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- QA RECETTE -->
-      <div class="tab-panel" id="tab-qa">
-        <div class="section-title">✅ Checklist Recette QA — Avant Déploiement</div>
-
-        <div class="qa-category">
-          <div class="qa-cat-title">⚡ Technique & Performance</div>
-          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Aucun lien cassé (0 erreur 404)</span><span class="qa-status status-todo">À tester</span></div>
-          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Images optimisées (WebP, &lt; 100KB, alt text présents)</span><span class="qa-status status-todo">À vérifier</span></div>
-          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">LCP &lt; 2.5s (Core Web Vitals)</span><span class="qa-status status-todo">À mesurer</span></div>
-          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Mobile responsive (375px / 768px / 1440px)</span><span class="qa-status status-todo">À tester</span></div>
-          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">JS/CSS minifiés — apps inutilisées supprimées</span><span class="qa-status status-todo">À vérifier</span></div>
-        </div>
-
-        <div class="qa-category">
-          <div class="qa-cat-title">🛒 Parcours Client</div>
-          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Checkout testé end-to-end (produit → paiement → confirmation)</span><span class="qa-status status-todo">À tester</span></div>
-          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Email de confirmation commande configuré et reçu</span><span class="qa-status status-todo">À tester</span></div>
-          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Shop Pay / Apple Pay / Google Pay fonctionnels</span><span class="qa-status status-todo">À tester</span></div>
-          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Politique livraison + retour visibles avant checkout</span><span class="qa-status status-todo">À vérifier</span></div>
-          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">iCart progress bar fonctionnel</span><span class="qa-status status-ok">✅ Natif</span></div>
-        </div>
-
-        <div class="qa-category">
-          <div class="qa-cat-title">🔍 SEO</div>
-          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Title tags &lt; 60 car. configurés sur toutes les pages</span><span class="qa-status status-fail">Manquant</span></div>
-          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Meta descriptions &lt; 155 car. sur toutes les pages</span><span class="qa-status status-fail">Manquant</span></div>
-          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">H1 unique par page</span><span class="qa-status status-todo">À vérifier</span></div>
-          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Canonical tags sur variantes produit</span><span class="qa-status status-todo">À configurer</span></div>
-          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Sitemap soumis à Google Search Console</span><span class="qa-status status-todo">À faire</span></div>
-        </div>
-
-        <div class="qa-category">
-          <div class="qa-cat-title">📊 Tracking & Schema</div>
-          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Schema Product + Offer + Review validé (Rich Results Test)</span><span class="qa-status status-fail">Manquant</span></div>
-          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Schema FAQPage sur pages produit clés</span><span class="qa-status status-fail">Manquant</span></div>
-          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">GA4 Enhanced Ecommerce : events firing (AddToCart, Purchase)</span><span class="qa-status status-todo">À vérifier</span></div>
-          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Meta Pixel : PageView + ViewContent + AddToCart + Purchase</span><span class="qa-status status-todo">À vérifier</span></div>
-        </div>
-
-        <div class="qa-category">
-          <div class="qa-cat-title">⚖️ Légal (France/UE)</div>
-          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Mentions légales complètes (SIRET, hébergeur, éditeur)</span><span class="qa-status status-todo">À vérifier</span></div>
-          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">CGV en ligne et accessibles</span><span class="qa-status status-todo">À vérifier</span></div>
-          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Bandeau cookies CNIL actif</span><span class="qa-status status-todo">À vérifier</span></div>
-          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Politique de confidentialité RGPD</span><span class="qa-status status-todo">À vérifier</span></div>
-        </div>
-      </div>
-
-      <!-- DEPLOY -->
-      <div class="tab-panel" id="tab-deploy">
-        <div class="section-title">🚀 Pipeline Déploiement Shopify via MCP</div>
-
-        <div class="card" style="margin-bottom:20px">
-          <div class="card-title">Statut Connexion</div>
-          <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
-            <div class="dot"></div>
-            <span style="font-size:14px;font-weight:600">MCP Shopify connecté</span>
-            <span style="font-size:12px;color:var(--muted)">· Prêt à déployer</span>
-          </div>
-        </div>
-
-        <div class="deploy-step">
-          <div class="step-num">1</div>
-          <div class="step-info">
-            <div class="step-title">Connexion & Vérification</div>
-            <div class="step-desc">Vérifier shop actif, plan Shopify, devise, langue configurée</div>
-          </div>
-          <button class="btn btn-ghost" style="font-size:12px" onclick="runStep(this, 'Connexion vérifiée ✅')">Exécuter</button>
-        </div>
-
-        <div class="deploy-step">
-          <div class="step-num">2</div>
-          <div class="step-info">
-            <div class="step-title">Upload Catalogue Produits</div>
-            <div class="step-desc">Créer/mettre à jour produits (titre, description SEO, variantes, images, prix)</div>
-          </div>
-          <button class="btn btn-ghost" style="font-size:12px">Configurer</button>
-        </div>
-
-        <div class="deploy-step">
-          <div class="step-num">3</div>
-          <div class="step-info">
-            <div class="step-title">Créer les Collections</div>
-            <div class="step-desc">Titre, description SEO, règles de tri, images de collection</div>
-          </div>
-          <button class="btn btn-ghost" style="font-size:12px">Configurer</button>
-        </div>
-
-        <div class="deploy-step">
-          <div class="step-num">4</div>
-          <div class="step-info">
-            <div class="step-title">Publier les Pages Statiques</div>
-            <div class="step-desc">Homepage, About, FAQ, Légales, Contact, Track Order</div>
-          </div>
-          <button class="btn btn-ghost" style="font-size:12px">Configurer</button>
-        </div>
-
-        <div class="deploy-step">
-          <div class="step-num">5</div>
-          <div class="step-info">
-            <div class="step-title">SEO & Schema Markup</div>
-            <div class="step-desc">Injecter title tags, meta descriptions, JSON-LD Product+FAQ sur toutes les pages</div>
-          </div>
-          <button class="btn btn-ghost" style="font-size:12px">Configurer</button>
-        </div>
-
-        <div class="deploy-step">
-          <div class="step-num">6</div>
-          <div class="step-info">
-            <div class="step-title">Vérification Finale QA</div>
-            <div class="step-desc">Lancer checklist QA automatisée — corriger erreurs avant mise en ligne</div>
-          </div>
-          <button class="btn btn-ghost" style="font-size:12px">Lancer QA</button>
-        </div>
-
-        <div style="margin-top:24px">
-          <button class="btn btn-primary" style="width:100%;padding:14px;font-size:14px" onclick="launchDeploy()">
-            🚀 Lancer le déploiement complet via MCP Shopify
-          </button>
         </div>
       </div>
 
@@ -879,102 +1241,206 @@ Ou : Fais l'audit SEO complet de ma page collection principale et donne-moi les 
 </div><!-- /main -->
 
 <script>
-function switchTab(name) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+// ─── TABS ───
+function openTab(name) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  const tab = document.querySelector(`[data-tab="${name}"]`);
-  const panel = document.getElementById(`tab-${name}`);
-  if (tab) tab.classList.add('active');
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  const panel = document.getElementById('panel-' + name);
   if (panel) panel.classList.add('active');
+  const tabs = document.querySelectorAll('.tab');
+  tabs.forEach(t => { if (t.getAttribute('onclick')?.includes(name)) t.classList.add('active'); });
 }
 
-function toggleCheck(btn) {
-  btn.classList.toggle('done');
+// ─── QUICK WINS ───
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+  const item = el.closest('.qw-item');
+  item.classList.toggle('done');
+  updateQWCount();
+}
+function updateQWCount() {
+  const done = document.querySelectorAll('.qw-check.checked').length;
+  const total = document.querySelectorAll('.qw-check').length;
+  document.getElementById('qw-done-count').textContent = `${done}/${total} complétés`;
 }
 
-function toggleQa(el) {
-  const states = ['', 'ok', 'fail'];
-  const cur = el.dataset.state || '0';
-  const next = (parseInt(cur) + 1) % 3;
-  el.dataset.state = next;
-  el.className = 'qa-check' + (next === 1 ? ' ok' : next === 2 ? ' fail' : '');
-  el.textContent = next === 1 ? '✓' : next === 2 ? '✗' : '';
+// ─── QA CHECKLIST ───
+function toggleQACB(el) {
+  if (el.classList.contains('ok')) {
+    el.classList.remove('ok');
+    el.classList.add('fail');
+    const badge = el.nextElementSibling.nextElementSibling;
+    if (badge) { badge.className = 'qa-badge qb-fail'; badge.textContent = 'Échec'; }
+  } else if (el.classList.contains('fail')) {
+    el.classList.remove('fail');
+    const badge = el.nextElementSibling.nextElementSibling;
+    if (badge) { badge.className = 'qa-badge qb-todo'; badge.textContent = 'À vérifier'; }
+  } else {
+    el.classList.add('ok');
+    const badge = el.nextElementSibling.nextElementSibling;
+    if (badge) { badge.className = 'qa-badge qb-ok'; badge.textContent = 'OK'; }
+  }
 }
 
+// ─── NOE PROMPT ───
+function updateCharCount(el) {
+  document.getElementById('char-count').textContent = `${el.value.length} / 2000`;
+}
 function insertShortcut(cmd) {
-  const ta = document.getElementById('promptInput');
+  const ta = document.getElementById('noe-input');
   ta.value = cmd + ' ';
   ta.focus();
-  updateCount();
+  updateCharCount(ta);
 }
-
 function clearPrompt() {
-  document.getElementById('promptInput').value = '';
-  updateCount();
+  const ta = document.getElementById('noe-input');
+  ta.value = '';
+  updateCharCount(ta);
 }
-
-function updateCount() {
-  const v = document.getElementById('promptInput').value;
-  document.getElementById('charCount').textContent = v.length + ' caractères';
-}
-
-document.getElementById('promptInput').addEventListener('input', updateCount);
-
 function sendPrompt() {
-  const val = document.getElementById('promptInput').value.trim();
+  const ta = document.getElementById('noe-input');
+  const val = ta.value.trim();
   if (!val) return;
-  const history = document.querySelector('.chat-history');
-  const userMsg = document.createElement('div');
-  userMsg.className = 'chat-msg user';
-  userMsg.innerHTML = `<div><div class="msg-bubble">${val}</div><div class="msg-time">Maintenant</div></div>`;
-  history.appendChild(userMsg);
-
-  const noeMsg = document.createElement('div');
-  noeMsg.className = 'chat-msg noe';
-  noeMsg.innerHTML = `<div class="noe-avatar">N</div><div><div class="msg-bubble">⏳ NOE analyse ta demande sur <strong>Succespro 2.0</strong>...<br><br><em>Pour exécuter cette instruction, copie ce prompt dans Claude avec le contexte de ta boutique chargé.</em></div><div class="msg-time">Maintenant</div></div>`;
-  history.appendChild(noeMsg);
-
-  clearPrompt();
-  history.scrollTop = history.scrollHeight;
-  switchTab('prompt');
+  addMsg('user', val);
+  addMsg('noe', `Commande reçue : <strong>${val}</strong><br><br>Pour exécuter cette action, copiez le contenu de <code style="font-family:var(--mono);font-size:11px">_AGENT-NOE/NOE-SYSTEM-PROMPT-v2.md</code> dans une conversation Claude et collez-y ce message.`);
+  ta.value = '';
+  updateCharCount(ta);
+}
+function addMsg(type, text) {
+  const wrap = document.getElementById('chat-history');
+  const avatar = type === 'noe' ? `<div class="noe-avatar">🧠</div>` : `<div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#ec4899);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">👤</div>`;
+  const time = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'});
+  const html = `<div class="msg ${type}">${type==='noe'?avatar:''}<div><div class="msg-bubble">${text}</div><div class="msg-time">${time}</div></div>${type==='user'?avatar:''}</div>`;
+  wrap.insertAdjacentHTML('beforeend', html);
+  wrap.scrollTop = wrap.scrollHeight;
 }
 
-function dragOver(e) {
-  e.preventDefault();
-  document.getElementById('uploadZone').classList.add('dragover');
-}
-function dragLeave(e) {
-  document.getElementById('uploadZone').classList.remove('dragover');
-}
+// ─── UPLOAD ───
 function handleDrop(e) {
   e.preventDefault();
-  document.getElementById('uploadZone').classList.remove('dragover');
+  document.getElementById('upload-zone').classList.remove('drag');
   const file = e.dataTransfer.files[0];
-  if (file && file.name.endsWith('.zip')) processZip(file.name);
+  if (file) processFile(file);
 }
-function handleFile(e) {
-  const file = e.target.files[0];
-  if (file) processZip(file.name);
+function handleFile(input) {
+  if (input.files[0]) processFile(input.files[0]);
 }
-function processZip(name) {
-  document.querySelector('.upload-title').textContent = '✅ ' + name + ' importé';
-  document.querySelector('.upload-sub').textContent = 'NOE analyse la structure du thème...';
-  document.getElementById('uploadZone').style.borderColor = 'var(--green)';
-}
-function showUpload() { switchTab('prompt'); }
-
-function runStep(btn, msg) {
-  const step = btn.closest('.deploy-step');
-  const num = step.querySelector('.step-num');
-  num.classList.add('done');
-  num.textContent = '✓';
-  btn.textContent = msg;
-  btn.disabled = true;
+function processFile(file) {
+  addMsg('noe', `📦 Fichier reçu : <strong>${file.name}</strong> (${(file.size/1024).toFixed(1)}KB)<br><br>Pour analyser ce thème avec NOE, ouvrez une conversation Claude avec le system prompt NOE v2.0 et uploadez ce fichier ZIP.`);
+  openTab('noe');
 }
 
-function launchDeploy() {
-  alert('🚀 Pipeline de déploiement — Connecte-toi via le MCP Shopify dans Claude pour exécuter les étapes une par une.');
+// ─── QA RUNNER ───
+function toggleQACheck(el) { el.classList.toggle('on'); }
+
+async function runQA() {
+  const url = document.getElementById('qa-url').value.trim();
+  if (!url) { alert('Entrez une URL de boutique'); return; }
+
+  const checks = Array.from(document.querySelectorAll('.qa-check-toggle.on')).map(el => el.dataset.check);
+  document.getElementById('qa-running').style.display = 'block';
+  document.getElementById('qa-results-wrap').style.display = 'none';
+
+  // Simulation QA (en production: appel API backend /api/qa/run)
+  let step = 0;
+  const steps = ['Vérification des liens...', 'Analyse SEO...', 'Validation schemas...', 'Test performance...'];
+  const interval = setInterval(() => {
+    if (step < steps.length) {
+      document.getElementById('qa-progress').textContent = steps[step++];
+    }
+  }, 800);
+
+  await new Promise(r => setTimeout(r, 3500));
+  clearInterval(interval);
+
+  // Résultats simulés
+  const results = generateSimulatedResults(url, checks);
+  displayQAResults(results);
+  document.getElementById('qa-running').style.display = 'none';
+  document.getElementById('qa-results-wrap').style.display = 'block';
 }
+
+function generateSimulatedResults(url, checks) {
+  return {
+    score: 62,
+    pass: 14, warn: 7, fail: 5,
+    items: [
+      { status: 'pass', label: 'Boutique accessible', detail: '✓ HTTP 200 OK' },
+      { status: 'pass', label: 'Homepage répond', detail: '✓ 200 OK · TTFB 380ms' },
+      { status: 'fail', label: 'Title tag homepage', detail: '✗ Aucun title tag trouvé' },
+      { status: 'fail', label: 'Meta description', detail: '✗ Meta description manquante' },
+      { status: 'warn', label: 'Schema JSON-LD', detail: '⚠ Aucun schema JSON-LD — impact SEO + GEO/AEO' },
+      { status: 'pass', label: 'Sitemap accessible', detail: '✓ /sitemap.xml valide' },
+      { status: 'pass', label: 'HTTPS actif', detail: '✓ Certificat SSL valide' },
+      { status: 'warn', label: 'Core Web Vitals', detail: '⚠ LCP estimé ~3.2s — optimisation images requise' },
+      { status: 'fail', label: 'Images alt text', detail: '✗ 8/24 images sans alt text' },
+      { status: 'pass', label: 'Lazy loading', detail: '✓ 15/24 images en lazy loading' },
+      { status: 'warn', label: 'Scripts asynchrones', detail: '⚠ 4 scripts sans defer/async' },
+      { status: 'pass', label: 'Viewport mobile', detail: '✓ <meta name="viewport"> présent' },
+    ]
+  };
+}
+
+function displayQAResults(results) {
+  const score = results.score;
+  const el = document.getElementById('qa-score-num');
+  el.textContent = score;
+  el.style.color = score >= 80 ? 'var(--green)' : score >= 60 ? 'var(--orange)' : 'var(--red)';
+  document.getElementById('qa-score-summary').innerHTML =
+    `<span style="color:var(--green)">✅ ${results.pass} PASS</span> &nbsp; <span style="color:var(--orange)">⚠️ ${results.warn} WARN</span> &nbsp; <span style="color:var(--red)">❌ ${results.fail} FAIL</span>`;
+
+  const list = document.getElementById('qa-results-list');
+  list.innerHTML = results.items.map(item => {
+    const icon = item.status === 'pass' ? '✅' : item.status === 'warn' ? '⚠️' : '❌';
+    return `<div class="qa-result-item">
+      <div class="qa-ri-status">${icon}</div>
+      <div><div class="qa-ri-label">${item.label}</div><div class="qa-ri-detail">${item.detail}</div></div>
+    </div>`;
+  }).join('');
+}
+
+function exportQAReport() {
+  const data = { generatedAt: new Date().toISOString(), tool: 'TR7 Shop Builder QA' };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = `qa-report-${Date.now()}.json`; a.click();
+}
+
+// ─── MCP ───
+function connectMCP() {
+  const url = document.getElementById('shopify-url')?.value || document.getElementById('qa-url')?.value || '';
+  document.getElementById('mcp-dot').className = 'dot dot-green';
+  document.getElementById('mcp-label').textContent = 'MCP connecté';
+  if (document.getElementById('deploy-mcp-dot')) {
+    document.getElementById('deploy-mcp-dot').className = 'dot dot-green';
+    document.getElementById('deploy-mcp-status').textContent = 'Connecté · ' + (url || 'boutique');
+  }
+  addMsg('noe', '✅ Connexion MCP Shopify simulée. Pour une connexion réelle, utilisez les outils MCP disponibles dans votre environnement Claude avec le tool <code style="font-family:var(--mono);font-size:11px">get-shop-info</code>.');
+  openTab('noe');
+}
+
+// ─── STORE SELECT ───
+function selectStore(id) {
+  document.querySelectorAll('.store-card').forEach(c => c.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+}
+
+// ─── AGENT SCROLL ───
+function scrollAgent(name) {
+  const el = document.getElementById('agent-' + name);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// ─── INIT ───
+document.addEventListener('DOMContentLoaded', () => {
+  updateQWCount();
+  // Animate score bars
+  setTimeout(() => {
+    document.querySelectorAll('.progress-fill').forEach(el => {
+      el.style.transition = 'width 1.2s cubic-bezier(.4,0,.2,1)';
+    });
+  }, 300);
+});
 </script>
 </body>
 </html>

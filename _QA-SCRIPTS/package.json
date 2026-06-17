@@ -1,0 +1,15 @@
+{
+  "name": "tr7-qa-scripts",
+  "version": "1.0.0",
+  "description": "TR7 Shop Builder — Scripts QA automatisés Phase 4",
+  "main": "qa-runner.js",
+  "scripts": {
+    "qa": "node qa-cli.js",
+    "test": "node tests/self-test.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "author": "TR7 Agency Studio",
+  "license": "MIT"
+}

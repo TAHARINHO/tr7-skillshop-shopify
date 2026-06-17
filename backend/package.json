@@ -1,0 +1,23 @@
+{
+  "name": "tr7-shop-builder-backend",
+  "version": "1.0.0",
+  "description": "TR7 Shop Builder — Backend API pour dashboard et QA automatisée",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node tests/run-tests.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "axios": "^1.6.0",
+    "cheerio": "^1.0.0-rc.12",
+    "node-html-parser": "^6.1.12"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "author": "TR7 Agency Studio",
+  "license": "MIT"
+}

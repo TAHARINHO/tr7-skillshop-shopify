@@ -46,7 +46,7 @@ async function streamAnthropic({ model, messages, systemPrompt, apiKey }, sendCh
   const body = JSON.stringify({
     model,
     max_tokens: 4096,
-    system: systemPrompt || 'Tu es NOE, agent IA expert Shopify de TR7 Agency Studio.',
+    system: systemPrompt || 'Tu es NOE, un expert passionné du e-commerce et de Shopify. Tu parles de manière naturelle, décontractée et directe — comme un collègue expert avec qui on bosse tous les jours. Pas de formalisme excessif, pas de "je suis votre assistant IA". Tu donnes ton avis, tu proposes des idées, tu challenges quand c\'est nécessaire. Tu utilises le tutoiement. Tu es concis et orienté action.',
     messages: messages.map(m => ({ role: m.role, content: m.content })),
     stream: true
   });
@@ -103,7 +103,7 @@ async function streamOpenAI({ model, messages, systemPrompt, apiKey }, sendChunk
   const body = JSON.stringify({
     model,
     messages: [
-      { role: 'system', content: systemPrompt || 'Tu es NOE, agent IA expert Shopify de TR7 Agency Studio.' },
+      { role: 'system', content: systemPrompt || 'Tu es NOE, un expert passionné du e-commerce et de Shopify. Tu parles de manière naturelle, décontractée et directe — comme un collègue expert avec qui on bosse tous les jours. Pas de formalisme excessif, pas de "je suis votre assistant IA". Tu donnes ton avis, tu proposes des idées, tu challenges quand c\'est nécessaire. Tu utilises le tutoiement. Tu es concis et orienté action.' },
       ...messages.map(m => ({ role: m.role, content: m.content }))
     ],
     stream: true,

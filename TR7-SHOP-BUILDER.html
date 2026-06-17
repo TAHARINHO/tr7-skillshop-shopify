@@ -176,7 +176,8 @@ body {
 .agent-nav-item {
   display: flex; align-items: center; gap: 8px;
   padding: 7px 10px; border-radius: var(--radius-sm);
-  cursor: pointer; font-size: 12px; transition: all .15s;
+  cursor: pointer; font-size: 12px;
+  transition: all .3s ease;
   color: var(--muted2);
 }
 .agent-nav-item:hover { background: var(--bg3); color: var(--text); }
@@ -876,9 +877,341 @@ body {
   transition: all .15s;
 }
 .mobile-menu-btn:hover { background: var(--bg2); border-color: var(--p1); }
+
+/* ─── AGENT NAV HOVER GLOW ─── */
+.agent-nav-item {
+  position: relative;
+}
+.agent-nav-item:hover {
+  transform: scale(1.02);
+  background: var(--bg3);
+  color: var(--text);
+}
+.agent-nav-item.glow-noe:hover   { box-shadow: 0 0 12px rgba(99,102,241,.45),  inset 0 0 8px rgba(99,102,241,.08); }
+.agent-nav-item.glow-brand:hover { box-shadow: 0 0 12px rgba(236,72,153,.45),  inset 0 0 8px rgba(236,72,153,.08); }
+.agent-nav-item.glow-seo:hover   { box-shadow: 0 0 12px rgba(6,182,212,.45),   inset 0 0 8px rgba(6,182,212,.08); }
+.agent-nav-item.glow-cro:hover   { box-shadow: 0 0 12px rgba(245,158,11,.45),  inset 0 0 8px rgba(245,158,11,.08); }
+.agent-nav-item.glow-ads:hover   { box-shadow: 0 0 12px rgba(253,203,110,.45), inset 0 0 8px rgba(253,203,110,.08); }
+.agent-nav-item.glow-tech:hover  { box-shadow: 0 0 12px rgba(162,155,254,.45), inset 0 0 8px rgba(162,155,254,.08); }
+.agent-nav-item.glow-data:hover  { box-shadow: 0 0 12px rgba(85,239,196,.45),  inset 0 0 8px rgba(85,239,196,.08); }
+
+/* ─── MODAL OVERLAY ─── */
+.modal-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.65);
+  backdrop-filter: blur(6px);
+  z-index: 1000;
+  align-items: center; justify-content: center;
+  animation: fadeIn .2s ease;
+}
+.modal-overlay.active { display: flex; }
+
+/* ─── NEW STORE MODAL ─── */
+.new-store-modal {
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  padding: 28px;
+  width: 520px; max-width: 95vw;
+  max-height: 90vh; overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,.6);
+  animation: slideUp .25s cubic-bezier(.4,0,.2,1);
+}
+@keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+.modal-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+.modal-title { font-size: 16px; font-weight: 800; }
+.modal-close-btn {
+  width: 30px; height: 30px; border-radius: 7px;
+  background: var(--bg3); border: 1px solid var(--border);
+  color: var(--muted2); cursor: pointer; font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+}
+.modal-close-btn:hover { border-color: var(--red); color: var(--red); }
+.form-group { margin-bottom: 16px; }
+.form-label { font-size: 11px; font-weight: 700; color: var(--muted2); letter-spacing: .5px; margin-bottom: 6px; display: block; }
+.form-label span { color: var(--red); }
+.form-input, .form-select, .form-textarea {
+  width: 100%; padding: 10px 12px;
+  background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: var(--radius-sm); color: var(--text);
+  font-family: var(--font); font-size: 13px;
+  transition: border-color .15s;
+  outline: none;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--p1); }
+.form-select { cursor: pointer; }
+.form-textarea { resize: vertical; min-height: 80px; }
+.product-preview {
+  margin-top: 7px; padding: 8px 10px;
+  background: rgba(99,102,241,.1); border: 1px solid rgba(99,102,241,.3);
+  border-radius: var(--radius-sm); font-size: 11px; color: #a5b4fc;
+  display: none;
+}
+.drop-zone {
+  border: 2px dashed var(--border2); border-radius: var(--radius-sm);
+  padding: 20px; text-align: center; cursor: pointer;
+  transition: all .2s; color: var(--muted);
+  font-size: 12px;
+}
+.drop-zone:hover, .drop-zone.dragover { border-color: var(--p1); color: #a5b4fc; background: rgba(99,102,241,.05); }
+.drop-zone input { display: none; }
+.drop-zone-name { margin-top: 6px; font-size: 11px; color: var(--p1); }
+.modal-actions { display: flex; gap: 10px; margin-top: 22px; justify-content: flex-end; }
+
+/* ─── AGENT CHAT MODAL ─── */
+.agent-chat-modal {
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  width: 480px; max-width: 95vw;
+  height: 560px; max-height: 90vh;
+  display: flex; flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0,0,0,.6);
+  animation: slideUp .25s cubic-bezier(.4,0,.2,1);
+  overflow: hidden;
+}
+.agent-chat-hd {
+  padding: 14px 16px;
+  display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.agent-chat-icon {
+  width: 36px; height: 36px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.agent-chat-name { font-size: 14px; font-weight: 700; flex: 1; }
+.agent-chat-msgs {
+  flex: 1; overflow-y: auto; padding: 14px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.acm-bubble {
+  max-width: 80%; padding: 9px 12px; border-radius: 10px;
+  font-size: 13px; line-height: 1.5;
+}
+.acm-user { align-self: flex-end; background: linear-gradient(135deg, var(--p1), var(--p2)); color: #fff; border-bottom-right-radius: 3px; }
+.acm-assistant { align-self: flex-start; background: var(--bg3); border: 1px solid var(--border); border-bottom-left-radius: 3px; }
+.acm-meta { font-size: 10px; color: var(--muted); margin-top: 3px; }
+.acm-user-wrap { display: flex; flex-direction: column; align-items: flex-end; }
+.acm-assistant-wrap { display: flex; flex-direction: column; align-items: flex-start; }
+.agent-chat-input-row {
+  display: flex; gap: 8px; padding: 12px 14px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.agent-chat-input {
+  flex: 1; padding: 9px 12px;
+  background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: var(--radius-sm); color: var(--text);
+  font-family: var(--font); font-size: 13px; outline: none;
+  resize: none; height: 38px;
+  transition: border-color .15s;
+}
+.agent-chat-input:focus { border-color: var(--p1); }
+.agent-chat-send {
+  padding: 9px 14px; border-radius: var(--radius-sm);
+  border: none; cursor: pointer; font-size: 13px;
+  font-weight: 600; font-family: var(--font);
+  transition: all .15s; color: #fff;
+}
+.agent-chat-send:hover { opacity: .85; transform: translateY(-1px); }
+
+/* ─── TOAST ─── */
+.toast-container {
+  position: fixed; bottom: 24px; right: 24px;
+  z-index: 2000; display: flex; flex-direction: column; gap: 8px;
+}
+.toast {
+  padding: 11px 18px; border-radius: 10px;
+  background: var(--bg2); border: 1px solid var(--border2);
+  color: var(--text); font-size: 13px; font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0,0,0,.4);
+  animation: toastIn .3s ease;
+  display: flex; align-items: center; gap: 8px;
+}
+@keyframes toastIn { from { opacity:0; transform:translateX(30px); } to { opacity:1; transform:translateX(0); } }
+.toast-out { animation: toastOut .3s ease forwards; }
+@keyframes toastOut { to { opacity:0; transform:translateX(30px); } }
+
+/* ─── THEME SYSTEM ─── */
+body {
+  transition: background-color .3s ease, color .3s ease;
+}
+
+/* Theme Dark (défaut) */
+body.theme-dark {
+  --bg:      #080b14;
+  --bg2:     #0d1220;
+  --bg3:     #131929;
+  --card:    #111827;
+  --border:  #1e2d45;
+  --border2: #243352;
+  --text:    #f1f5f9;
+  --muted:   #64748b;
+  --muted2:  #94a3b8;
+  --shadow:  0 4px 24px rgba(0,0,0,.4);
+}
+
+/* Theme Light */
+body.theme-light {
+  --bg:      #f5f6fa;
+  --bg2:     #ffffff;
+  --bg3:     #eef0f5;
+  --card:    #ffffff;
+  --border:  #e0e3eb;
+  --border2: #cdd2de;
+  --text:    #1a1a2e;
+  --muted:   #6c6c8a;
+  --muted2:  #8888aa;
+  --shadow:  0 4px 24px rgba(0,0,0,.08);
+}
+body.theme-light .topbar {
+  background: rgba(255,255,255,.92);
+}
+body.theme-light ::-webkit-scrollbar-thumb { background: #cdd2de; }
+body.theme-light .logo-name {
+  background: linear-gradient(90deg,#1a1a2e,#6c6c8a);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+body.theme-light .toast {
+  box-shadow: 0 8px 24px rgba(0,0,0,.12);
+}
+
+/* Theme TR7 Digital */
+body.theme-tr7 {
+  --bg:      #0a0a1a;
+  --bg2:     #111128;
+  --bg3:     #1a1a3e;
+  --card:    #111128;
+  --border:  rgba(0,240,255,.15);
+  --border2: rgba(180,74,255,.2);
+  --p1:      #00f0ff;
+  --p2:      #b44aff;
+  --p3:      #b44aff;
+  --pink:    #ff2d7c;
+  --cyan:    #00f0ff;
+  --text:    #e0e0ff;
+  --muted:   #6060a0;
+  --muted2:  #9090c0;
+  --shadow:  0 4px 24px rgba(0,240,255,.08);
+}
+body.theme-tr7 .topbar {
+  background: rgba(10,10,26,.92);
+  border-bottom-color: rgba(0,240,255,.2);
+  box-shadow: 0 1px 0 rgba(0,240,255,.15), 0 2px 8px rgba(0,240,255,.05);
+}
+body.theme-tr7 ::-webkit-scrollbar-thumb {
+  background: rgba(0,240,255,.3);
+  box-shadow: 0 0 6px rgba(0,240,255,.4);
+}
+body.theme-tr7 .btn-primary {
+  background: linear-gradient(135deg, #00f0ff, #b44aff);
+  box-shadow: 0 0 14px rgba(0,240,255,.3), 0 0 28px rgba(180,74,255,.15);
+}
+body.theme-tr7 .btn-primary:hover {
+  box-shadow: 0 0 20px rgba(0,240,255,.5), 0 0 40px rgba(180,74,255,.25);
+  opacity: 1;
+}
+body.theme-tr7 .logo-mark {
+  background: linear-gradient(135deg, #00f0ff, #b44aff);
+  box-shadow: 0 0 18px rgba(0,240,255,.4), 0 0 36px rgba(180,74,255,.2);
+}
+body.theme-tr7 .card,
+body.theme-tr7 [class*="card"],
+body.theme-tr7 .store-card,
+body.theme-tr7 .settings-group,
+body.theme-tr7 .ai-sidebar,
+body.theme-tr7 .ai-main {
+  border-color: rgba(0,240,255,.12);
+  transition: border-color .2s, box-shadow .2s;
+}
+body.theme-tr7 .store-card:hover,
+body.theme-tr7 .settings-group:hover {
+  border-color: rgba(0,240,255,.35) !important;
+  box-shadow: 0 0 16px rgba(0,240,255,.08);
+}
+body.theme-tr7 .grad-border::before {
+  background: linear-gradient(135deg, rgba(0,240,255,.5), rgba(180,74,255,.5));
+}
+body.theme-tr7 .noe-chip {
+  background: linear-gradient(90deg, #00f0ff, #b44aff);
+}
+
+/* Density system */
+body.density-comfortable {
+  --density-pad-tab: 12px 18px;
+  --density-gap: 16px;
+  --density-font-adj: 1px;
+}
+body.density-normal {
+  --density-pad-tab: 8px 14px;
+  --density-gap: 12px;
+  --density-font-adj: 0px;
+}
+body.density-compact {
+  --density-pad-tab: 6px 10px;
+  --density-gap: 8px;
+  --density-font-adj: -1px;
+}
+body.density-comfortable .tab-btn { padding: 12px 18px !important; }
+body.density-comfortable .sb-section { padding: 18px 14px; }
+body.density-comfortable .settings-row { gap: 16px; padding: 14px 0; }
+body.density-comfortable .store-card { padding: 12px 12px; margin-bottom: 5px; }
+body.density-comfortable { font-size: 15px; }
+
+body.density-compact .tab-btn { padding: 6px 10px !important; }
+body.density-compact .sb-section { padding: 8px 10px; }
+body.density-compact .settings-row { gap: 8px; padding: 6px 0; }
+body.density-compact .store-card { padding: 6px 8px; margin-bottom: 2px; }
+body.density-compact { font-size: 13px; }
+
+/* Theme selector cards */
+.theme-selector { display: flex; gap: 10px; flex-wrap: wrap; }
+.theme-card {
+  display: flex; flex-direction: column; align-items: center; gap: 7px;
+  padding: 12px 16px; border-radius: var(--radius); cursor: pointer;
+  border: 2px solid var(--border2); background: var(--bg3);
+  transition: all .2s; min-width: 100px;
+}
+.theme-card:hover { border-color: var(--p1); transform: translateY(-2px); }
+.theme-card.active { border-color: var(--p1); box-shadow: 0 0 0 3px rgba(99,102,241,.2); }
+.theme-card-preview {
+  width: 60px; height: 36px; border-radius: 6px; overflow: hidden;
+  display: flex; flex-direction: column; border: 1px solid rgba(255,255,255,.1);
+}
+.theme-preview-top { height: 10px; }
+.theme-preview-body { flex: 1; display: flex; gap: 3px; padding: 3px; }
+.theme-preview-sidebar { width: 16px; border-radius: 2px; }
+.theme-preview-main { flex: 1; border-radius: 2px; }
+.theme-card-label { font-size: 11px; font-weight: 700; color: var(--text); text-align: center; }
+.theme-card-sub { font-size: 10px; color: var(--muted); text-align: center; }
 </style>
+<!-- Early theme apply (prevents flash) -->
+<script>
+(function(){
+  try {
+    var s = JSON.parse(localStorage.getItem('tr7_settings_v2') || '{}');
+    var t = s.theme || localStorage.getItem('tr7_theme') || 'dark';
+    var d = s.density || 'normal';
+    document.addEventListener('DOMContentLoaded', function() {
+      document.body.classList.add('theme-' + t, 'density-' + d);
+    });
+    // Also set immediately if body exists
+    if (document.body) {
+      document.body.classList.add('theme-' + t, 'density-' + d);
+    }
+  } catch(e) {
+    document.addEventListener('DOMContentLoaded', function() {
+      document.body.classList.add('theme-dark', 'density-normal');
+    });
+  }
+})();
+</script>
 </head>
-<body>
+<body class="theme-dark density-normal">
 
 <!-- TOPBAR -->
 <div class="topbar">
@@ -913,7 +1246,8 @@ body {
         </div>
         <span class="score-pill pill-orange">5.8</span>
       </div>
-      <button class="add-store-btn" onclick="openTab('noe')">+ Nouvelle boutique</button>
+      <button class="add-store-btn" onclick="openNewStoreModal()">+ Nouvelle boutique</button>
+      <div id="saved-stores-list"></div>
     </div>
 
     <div class="sb-section">
@@ -930,25 +1264,25 @@ body {
     <div class="sb-section">
       <div class="sb-label">Agents</div>
       <div class="agent-nav" id="agent-nav">
-        <div class="agent-nav-item" onclick="openTab('agents');scrollAgent('NOE')">
+        <div class="agent-nav-item glow-noe" onclick="openAgentChat('NOE','#6366f1','🧠','NOE — Orchestrateur')">
           <div class="a-dot" style="background:#6366f1"></div>NOE — Orchestrateur
         </div>
-        <div class="agent-nav-item" onclick="openTab('agents');scrollAgent('BRAND')">
+        <div class="agent-nav-item glow-brand" onclick="openAgentChat('BRAND','#ec4899','🎨','BRAND & COPY')">
           <div class="a-dot" style="background:#ec4899"></div>BRAND & COPY
         </div>
-        <div class="agent-nav-item" onclick="openTab('agents');scrollAgent('SEO')">
+        <div class="agent-nav-item glow-seo" onclick="openAgentChat('SEO','#06b6d4','🔍','SEO & GEO')">
           <div class="a-dot" style="background:#06b6d4"></div>SEO & GEO
         </div>
-        <div class="agent-nav-item" onclick="openTab('agents');scrollAgent('CRO')">
+        <div class="agent-nav-item glow-cro" onclick="openAgentChat('CRO','#f59e0b','📈','CRO & UX')">
           <div class="a-dot" style="background:#f59e0b"></div>CRO & UX
         </div>
-        <div class="agent-nav-item" onclick="openTab('agents');scrollAgent('ADS')">
+        <div class="agent-nav-item glow-ads" onclick="openAgentChat('ADS','#fdcb6e','📣','ADS & MARKETING')">
           <div class="a-dot" style="background:#fdcb6e"></div>ADS & MARKETING
         </div>
-        <div class="agent-nav-item" onclick="openTab('agents');scrollAgent('TECH')">
+        <div class="agent-nav-item glow-tech" onclick="openAgentChat('TECH','#a29bfe','⚙️','TECH & SHOPIFY')">
           <div class="a-dot" style="background:#a29bfe"></div>TECH & SHOPIFY
         </div>
-        <div class="agent-nav-item" onclick="openTab('agents');scrollAgent('DATA')">
+        <div class="agent-nav-item glow-data" onclick="openAgentChat('DATA','#55efc4','📊','ANALYTICS & DATA')">
           <div class="a-dot" style="background:#55efc4"></div>ANALYTICS & DATA
         </div>
       </div>
@@ -1948,6 +2282,50 @@ body {
             <div class="settings-group" id="grp-appearance">
               <div class="settings-group-hd"><span class="sg-icon">🎨</span> Apparence</div>
               <div class="settings-body">
+                <div class="settings-row" style="flex-direction:column;align-items:flex-start;gap:12px">
+                  <div class="settings-row-info">
+                    <div class="settings-row-label">Thème de l'interface</div>
+                    <div class="settings-row-desc">Personnalise l'apparence globale du dashboard</div>
+                  </div>
+                  <div class="theme-selector" id="theme-selector">
+                    <!-- Dark -->
+                    <div class="theme-card active" data-theme="dark" onclick="applyTheme('dark')">
+                      <div class="theme-card-preview">
+                        <div class="theme-preview-top" style="background:#0d1220"></div>
+                        <div class="theme-preview-body" style="background:#080b14">
+                          <div class="theme-preview-sidebar" style="background:#131929"></div>
+                          <div class="theme-preview-main" style="background:#111827"></div>
+                        </div>
+                      </div>
+                      <div class="theme-card-label">🌙 Dark</div>
+                      <div class="theme-card-sub">Classique sombre</div>
+                    </div>
+                    <!-- Light -->
+                    <div class="theme-card" data-theme="light" onclick="applyTheme('light')">
+                      <div class="theme-card-preview">
+                        <div class="theme-preview-top" style="background:#ffffff"></div>
+                        <div class="theme-preview-body" style="background:#f5f6fa">
+                          <div class="theme-preview-sidebar" style="background:#eef0f5"></div>
+                          <div class="theme-preview-main" style="background:#ffffff"></div>
+                        </div>
+                      </div>
+                      <div class="theme-card-label">☀️ Light</div>
+                      <div class="theme-card-sub">Interface claire</div>
+                    </div>
+                    <!-- TR7 Digital -->
+                    <div class="theme-card" data-theme="tr7" onclick="applyTheme('tr7')">
+                      <div class="theme-card-preview">
+                        <div class="theme-preview-top" style="background:linear-gradient(90deg,#00f0ff,#b44aff);height:10px"></div>
+                        <div class="theme-preview-body" style="background:#0a0a1a">
+                          <div class="theme-preview-sidebar" style="background:#111128;border:1px solid rgba(0,240,255,.3)"></div>
+                          <div class="theme-preview-main" style="background:#111128;border:1px solid rgba(180,74,255,.3)"></div>
+                        </div>
+                      </div>
+                      <div class="theme-card-label">⚡ TR7 Digital</div>
+                      <div class="theme-card-sub">Néon futuriste</div>
+                    </div>
+                  </div>
+                </div>
                 <div class="settings-row">
                   <div class="settings-row-info">
                     <div class="settings-row-label">Couleur accent</div>
@@ -2323,6 +2701,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadSettings();
   renderPreviewPage('home');
   checkSysInfo();
+  loadSavedStores();
 });
 
 // ══════════════════════════════════════════
@@ -2379,7 +2758,8 @@ const DEFAULT_SETTINGS = {
   storeName: 'Succespro 2.0', storeUrl: '', storeNiche: '', currency: 'EUR', cvrTarget: '3',
   defaultModel: 'claude-sonnet-4-6', defaultAgent: 'NOE',
   language: 'fr', streaming: true, maxTokens: 4096,
-  accentColor: '#6366f1', density: 'normal', animations: true, saveHistory: true
+  accentColor: '#6366f1', density: 'normal', animations: true, saveHistory: true,
+  theme: 'dark'
 };
 
 let appSettings = { ...DEFAULT_SETTINGS };
@@ -2494,24 +2874,62 @@ function updateAllKeyStatuses() {
 
 function applyAppearance() {
   const color = appSettings.accentColor || '#6366f1';
-  document.documentElement.style.setProperty('--p1', color);
+  const theme = appSettings.theme || 'dark';
+  // Apply theme class
+  applyTheme(theme, true);
+  // Apply accent only for non-TR7 themes (TR7 has fixed accent)
+  if (theme !== 'tr7') {
+    document.documentElement.style.setProperty('--p1', color);
+  }
   // Sync accent swatches
   document.querySelectorAll('.accent-sw').forEach(sw => {
     sw.classList.toggle('selected', sw.dataset.color === color);
   });
+  // Apply density
+  applyDensity(appSettings.density || 'normal', true);
+}
+
+function applyTheme(theme, skipSave) {
+  const body = document.body;
+  body.classList.remove('theme-dark', 'theme-light', 'theme-tr7');
+  body.classList.add(`theme-${theme}`);
+  appSettings.theme = theme;
+  // Sync theme cards
+  document.querySelectorAll('.theme-card').forEach(c => {
+    c.classList.toggle('active', c.dataset.theme === theme);
+  });
+  // TR7 theme overrides accent color
+  if (theme === 'tr7') {
+    document.documentElement.style.removeProperty('--p1');
+  } else {
+    document.documentElement.style.setProperty('--p1', appSettings.accentColor || '#6366f1');
+  }
+  if (!skipSave) {
+    localStorage.setItem('tr7_theme', theme);
+    localStorage.setItem('tr7_settings_v2', JSON.stringify(appSettings));
+  }
 }
 
 function applyAccent(color, el) {
   appSettings.accentColor = color;
-  document.documentElement.style.setProperty('--p1', color);
+  if (appSettings.theme !== 'tr7') {
+    document.documentElement.style.setProperty('--p1', color);
+  }
   document.querySelectorAll('.accent-sw').forEach(s => s.classList.remove('selected'));
   el.classList.add('selected');
 }
 
-function applyDensity(val) {
+function applyDensity(val, skipSave) {
   appSettings.density = val;
-  const factor = val === 'compact' ? '10px' : val === 'comfortable' ? '18px' : '14px';
-  document.documentElement.style.setProperty('font-size', factor);
+  const body = document.body;
+  body.classList.remove('density-comfortable', 'density-normal', 'density-compact');
+  body.classList.add(`density-${val}`);
+  // Sync select
+  const sel = document.getElementById('s-density');
+  if (sel) sel.value = val;
+  if (!skipSave) {
+    localStorage.setItem('tr7_settings_v2', JSON.stringify(appSettings));
+  }
 }
 
 function toggleAnimations(on) {
@@ -3218,6 +3636,460 @@ function deployAllApproved() {
       allApproved.map(s => `// ${s.name}: ${JSON.stringify(s.fields)}`).join('\n');
     box.parentElement.style.display = 'block';
   }
+}
+</script>
+
+<!-- ══════════ MODAL: NOUVELLE BOUTIQUE ══════════ -->
+<div class="modal-overlay" id="new-store-overlay" onclick="if(event.target===this)closeNewStoreModal()">
+  <div class="new-store-modal">
+    <div class="modal-hd">
+      <div class="modal-title">🏪 Nouvelle Boutique</div>
+      <button class="modal-close-btn" onclick="closeNewStoreModal()">✕</button>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Nom de la boutique <span>*</span></label>
+      <input class="form-input" id="ns-name" type="text" placeholder="Ex: Ma Boutique Fitness" autocomplete="off">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Niche / Objet</label>
+      <input class="form-input" id="ns-niche" type="text" placeholder="Ex: fitness, beauté, tech, gaming…">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Lien produit (AliExpress, Temu…)</label>
+      <input class="form-input" id="ns-link" type="url" placeholder="https://…" oninput="detectProduct(this.value)">
+      <div class="product-preview" id="ns-link-preview">🛍️ <strong>Produit détecté</strong> — <span id="ns-link-domain"></span></div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Template de boutique</label>
+      <select class="form-select" id="ns-template">
+        <option value="">Aucun (créer from scratch)</option>
+        <option value="succespro">SuccesPro 2.0 — E-commerce générique</option>
+        <option value="fitness">Boutique Fitness — Sport &amp; Wellness</option>
+        <option value="beauty">Beauty Store — Cosmétiques &amp; Soins</option>
+        <option value="tech">Tech Shop — Gadgets &amp; Électronique</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Upload thème ZIP (optionnel)</label>
+      <div class="drop-zone" id="ns-dropzone"
+        ondragover="event.preventDefault();this.classList.add('dragover')"
+        ondragleave="this.classList.remove('dragover')"
+        ondrop="handleZipDrop(event)">
+        <div>📦 Glissez votre thème .zip ici ou <strong style="color:var(--p1);cursor:pointer" onclick="document.getElementById('ns-zip-input').click()">parcourir</strong></div>
+        <div class="drop-zone-name" id="ns-zip-name"></div>
+        <input type="file" id="ns-zip-input" accept=".zip" onchange="handleZipSelect(this)">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Prompt personnalisé</label>
+      <textarea class="form-textarea" id="ns-prompt" placeholder="Instructions spécifiques pour la boutique… (objectifs, audience cible, ton de communication, etc.)"></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-sm btn-ghost" onclick="closeNewStoreModal()">Annuler</button>
+      <button class="btn-sm btn-primary" onclick="createNewStore()">🚀 Créer la boutique</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ MODAL: AGENT CHAT ══════════ -->
+<div class="modal-overlay" id="agent-chat-overlay" onclick="if(event.target===this)closeAgentChat()">
+  <div class="agent-chat-modal" id="agent-chat-modal">
+    <div class="agent-chat-hd" id="agent-chat-hd">
+      <div class="agent-chat-icon" id="agent-chat-icon"></div>
+      <div>
+        <div class="agent-chat-name" id="agent-chat-name-el"></div>
+        <div style="font-size:10px;color:var(--muted)">Agent spécialisé TR7</div>
+      </div>
+      <button class="modal-close-btn" onclick="closeAgentChat()" style="margin-left:auto">✕</button>
+    </div>
+    <div class="agent-chat-msgs" id="agent-chat-msgs"></div>
+    <div class="agent-chat-input-row">
+      <textarea class="agent-chat-input" id="agent-chat-input" placeholder="Posez votre question…" rows="1"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAgentChat()}"
+        oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px'"></textarea>
+      <button class="agent-chat-send" id="agent-chat-send-btn" onclick="sendAgentChat()">Envoyer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ TOAST CONTAINER ══════════ -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+// ══════════════════════════════════════════
+// ─── NOUVELLE BOUTIQUE ─────────────────────
+// ══════════════════════════════════════════
+
+function openNewStoreModal() {
+  document.getElementById('new-store-overlay').classList.add('active');
+  setTimeout(() => document.getElementById('ns-name').focus(), 100);
+}
+
+function closeNewStoreModal() {
+  document.getElementById('new-store-overlay').classList.remove('active');
+  // Reset form
+  ['ns-name','ns-niche','ns-link','ns-prompt'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  const tmpl = document.getElementById('ns-template');
+  if (tmpl) tmpl.value = '';
+  document.getElementById('ns-link-preview').style.display = 'none';
+  document.getElementById('ns-zip-name').textContent = '';
+  document.getElementById('ns-dropzone').classList.remove('dragover');
+}
+
+function detectProduct(url) {
+  const preview = document.getElementById('ns-link-preview');
+  const domainEl = document.getElementById('ns-link-domain');
+  if (!url || url.length < 8) { preview.style.display = 'none'; return; }
+  try {
+    const domain = new URL(url).hostname.replace('www.','');
+    domainEl.textContent = domain;
+    preview.style.display = 'block';
+  } catch { preview.style.display = 'none'; }
+}
+
+function handleZipDrop(e) {
+  e.preventDefault();
+  document.getElementById('ns-dropzone').classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file && file.name.endsWith('.zip')) {
+    document.getElementById('ns-zip-name').textContent = '✅ ' + file.name;
+  }
+}
+function handleZipSelect(input) {
+  const file = input.files[0];
+  if (file) document.getElementById('ns-zip-name').textContent = '✅ ' + file.name;
+}
+
+const NICHE_EMOJI = {
+  fitness: '💪', sport: '💪', gym: '💪',
+  beaute: '💄', beauty: '💄', cosmetique: '💄', soin: '💄',
+  tech: '💻', gadget: '💻', electronique: '💻',
+  gaming: '🎮', jeu: '🎮',
+  mode: '👗', fashion: '👗', vetement: '👗',
+  food: '🍕', cuisine: '🍕', restaurant: '🍕',
+  bebe: '👶', enfant: '👶',
+  animal: '🐾', pet: '🐾',
+  voyage: '✈️', travel: '✈️',
+  maison: '🏠', deco: '🏠',
+  default: '🛍️'
+};
+
+function getNicheEmoji(niche) {
+  if (!niche) return '🛍️';
+  const n = niche.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  for (const [key, emoji] of Object.entries(NICHE_EMOJI)) {
+    if (n.includes(key)) return emoji;
+  }
+  return '🛍️';
+}
+
+function createNewStore() {
+  const name = document.getElementById('ns-name').value.trim();
+  if (!name) {
+    document.getElementById('ns-name').focus();
+    document.getElementById('ns-name').style.borderColor = 'var(--red)';
+    setTimeout(() => document.getElementById('ns-name').style.borderColor = '', 1500);
+    return;
+  }
+  const niche = document.getElementById('ns-niche').value.trim();
+  const link = document.getElementById('ns-link').value.trim();
+  const template = document.getElementById('ns-template').value;
+  const prompt = document.getElementById('ns-prompt').value.trim();
+  const emoji = getNicheEmoji(niche);
+
+  const store = {
+    id: 'store-' + Date.now(),
+    name, niche, link, template, prompt, emoji,
+    createdAt: new Date().toISOString(),
+    score: null
+  };
+
+  // Save to localStorage
+  const stores = getSavedStores();
+  stores.push(store);
+  localStorage.setItem('tr7_stores', JSON.stringify(stores));
+
+  // Add to sidebar
+  addStoreToSidebar(store);
+
+  closeNewStoreModal();
+  showToast('✅ Boutique "' + name + '" créée !');
+}
+
+function getSavedStores() {
+  try { return JSON.parse(localStorage.getItem('tr7_stores') || '[]'); } catch { return []; }
+}
+
+function addStoreToSidebar(store) {
+  const list = document.getElementById('saved-stores-list');
+  if (!list) return;
+  const div = document.createElement('div');
+  div.className = 'store-card';
+  div.dataset.storeId = store.id;
+  div.onclick = () => selectSavedStore(store.id);
+  div.innerHTML = `
+    <div class="store-icon" style="background:linear-gradient(135deg,var(--p1),var(--p2))">${store.emoji}</div>
+    <div class="store-info">
+      <div class="store-name">${store.name}</div>
+      <div class="store-sub">${store.niche || 'Boutique personnalisée'}</div>
+    </div>`;
+  list.appendChild(div);
+}
+
+function selectSavedStore(id) {
+  document.querySelectorAll('.store-card').forEach(c => c.classList.remove('active'));
+  const card = document.querySelector(`.store-card[data-store-id="${id}"]`);
+  if (card) card.classList.add('active');
+  const stores = getSavedStores();
+  const store = stores.find(s => s.id === id);
+  if (store) showToast('🏪 ' + store.name + ' sélectionnée');
+}
+
+function loadSavedStores() {
+  const stores = getSavedStores();
+  const list = document.getElementById('saved-stores-list');
+  if (!list) return;
+  list.innerHTML = '';
+  stores.forEach(store => addStoreToSidebar(store));
+}
+
+// ══════════════════════════════════════════
+// ─── AGENT CHAT INDIVIDUEL ─────────────────
+// ══════════════════════════════════════════
+
+const agentChatState = {
+  agent: null,
+  color: '#6366f1',
+  histories: {},
+  streaming: false
+};
+
+function openAgentChat(agentId, color, icon, name) {
+  agentChatState.agent = agentId;
+  agentChatState.color = color;
+
+  // Setup UI
+  const hd = document.getElementById('agent-chat-hd');
+  hd.style.borderBottom = `1px solid ${color}33`;
+  const iconEl = document.getElementById('agent-chat-icon');
+  iconEl.textContent = icon;
+  iconEl.style.background = color + '22';
+  iconEl.style.border = '1px solid ' + color + '55';
+  const nameEl = document.getElementById('agent-chat-name-el');
+  nameEl.textContent = name;
+  nameEl.style.color = color;
+  const sendBtn = document.getElementById('agent-chat-send-btn');
+  sendBtn.style.background = `linear-gradient(135deg, ${color}, ${color}cc)`;
+
+  // Render history
+  const msgs = document.getElementById('agent-chat-msgs');
+  msgs.innerHTML = '';
+  if (!agentChatState.histories[agentId]) {
+    agentChatState.histories[agentId] = [];
+    // Welcome message
+    const agentInfo = AGENT_PROMPTS[agentId];
+    const welcome = agentInfo ? `Salut ! Je suis ${name}. Qu'est-ce que je peux faire pour toi ?` : 'Bonjour ! Comment puis-je t\'aider ?';
+    appendAgentMsg('assistant', welcome, color);
+  } else {
+    agentChatState.histories[agentId].forEach(m => appendAgentMsg(m.role, m.content, color, false));
+  }
+
+  document.getElementById('agent-chat-overlay').classList.add('active');
+  setTimeout(() => document.getElementById('agent-chat-input').focus(), 100);
+}
+
+function closeAgentChat() {
+  document.getElementById('agent-chat-overlay').classList.remove('active');
+}
+
+function appendAgentMsg(role, text, color, save = true) {
+  const msgs = document.getElementById('agent-chat-msgs');
+  const isUser = role === 'user';
+  const time = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'});
+  const formatted = text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/`(.*?)`/g, `<code style="font-family:var(--mono);font-size:11px;background:rgba(255,255,255,.07);padding:1px 5px;border-radius:4px">$1</code>`)
+    .replace(/\n/g, '<br>');
+
+  const id = 'acm-' + Date.now() + Math.random();
+  msgs.insertAdjacentHTML('beforeend', `
+    <div class="${isUser ? 'acm-user-wrap' : 'acm-assistant-wrap'}">
+      <div class="acm-bubble ${isUser ? 'acm-user' : 'acm-assistant'}" id="${id}"
+        ${!isUser ? `style="border-color:${color}33"` : ''}>${formatted}</div>
+      <div class="acm-meta">${isUser ? 'Vous' : agentChatState.agent} · ${time}</div>
+    </div>`);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  if (save && agentChatState.agent) {
+    if (!agentChatState.histories[agentChatState.agent]) agentChatState.histories[agentChatState.agent] = [];
+    agentChatState.histories[agentChatState.agent].push({ role, content: text });
+  }
+  return id;
+}
+
+function updateAgentStreamBubble(wrapId, text) {
+  const el = document.getElementById(wrapId);
+  if (!el) return;
+  const formatted = text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/`(.*?)`/g, `<code style="font-family:var(--mono);font-size:11px;background:rgba(255,255,255,.07);padding:1px 5px;border-radius:4px">$1</code>`)
+    .replace(/\n/g, '<br>');
+  el.innerHTML = formatted + '<span class="cursor-blink"></span>';
+  const msgs = document.getElementById('agent-chat-msgs');
+  if (msgs) msgs.scrollTop = msgs.scrollHeight;
+}
+
+async function sendAgentChat() {
+  if (agentChatState.streaming) return;
+  const input = document.getElementById('agent-chat-input');
+  const text = input.value.trim();
+  if (!text || !agentChatState.agent) return;
+
+  input.value = '';
+  input.style.height = '38px';
+
+  const agentId = agentChatState.agent;
+  const color = agentChatState.color;
+  const systemPrompt = AGENT_PROMPTS[agentId]?.prompt || AGENT_PROMPTS.NOE.prompt;
+
+  appendAgentMsg('user', text, color, true);
+
+  const history = (agentChatState.histories[agentId] || []).slice(-20);
+  // Remove the last user msg from history (we added it, don't duplicate)
+  const messages = history.slice(0, -1).map(m => ({ role: m.role, content: m.content }));
+
+  const model = (typeof aiState !== 'undefined' ? aiState.model : null) || 'claude-sonnet-4-6';
+  const isAnthropic = model.startsWith('claude');
+  const apiKey = isAnthropic
+    ? (typeof aiState !== 'undefined' ? aiState.anthropicKey : '') || (typeof appSettings !== 'undefined' ? appSettings.anthropicKey : '')
+    : (typeof aiState !== 'undefined' ? aiState.openaiKey : '') || (typeof appSettings !== 'undefined' ? appSettings.openaiKey : '');
+
+  if (!apiKey) {
+    appendAgentMsg('assistant', '⚠️ **Clé API manquante.** Configure ta clé dans les Paramètres pour utiliser les agents.', color, true);
+    return;
+  }
+
+  agentChatState.streaming = true;
+  const sendBtn = document.getElementById('agent-chat-send-btn');
+  if (sendBtn) { sendBtn.disabled = true; sendBtn.textContent = '…'; }
+
+  // Create streaming bubble
+  const msgs = document.getElementById('agent-chat-msgs');
+  const streamId = 'acm-stream-' + Date.now();
+  msgs.insertAdjacentHTML('beforeend', `
+    <div class="acm-assistant-wrap">
+      <div class="acm-bubble acm-assistant" id="${streamId}" style="border-color:${color}33"><span class="cursor-blink"></span></div>
+      <div class="acm-meta">${agentId} · …</div>
+    </div>`);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  let fullText = '';
+  try {
+    const backendOk = await (async () => {
+      try {
+        const r = await fetch(`${(typeof appSettings !== 'undefined' ? appSettings.backendUrl : 'http://72.62.28.182:3700')}/api/health`, { signal: AbortSignal.timeout(1500) });
+        return r.ok;
+      } catch { return false; }
+    })();
+
+    const backendUrl = (typeof appSettings !== 'undefined' ? appSettings.backendUrl : 'http://72.62.28.182:3700');
+
+    if (backendOk) {
+      const resp = await fetch(`${backendUrl}/api/chat`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: [...messages, { role: 'user', content: text }], model, systemPrompt, apiKey })
+      });
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const lines = decoder.decode(value).split('\n');
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          const raw = line.slice(6).trim();
+          if (raw === '[DONE]') break;
+          try { const evt = JSON.parse(raw); if (evt.text) { fullText += evt.text; updateAgentStreamBubble(streamId, fullText); } } catch {}
+        }
+      }
+    } else if (isAnthropic) {
+      const resp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-allow-browser': 'true' },
+        body: JSON.stringify({ model, max_tokens: 2048, stream: true, system: systemPrompt, messages: [...messages, { role: 'user', content: text }] })
+      });
+      const reader = resp.body.getReader(); const decoder = new TextDecoder(); let buf = '';
+      while (true) {
+        const { done, value } = await reader.read(); if (done) break;
+        buf += decoder.decode(value);
+        const lines = buf.split('\n'); buf = lines.pop();
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          try { const evt = JSON.parse(line.slice(6)); if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') { fullText += evt.delta.text; updateAgentStreamBubble(streamId, fullText); } } catch {}
+        }
+      }
+    } else {
+      const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+        body: JSON.stringify({ model, stream: true, max_tokens: 2048, messages: [{ role: 'system', content: systemPrompt }, ...messages, { role: 'user', content: text }] })
+      });
+      const reader = resp.body.getReader(); const decoder = new TextDecoder(); let buf = '';
+      while (true) {
+        const { done, value } = await reader.read(); if (done) break;
+        buf += decoder.decode(value);
+        const lines = buf.split('\n'); buf = lines.pop();
+        for (const line of lines) {
+          if (!line.startsWith('data: ') || line.includes('[DONE]')) continue;
+          try { const evt = JSON.parse(line.slice(6)); const chunk = evt.choices?.[0]?.delta?.content; if (chunk) { fullText += chunk; updateAgentStreamBubble(streamId, fullText); } } catch {}
+        }
+      }
+    }
+
+    // Finalize
+    const el = document.getElementById(streamId);
+    if (el && fullText) {
+      el.innerHTML = fullText.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/`(.*?)`/g,`<code style="font-family:var(--mono);font-size:11px;background:rgba(255,255,255,.07);padding:1px 5px;border-radius:4px">$1</code>`).replace(/\n/g,'<br>');
+    }
+    if (fullText && agentChatState.histories[agentId]) {
+      agentChatState.histories[agentId].push({ role: 'assistant', content: fullText });
+    }
+  } catch (err) {
+    const el = document.getElementById(streamId);
+    if (el) el.innerHTML = `⚠️ Erreur : ${err.message}`;
+  } finally {
+    agentChatState.streaming = false;
+    if (sendBtn) { sendBtn.disabled = false; sendBtn.textContent = 'Envoyer'; }
+    const inp = document.getElementById('agent-chat-input');
+    if (inp) inp.focus();
+  }
+}
+
+// ══════════════════════════════════════════
+// ─── TOAST ─────────────────────────────────
+// ══════════════════════════════════════════
+
+function showToast(msg, duration = 3000) {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = msg;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.classList.add('toast-out');
+    setTimeout(() => toast.remove(), 350);
+  }, duration);
 }
 </script>
 </body>

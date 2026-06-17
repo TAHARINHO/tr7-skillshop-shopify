@@ -1,0 +1,8 @@
+# Fichiers thème bruts (géré séparément via Shopify MCP)
+assets/
+config/
+layout/
+locales/
+sections/
+snippets/
+templates/

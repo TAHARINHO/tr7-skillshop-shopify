@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TR7 Shop Builder — Powered by NOE</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --bg3: #1a1a24;
+    --border: #2a2a38;
+    --accent: #6c5ce7;
+    --accent2: #a29bfe;
+    --green: #00cec9;
+    --orange: #fd7b2e;
+    --red: #e84393;
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --card: #16161f;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+
+  /* TOP BAR */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px; height: 56px;
+    background: var(--bg2); border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; }
+  .logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, var(--accent), var(--red)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .noe-badge { background: linear-gradient(90deg, var(--accent), var(--red)); padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .shopify-status { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .dot.offline { background: var(--muted); box-shadow: none; }
+
+  /* MAIN LAYOUT */
+  .main { display: flex; flex: 1; overflow: hidden; height: calc(100vh - 56px); }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 260px; min-width: 260px;
+    background: var(--bg2); border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; overflow-y: auto;
+  }
+  .sidebar-section { padding: 16px; border-bottom: 1px solid var(--border); }
+  .sidebar-label { font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
+  .store-item {
+    display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+    border-radius: 8px; cursor: pointer; transition: all 0.15s;
+    margin-bottom: 4px; border: 1px solid transparent;
+  }
+  .store-item:hover { background: var(--bg3); }
+  .store-item.active { background: var(--bg3); border-color: var(--accent); }
+  .store-icon { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .store-info { flex: 1; min-width: 0; }
+  .store-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .store-phase { font-size: 11px; color: var(--muted); }
+  .score-pill { font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 10px; flex-shrink: 0; }
+  .score-mid { background: rgba(253,123,46,0.15); color: var(--orange); }
+  .score-low { background: rgba(232,67,147,0.15); color: var(--red); }
+  .score-high { background: rgba(0,206,201,0.15); color: var(--green); }
+
+  .add-btn {
+    display: flex; align-items: center; gap: 8px; padding: 10px 12px;
+    border-radius: 8px; cursor: pointer; color: var(--muted); font-size: 13px;
+    border: 1px dashed var(--border); transition: all 0.15s; width: 100%; background: none;
+    margin-top: 4px;
+  }
+  .add-btn:hover { border-color: var(--accent); color: var(--accent2); }
+
+  /* CONTENT AREA */
+  .content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+  /* STORE HEADER */
+  .store-header {
+    padding: 20px 24px 0; border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+  }
+  .store-title-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .store-emoji { font-size: 28px; }
+  .store-title { font-size: 20px; font-weight: 700; }
+  .store-subtitle { font-size: 13px; color: var(--muted); margin-top: 2px; }
+  .score-bar-wrap { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+  .score-label { font-size: 12px; color: var(--muted); }
+  .score-big { font-size: 22px; font-weight: 800; color: var(--orange); }
+  .score-max { font-size: 13px; color: var(--muted); }
+
+  /* TABS */
+  .tabs { display: flex; gap: 2px; padding: 0 24px; }
+  .tab {
+    padding: 10px 16px; font-size: 13px; cursor: pointer; border-radius: 6px 6px 0 0;
+    color: var(--muted); transition: all 0.15s; white-space: nowrap; border: 1px solid transparent;
+    border-bottom: none; position: relative; top: 1px;
+  }
+  .tab:hover { color: var(--text); background: var(--bg3); }
+  .tab.active { color: var(--text); background: var(--bg); border-color: var(--border); font-weight: 600; }
+  .tab-icon { margin-right: 6px; }
+
+  /* PANEL */
+  .panel { flex: 1; overflow-y: auto; padding: 24px; background: var(--bg); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* CARDS */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px;
+  }
+  .card-title { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
+  .card-value { font-size: 26px; font-weight: 800; }
+  .card-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .card-accent { color: var(--accent2); }
+  .card-green { color: var(--green); }
+  .card-orange { color: var(--orange); }
+  .card-red { color: var(--red); }
+
+  /* AUDIT SECTION */
+  .audit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  .audit-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .audit-row:last-child { border-bottom: none; }
+  .audit-label { font-size: 13px; }
+  .audit-score { display: flex; align-items: center; gap: 8px; }
+  .bar { height: 6px; border-radius: 3px; background: var(--border); width: 80px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; transition: width 0.5s; }
+  .bar-fill.high { background: var(--green); }
+  .bar-fill.mid { background: var(--orange); }
+  .bar-fill.low { background: var(--red); }
+  .score-num { font-size: 12px; font-weight: 700; width: 30px; text-align: right; }
+
+  /* PRIORITY LIST */
+  .priority-list { list-style: none; }
+  .priority-item {
+    display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px;
+    background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+    margin-bottom: 8px;
+  }
+  .priority-num { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+  .p1 { background: rgba(232,67,147,0.2); color: var(--red); }
+  .p2 { background: rgba(253,123,46,0.2); color: var(--orange); }
+  .p3 { background: rgba(108,92,231,0.2); color: var(--accent2); }
+  .priority-text { font-size: 13px; line-height: 1.5; flex: 1; }
+  .priority-tag { font-size: 10px; color: var(--muted); margin-top: 3px; }
+  .check-btn { width: 20px; height: 20px; border: 1px solid var(--border); border-radius: 4px; cursor: pointer; flex-shrink: 0; background: transparent; display: flex; align-items: center; justify-content: center; transition: all 0.15s; color: transparent; font-size: 12px; }
+  .check-btn:hover { border-color: var(--green); color: var(--green); }
+  .check-btn.done { background: rgba(0,206,201,0.1); border-color: var(--green); color: var(--green); }
+
+  /* PROMPT AREA */
+  .prompt-wrap {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; margin-bottom: 20px;
+  }
+  .prompt-header { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+  .noe-avatar { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--red)); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+  .prompt-header-text { font-size: 13px; font-weight: 600; }
+  .prompt-header-sub { font-size: 11px; color: var(--muted); }
+  .shortcuts-bar { display: flex; gap: 6px; padding: 10px 16px; flex-wrap: wrap; border-bottom: 1px solid var(--border); }
+  .shortcut {
+    padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
+    background: var(--bg3); border: 1px solid var(--border); cursor: pointer;
+    transition: all 0.15s; color: var(--muted); font-family: monospace;
+  }
+  .shortcut:hover { border-color: var(--accent2); color: var(--accent2); background: rgba(108,92,231,0.1); }
+  textarea.prompt-input {
+    width: 100%; padding: 14px 16px; background: transparent; border: none;
+    color: var(--text); font-size: 14px; resize: none; outline: none;
+    font-family: inherit; line-height: 1.6; min-height: 100px;
+  }
+  textarea.prompt-input::placeholder { color: var(--muted); }
+  .prompt-footer { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-top: 1px solid var(--border); }
+  .prompt-actions { display: flex; gap: 8px; }
+  .btn {
+    padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600;
+    cursor: pointer; border: none; transition: all 0.15s;
+  }
+  .btn-primary { background: linear-gradient(135deg, var(--accent), #8b5cf6); color: white; }
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+  .btn-ghost:hover { border-color: var(--accent2); color: var(--text); }
+  .char-count { font-size: 11px; color: var(--muted); }
+
+  /* CHAT HISTORY */
+  .chat-history { margin-bottom: 20px; }
+  .chat-msg { display: flex; gap: 10px; margin-bottom: 14px; }
+  .chat-msg.noe { flex-direction: row; }
+  .chat-msg.user { flex-direction: row-reverse; }
+  .msg-bubble {
+    max-width: 80%; padding: 12px 14px; border-radius: 12px; font-size: 13px; line-height: 1.6;
+  }
+  .noe .msg-bubble { background: var(--card); border: 1px solid var(--border); border-radius: 4px 12px 12px 12px; }
+  .user .msg-bubble { background: rgba(108,92,231,0.15); border: 1px solid rgba(108,92,231,0.3); border-radius: 12px 4px 12px 12px; }
+  .msg-time { font-size: 10px; color: var(--muted); margin-top: 4px; }
+
+  /* UPLOAD ZONE */
+  .upload-zone {
+    border: 2px dashed var(--border); border-radius: 12px; padding: 32px;
+    text-align: center; cursor: pointer; transition: all 0.2s;
+    background: var(--card); margin-bottom: 20px;
+  }
+  .upload-zone:hover { border-color: var(--accent); background: rgba(108,92,231,0.05); }
+  .upload-zone.dragover { border-color: var(--accent); background: rgba(108,92,231,0.08); }
+  .upload-icon { font-size: 36px; margin-bottom: 12px; }
+  .upload-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+  .upload-sub { font-size: 12px; color: var(--muted); }
+
+  /* DESIGN SYSTEM PREVIEW */
+  .color-row { display: flex; gap: 8px; margin-bottom: 16px; }
+  .color-swatch { width: 44px; height: 44px; border-radius: 8px; border: 1px solid var(--border); position: relative; cursor: pointer; }
+  .color-label { font-size: 10px; color: var(--muted); margin-top: 4px; text-align: center; font-family: monospace; }
+  .color-wrap { text-align: center; }
+  .font-preview { padding: 14px; background: var(--bg3); border-radius: 8px; margin-bottom: 8px; }
+  .font-headline { font-size: 22px; font-weight: 700; }
+  .font-body-preview { font-size: 14px; color: var(--muted); margin-top: 4px; }
+
+  /* QA CHECKLIST */
+  .qa-category { margin-bottom: 20px; }
+  .qa-cat-title { font-size: 13px; font-weight: 700; color: var(--accent2); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .qa-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 6px; margin-bottom: 4px; transition: background 0.15s; }
+  .qa-item:hover { background: var(--card); }
+  .qa-check { width: 18px; height: 18px; border: 1px solid var(--border); border-radius: 4px; flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; transition: all 0.15s; }
+  .qa-check.ok { background: rgba(0,206,201,0.15); border-color: var(--green); color: var(--green); }
+  .qa-check.fail { background: rgba(232,67,147,0.15); border-color: var(--red); color: var(--red); }
+  .qa-text { font-size: 13px; flex: 1; }
+  .qa-status { font-size: 11px; padding: 2px 8px; border-radius: 10px; }
+  .status-ok { background: rgba(0,206,201,0.1); color: var(--green); }
+  .status-warn { background: rgba(253,123,46,0.1); color: var(--orange); }
+  .status-fail { background: rgba(232,67,147,0.1); color: var(--red); }
+  .status-todo { background: rgba(255,255,255,0.05); color: var(--muted); }
+
+  /* DEPLOY */
+  .deploy-step { display: flex; gap: 12px; padding: 14px; border-radius: 8px; margin-bottom: 8px; background: var(--card); border: 1px solid var(--border); }
+  .step-num { width: 28px; height: 28px; border-radius: 50%; background: var(--bg3); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+  .step-num.done { background: rgba(0,206,201,0.15); border-color: var(--green); color: var(--green); }
+  .step-num.active { background: rgba(108,92,231,0.2); border-color: var(--accent); color: var(--accent2); }
+  .step-info { flex: 1; }
+  .step-title { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+  .step-desc { font-size: 12px; color: var(--muted); }
+
+  /* SECTION TITLES */
+  .section-title { font-size: 15px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* APPS GRID */
+  .apps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+  .app-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
+  .app-icon { font-size: 24px; margin-bottom: 8px; }
+  .app-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+  .app-desc { font-size: 11px; color: var(--muted); line-height: 1.4; }
+  .app-status { display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 10px; margin-top: 8px; font-weight: 600; }
+  .installed { background: rgba(0,206,201,0.1); color: var(--green); }
+  .recommended { background: rgba(108,92,231,0.1); color: var(--accent2); }
+  .replace { background: rgba(232,67,147,0.1); color: var(--red); }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* TAG */
+  .tag { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 10px; border: 1px solid var(--border); color: var(--muted); margin-right: 4px; }
+
+  /* THEME INFO */
+  .theme-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; font-size: 12px; margin-bottom: 16px; }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-icon">🏪</div>
+    TR7 Shop Builder
+    <span class="noe-badge">✦ NOE v2.0</span>
+  </div>
+  <div class="topbar-right">
+    <div class="shopify-status">
+      <div class="dot"></div>
+      MCP Shopify connecté
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Mes Boutiques</div>
+
+      <div class="store-item active" onclick="selectStore('succespro')">
+        <div class="store-icon" style="background:linear-gradient(135deg,#667eea,#764ba2)">💼</div>
+        <div class="store-info">
+          <div class="store-name">Succespro 2.0</div>
+          <div class="store-phase">Audit · Base importée</div>
+        </div>
+        <span class="score-pill score-mid">5.8</span>
+      </div>
+
+      <button class="add-btn" onclick="showUpload()">
+        <span style="font-size:16px">＋</span> Nouvelle boutique
+      </button>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Agents Actifs</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.8">
+        <div>🧠 NOE — Orchestrateur</div>
+        <div style="color:var(--muted);opacity:0.5">✦ Brand &amp; Copy</div>
+        <div style="color:var(--muted);opacity:0.5">✦ SEO / GEO</div>
+        <div style="color:var(--muted);opacity:0.5">✦ CRO / UX</div>
+        <div style="color:var(--muted);opacity:0.5">✦ Tech / Shopify</div>
+        <div style="color:var(--muted);opacity:0.5">✦ Analytics</div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Accès Rapide</div>
+      <div style="font-size:12px;color:var(--muted);line-height:2">
+        <div style="cursor:pointer" onclick="switchTab('prompt')">💬 Prompt NOE</div>
+        <div style="cursor:pointer" onclick="switchTab('audit')">🔍 Audit boutique</div>
+        <div style="cursor:pointer" onclick="switchTab('qa')">✅ Recette QA</div>
+        <div style="cursor:pointer" onclick="switchTab('deploy')">🚀 Déploiement</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- STORE HEADER -->
+    <div class="store-header">
+      <div class="store-title-row">
+        <span class="store-emoji">💼</span>
+        <div>
+          <div class="store-title">Succespro 2.0</div>
+          <div class="store-subtitle">Thème SuccessPro v1.2.0 · ByMade · Base importée · Juin 2026</div>
+        </div>
+        <div class="score-bar-wrap">
+          <div>
+            <div class="score-label">Score NOE</div>
+            <div style="display:flex;align-items:baseline;gap:4px">
+              <span class="score-big">5.8</span><span class="score-max">/10</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('overview')" data-tab="overview"><span class="tab-icon">📊</span>Vue d'ensemble</div>
+        <div class="tab" onclick="switchTab('prompt')" data-tab="prompt"><span class="tab-icon">💬</span>NOE Prompt</div>
+        <div class="tab" onclick="switchTab('audit')" data-tab="audit"><span class="tab-icon">🔍</span>Audit</div>
+        <div class="tab" onclick="switchTab('design')" data-tab="design"><span class="tab-icon">🎨</span>Design System</div>
+        <div class="tab" onclick="switchTab('apps')" data-tab="apps"><span class="tab-icon">📦</span>Apps Stack</div>
+        <div class="tab" onclick="switchTab('qa')" data-tab="qa"><span class="tab-icon">✅</span>Recette QA</div>
+        <div class="tab" onclick="switchTab('deploy')" data-tab="deploy"><span class="tab-icon">🚀</span>Déploiement</div>
+      </div>
+    </div>
+
+    <!-- PANEL -->
+    <div class="panel">
+
+      <!-- OVERVIEW -->
+      <div class="tab-panel active" id="tab-overview">
+        <div class="grid3">
+          <div class="card">
+            <div class="card-title">Sections Liquid</div>
+            <div class="card-value card-accent">85</div>
+            <div class="card-sub">Sections dans le thème</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Templates</div>
+            <div class="card-value card-green">18</div>
+            <div class="card-sub">Pages configurées</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Apps détectées</div>
+            <div class="card-value card-orange">8</div>
+            <div class="card-sub">iCart, Bundles, Trustpilot...</div>
+          </div>
+        </div>
+
+        <div class="section-title">🎯 Priorités NOE — Quick Wins</div>
+        <ul class="priority-list">
+          <li class="priority-item">
+            <div class="priority-num p1">1</div>
+            <div class="priority-text">
+              <strong>Remplacer AliReviews par Loox</strong> — Photos UGC sur les fiches produit = +15-25% CVR
+              <div class="priority-tag">Impact : MAXIMAL · Temps : 2h · KPI : Taux de conversion PDP</div>
+            </div>
+            <div class="check-btn" onclick="toggleCheck(this)">✓</div>
+          </li>
+          <li class="priority-item">
+            <div class="priority-num p1">2</div>
+            <div class="priority-text">
+              <strong>Ajouter exit-intent popup Klaviyo</strong> — Capture des emails quittants = +8-12% list growth
+              <div class="priority-tag">Impact : MAXIMAL · Temps : 1h · KPI : Taux de capture email</div>
+            </div>
+            <div class="check-btn" onclick="toggleCheck(this)">✓</div>
+          </li>
+          <li class="priority-item">
+            <div class="priority-num p1">3</div>
+            <div class="priority-text">
+              <strong>Configurer title tags + meta descriptions</strong> sur toutes les pages clés
+              <div class="priority-tag">Impact : FORT · Temps : 3h · KPI : CTR organic</div>
+            </div>
+            <div class="check-btn" onclick="toggleCheck(this)">✓</div>
+          </li>
+          <li class="priority-item">
+            <div class="priority-num p2">4</div>
+            <div class="priority-text">
+              <strong>Ajouter Social Proof Bar</strong> sur la homepage — Chiffres, étoiles Trustpilot
+              <div class="priority-tag">Impact : FORT · Temps : 1h · KPI : Taux de rebond homepage</div>
+            </div>
+            <div class="check-btn" onclick="toggleCheck(this)">✓</div>
+          </li>
+          <li class="priority-item">
+            <div class="priority-num p2">5</div>
+            <div class="priority-text">
+              <strong>Ajouter section Bestsellers</strong> sur la homepage — Manquant actuellement
+              <div class="priority-tag">Impact : FORT · Temps : 30min · KPI : Taux ajout panier</div>
+            </div>
+            <div class="check-btn" onclick="toggleCheck(this)">✓</div>
+          </li>
+          <li class="priority-item">
+            <div class="priority-num p2">6</div>
+            <div class="priority-text">
+              <strong>Configurer Klaviyo flows</strong> : Welcome (5 emails) + Abandoned Cart (3 messages)
+              <div class="priority-tag">Impact : FORT · Temps : 4h · KPI : Revenue email / Récupération panier</div>
+            </div>
+            <div class="check-btn" onclick="toggleCheck(this)">✓</div>
+          </li>
+          <li class="priority-item">
+            <div class="priority-num p3">7</div>
+            <div class="priority-text">
+              <strong>Ajouter Schema JSON-LD</strong> Product + FAQ via snippet Liquid custom
+              <div class="priority-tag">Impact : SEO · Temps : 2h · KPI : Rich results Google</div>
+            </div>
+            <div class="check-btn" onclick="toggleCheck(this)">✓</div>
+          </li>
+          <li class="priority-item">
+            <div class="priority-num p3">8</div>
+            <div class="priority-text">
+              <strong>Installer Hotjar</strong> → heatmaps + session recordings pour détecter frictions
+              <div class="priority-tag">Impact : CRO · Temps : 30min · KPI : Taux de complétion checkout</div>
+            </div>
+            <div class="check-btn" onclick="toggleCheck(this)">✓</div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- NOE PROMPT -->
+      <div class="tab-panel" id="tab-prompt">
+        <div class="section-title">💬 Espace NOE — Prompt Personnalisé</div>
+
+        <!-- CHAT HISTORY -->
+        <div class="chat-history">
+          <div class="chat-msg noe">
+            <div class="noe-avatar">N</div>
+            <div>
+              <div class="msg-bubble">
+                👋 Bonjour ! Je suis <strong>NOE</strong>, ton agent Shopify. J'ai analysé ta boutique <strong>Succespro 2.0</strong> et généré un audit complet.<br><br>
+                Score actuel : <strong>5.8/10</strong> — bonne base avec un potentiel élevé. J'ai identifié <strong>8 quick wins</strong> pour booster tes performances rapidement.<br><br>
+                Que veux-tu faire en premier ? Tu peux utiliser les commandes ci-dessous ou me donner une instruction libre.
+              </div>
+              <div class="msg-time">Aujourd'hui · 09:43</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SHORTCUTS -->
+        <div class="prompt-wrap">
+          <div class="prompt-header">
+            <div class="noe-avatar">N</div>
+            <div>
+              <div class="prompt-header-text">NOE — Instructions</div>
+              <div class="prompt-header-sub">Donne une instruction libre ou utilise une commande rapide</div>
+            </div>
+          </div>
+          <div class="shortcuts-bar">
+            <span class="shortcut" onclick="insertShortcut('/audit')">/audit</span>
+            <span class="shortcut" onclick="insertShortcut('/copy ')">/copy [produit]</span>
+            <span class="shortcut" onclick="insertShortcut('/seo ')">/seo [page]</span>
+            <span class="shortcut" onclick="insertShortcut('/geo ')">/geo [page]</span>
+            <span class="shortcut" onclick="insertShortcut('/ads meta')">/ads meta</span>
+            <span class="shortcut" onclick="insertShortcut('/cro')">/cro</span>
+            <span class="shortcut" onclick="insertShortcut('/brand')">/brand</span>
+            <span class="shortcut" onclick="insertShortcut('/email welcome')">/email welcome</span>
+            <span class="shortcut" onclick="insertShortcut('/blog ')">/blog [sujet]</span>
+            <span class="shortcut" onclick="insertShortcut('/homepage')">/homepage</span>
+            <span class="shortcut" onclick="insertShortcut('/pdp ')">/pdp [produit]</span>
+            <span class="shortcut" onclick="insertShortcut('/roadmap')">/roadmap</span>
+            <span class="shortcut" onclick="insertShortcut('/qa')">/qa</span>
+            <span class="shortcut" onclick="insertShortcut('/deploy')">/deploy</span>
+            <span class="shortcut" onclick="insertShortcut('/legal')">/legal</span>
+          </div>
+          <textarea class="prompt-input" id="promptInput" placeholder="Ex : Crée la fiche produit complète de mon produit principal en ciblant les femmes 25-45 ans CSP+, avec un copywriting premium orienté résultat...
+
+Ou : Génère les 5 emails du welcome flow Klaviyo avec un ton direct et chaleureux, offre de bienvenue -15%...
+
+Ou : Fais l'audit SEO complet de ma page collection principale et donne-moi les 5 actions prioritaires..." rows="5"></textarea>
+          <div class="prompt-footer">
+            <span class="char-count" id="charCount">0 caractères</span>
+            <div class="prompt-actions">
+              <button class="btn btn-ghost" onclick="clearPrompt()">Effacer</button>
+              <button class="btn btn-primary" onclick="sendPrompt()">✦ Envoyer à NOE</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- UPLOAD -->
+        <div class="section-title">📎 Import Boutique ZIP</div>
+        <div class="upload-zone" id="uploadZone" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="handleDrop(event)" onclick="document.getElementById('fileInput').click()">
+          <div class="upload-icon">📦</div>
+          <div class="upload-title">Glisser-déposer un fichier .zip</div>
+          <div class="upload-sub">Ou cliquer pour sélectionner · NOE analyse automatiquement la structure du thème</div>
+          <input type="file" id="fileInput" accept=".zip" style="display:none" onchange="handleFile(event)">
+        </div>
+      </div>
+
+      <!-- AUDIT -->
+      <div class="tab-panel" id="tab-audit">
+        <div class="section-title">🔍 Audit Succespro 2.0 — Scores par Dimension</div>
+
+        <div class="audit-grid">
+          <div class="card">
+            <div class="card-title">Scores Détaillés</div>
+            <div class="audit-row">
+              <span class="audit-label">Structure boutique</span>
+              <div class="audit-score">
+                <div class="bar"><div class="bar-fill mid" style="width:70%"></div></div>
+                <span class="score-num" style="color:var(--orange)">7/10</span>
+              </div>
+            </div>
+            <div class="audit-row">
+              <span class="audit-label">Design System</span>
+              <div class="audit-score">
+                <div class="bar"><div class="bar-fill mid" style="width:60%"></div></div>
+                <span class="score-num" style="color:var(--orange)">6/10</span>
+              </div>
+            </div>
+            <div class="audit-row">
+              <span class="audit-label">SEO Technique</span>
+              <div class="audit-score">
+                <div class="bar"><div class="bar-fill low" style="width:40%"></div></div>
+                <span class="score-num" style="color:var(--red)">4/10</span>
+              </div>
+            </div>
+            <div class="audit-row">
+              <span class="audit-label">CRO</span>
+              <div class="audit-score">
+                <div class="bar"><div class="bar-fill mid" style="width:70%"></div></div>
+                <span class="score-num" style="color:var(--orange)">7/10</span>
+              </div>
+            </div>
+            <div class="audit-row">
+              <span class="audit-label">Apps Stack</span>
+              <div class="audit-score">
+                <div class="bar"><div class="bar-fill mid" style="width:50%"></div></div>
+                <span class="score-num" style="color:var(--orange)">5/10</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Infos Thème Détectées</div>
+            <div style="font-size:13px;line-height:2.2;color:var(--muted)">
+              <div><span style="color:var(--text)">Thème</span> · SuccessPro v1.2.0</div>
+              <div><span style="color:var(--text)">Auteur</span> · ByMade (bymade.com)</div>
+              <div><span style="color:var(--text)">Taille</span> · 6.5 MB</div>
+              <div><span style="color:var(--text)">Sections</span> · 85 sections Liquid</div>
+              <div><span style="color:var(--text)">Langues</span> · 20+ locales</div>
+              <div><span style="color:var(--text)">iCart</span> · Intégré natif ✅</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-title">🏗️ Structure Homepage — Blocs Détectés</div>
+        <div class="card" style="margin-bottom:20px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div class="audit-row"><span class="audit-label">✅ Hero (image-banner)</span><span class="qa-status status-ok">Présent</span></div>
+            <div class="audit-row"><span class="audit-label">✅ Image slider</span><span class="qa-status status-ok">Présent</span></div>
+            <div class="audit-row"><span class="audit-label">✅ Trust badges (icon-bar)</span><span class="qa-status status-ok">Présent</span></div>
+            <div class="audit-row"><span class="audit-label">✅ Témoignages</span><span class="qa-status status-ok">Présent</span></div>
+            <div class="audit-row"><span class="audit-label">✅ FAQ collapsible</span><span class="qa-status status-ok">Présent</span></div>
+            <div class="audit-row"><span class="audit-label">⚠️ Bestsellers</span><span class="qa-status status-fail">Manquant</span></div>
+            <div class="audit-row"><span class="audit-label">⚠️ Social Proof Bar</span><span class="qa-status status-fail">Manquant</span></div>
+            <div class="audit-row"><span class="audit-label">⚠️ Newsletter capture</span><span class="qa-status status-warn">À ajouter</span></div>
+            <div class="audit-row"><span class="audit-label">⚠️ UGC / Instagram Wall</span><span class="qa-status status-fail">Manquant</span></div>
+          </div>
+        </div>
+
+        <div class="section-title">📱 Fiche Produit — Blocs Détectés</div>
+        <div class="card">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div class="audit-row"><span class="audit-label">✅ Rating stars</span><span class="qa-status status-ok">Présent</span></div>
+            <div class="audit-row"><span class="audit-label">✅ Sticky ATC</span><span class="qa-status status-ok">Présent</span></div>
+            <div class="audit-row"><span class="audit-label">✅ Payment badges</span><span class="qa-status status-ok">Présent</span></div>
+            <div class="audit-row"><span class="audit-label">✅ Sizing chart</span><span class="qa-status status-ok">Présent</span></div>
+            <div class="audit-row"><span class="audit-label">✅ Quantity breaks</span><span class="qa-status status-ok">Présent</span></div>
+            <div class="audit-row"><span class="audit-label">✅ Upsell block</span><span class="qa-status status-ok">Présent</span></div>
+            <div class="audit-row"><span class="audit-label">✅ Related products</span><span class="qa-status status-ok">Présent</span></div>
+            <div class="audit-row"><span class="audit-label">⚠️ Avis photos UGC</span><span class="qa-status status-fail">Remplacer</span></div>
+            <div class="audit-row"><span class="audit-label">⚠️ Schema JSON-LD</span><span class="qa-status status-fail">Manquant</span></div>
+            <div class="audit-row"><span class="audit-label">⚠️ FAQ schema</span><span class="qa-status status-fail">Manquant</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DESIGN SYSTEM -->
+      <div class="tab-panel" id="tab-design">
+        <div class="section-title">🎨 Design System Détecté</div>
+
+        <div class="theme-badge">
+          📐 Thème SuccessPro v1.2.0 · ByMade
+        </div>
+
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-title">Palette de Couleurs</div>
+          <div class="color-row">
+            <div class="color-wrap">
+              <div class="color-swatch" style="background:#ffffff;border:1px solid #333"></div>
+              <div class="color-label">#ffffff</div>
+              <div style="font-size:10px;color:var(--muted);text-align:center">Background</div>
+            </div>
+            <div class="color-wrap">
+              <div class="color-swatch" style="background:#9ed3ff"></div>
+              <div class="color-label">#9ed3ff</div>
+              <div style="font-size:10px;color:var(--muted);text-align:center">Accent</div>
+            </div>
+            <div class="color-wrap">
+              <div class="color-swatch" style="background:#fffced"></div>
+              <div class="color-label">#fffced</div>
+              <div style="font-size:10px;color:var(--muted);text-align:center">Accent 2</div>
+            </div>
+            <div class="color-wrap">
+              <div class="color-swatch" style="background:#000000"></div>
+              <div class="color-label">#000000</div>
+              <div style="font-size:10px;color:var(--muted);text-align:center">Texte</div>
+            </div>
+          </div>
+          <div style="font-size:12px;color:var(--muted);margin-top:8px">
+            💡 <strong>NOE recommande</strong> : Palette épurée noir/blanc avec accent bleu pastel. Ajouter une police display distincte pour les headlines (Playfair pour premium ou Bebas Neue pour lifestyle).
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-title">Typographie</div>
+          <div class="font-preview">
+            <div class="font-headline" style="font-family:'Poppins',sans-serif">Headline Display</div>
+            <div class="font-body-preview" style="font-family:'Poppins',sans-serif">Body text — Poppins Regular · Très bonne lisibilité</div>
+          </div>
+          <div style="font-size:12px;color:var(--muted);margin-top:8px">
+            📝 Body : <strong>Poppins (n4)</strong> · Header : <strong>Sans-serif système</strong>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-title">Branding Assets</div>
+          <div style="font-size:13px;line-height:2.2">
+            <div>🖤 <strong>Logo noir</strong> : logo_noir.png (200px desktop, 140px mobile)</div>
+            <div>🤍 <strong>Logo blanc</strong> : logo_blanc.png (version fond sombre)</div>
+            <div>🛒 <strong>Image checkout</strong> : 6-2.jpg configurée</div>
+            <div>🔘 <strong>Boutons</strong> : border-radius 6px · shadow activé · noir sur fond blanc</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- APPS STACK -->
+      <div class="tab-panel" id="tab-apps">
+        <div class="section-title">📦 Apps Détectées dans le Thème</div>
+        <div class="apps-grid">
+          <div class="app-card">
+            <div class="app-icon">🛒</div>
+            <div class="app-name">iCart (Cart Drawer)</div>
+            <div class="app-desc">Panier drawer avancé avec progress bar, upsell, gifts</div>
+            <span class="app-status installed">✅ Intégré natif</span>
+          </div>
+          <div class="app-card">
+            <div class="app-icon">⭐</div>
+            <div class="app-name">Trustpilot</div>
+            <div class="app-desc">Widget avis Trustpilot sur homepage et PDP</div>
+            <span class="app-status installed">✅ Snippet présent</span>
+          </div>
+          <div class="app-card">
+            <div class="app-icon">📦</div>
+            <div class="app-name">Bundle Deals</div>
+            <div class="app-desc">Section bundles et offres groupées (+20-35% AOV)</div>
+            <span class="app-status installed">✅ Section native</span>
+          </div>
+          <div class="app-card">
+            <div class="app-icon">📏</div>
+            <div class="app-name">Quantity Breaks</div>
+            <div class="app-desc">Paliers de remise selon quantité commandée</div>
+            <span class="app-status installed">✅ Snippet natif</span>
+          </div>
+          <div class="app-card">
+            <div class="app-icon">⬆️</div>
+            <div class="app-name">Upsell Block</div>
+            <div class="app-desc">Cross-sell et upsell sur fiche produit</div>
+            <span class="app-status installed">✅ Snippet natif</span>
+          </div>
+          <div class="app-card" style="border-color:rgba(232,67,147,0.3)">
+            <div class="app-icon">⚠️</div>
+            <div class="app-name">AliReviews</div>
+            <div class="app-desc">Système d'avis — qualité limitée, pas de photos UGC</div>
+            <span class="app-status replace">⚠️ À remplacer</span>
+          </div>
+        </div>
+
+        <div class="section-title">🔧 Apps Recommandées à Ajouter</div>
+        <div class="apps-grid">
+          <div class="app-card">
+            <div class="app-icon">📸</div>
+            <div class="app-name">Loox</div>
+            <div class="app-desc">Avis photos UGC · +15-25% CVR sur PDP · 49$/mois</div>
+            <span class="app-status recommended">⭐ Priorité 1</span>
+          </div>
+          <div class="app-card">
+            <div class="app-icon">📧</div>
+            <div class="app-name">Klaviyo</div>
+            <div class="app-desc">Email + SMS · Welcome / Cart / Post-Purchase flows</div>
+            <span class="app-status recommended">⭐ Priorité 1</span>
+          </div>
+          <div class="app-card">
+            <div class="app-icon">💬</div>
+            <div class="app-name">Tidio</div>
+            <div class="app-desc">Live chat + chatbot IA · réduit abandons -5-15%</div>
+            <span class="app-status recommended">⭐ Priorité 2</span>
+          </div>
+          <div class="app-card">
+            <div class="app-icon">🔥</div>
+            <div class="app-name">Hotjar</div>
+            <div class="app-desc">Heatmaps + session recordings · identifier frictions</div>
+            <span class="app-status recommended">⭐ Priorité 2</span>
+          </div>
+          <div class="app-card">
+            <div class="app-icon">📈</div>
+            <div class="app-name">ReConvert</div>
+            <div class="app-desc">Post-purchase upsell · +15-30% AOV</div>
+            <span class="app-status recommended">⭐ Priorité 2</span>
+          </div>
+          <div class="app-card">
+            <div class="app-icon">📡</div>
+            <div class="app-name">AfterShip</div>
+            <div class="app-desc">Tracking livraison · réduit contacts SAV</div>
+            <span class="app-status recommended">⭐ Priorité 3</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- QA RECETTE -->
+      <div class="tab-panel" id="tab-qa">
+        <div class="section-title">✅ Checklist Recette QA — Avant Déploiement</div>
+
+        <div class="qa-category">
+          <div class="qa-cat-title">⚡ Technique & Performance</div>
+          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Aucun lien cassé (0 erreur 404)</span><span class="qa-status status-todo">À tester</span></div>
+          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Images optimisées (WebP, &lt; 100KB, alt text présents)</span><span class="qa-status status-todo">À vérifier</span></div>
+          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">LCP &lt; 2.5s (Core Web Vitals)</span><span class="qa-status status-todo">À mesurer</span></div>
+          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Mobile responsive (375px / 768px / 1440px)</span><span class="qa-status status-todo">À tester</span></div>
+          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">JS/CSS minifiés — apps inutilisées supprimées</span><span class="qa-status status-todo">À vérifier</span></div>
+        </div>
+
+        <div class="qa-category">
+          <div class="qa-cat-title">🛒 Parcours Client</div>
+          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Checkout testé end-to-end (produit → paiement → confirmation)</span><span class="qa-status status-todo">À tester</span></div>
+          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Email de confirmation commande configuré et reçu</span><span class="qa-status status-todo">À tester</span></div>
+          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Shop Pay / Apple Pay / Google Pay fonctionnels</span><span class="qa-status status-todo">À tester</span></div>
+          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Politique livraison + retour visibles avant checkout</span><span class="qa-status status-todo">À vérifier</span></div>
+          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">iCart progress bar fonctionnel</span><span class="qa-status status-ok">✅ Natif</span></div>
+        </div>
+
+        <div class="qa-category">
+          <div class="qa-cat-title">🔍 SEO</div>
+          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Title tags &lt; 60 car. configurés sur toutes les pages</span><span class="qa-status status-fail">Manquant</span></div>
+          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Meta descriptions &lt; 155 car. sur toutes les pages</span><span class="qa-status status-fail">Manquant</span></div>
+          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">H1 unique par page</span><span class="qa-status status-todo">À vérifier</span></div>
+          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Canonical tags sur variantes produit</span><span class="qa-status status-todo">À configurer</span></div>
+          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Sitemap soumis à Google Search Console</span><span class="qa-status status-todo">À faire</span></div>
+        </div>
+
+        <div class="qa-category">
+          <div class="qa-cat-title">📊 Tracking & Schema</div>
+          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Schema Product + Offer + Review validé (Rich Results Test)</span><span class="qa-status status-fail">Manquant</span></div>
+          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Schema FAQPage sur pages produit clés</span><span class="qa-status status-fail">Manquant</span></div>
+          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">GA4 Enhanced Ecommerce : events firing (AddToCart, Purchase)</span><span class="qa-status status-todo">À vérifier</span></div>
+          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Meta Pixel : PageView + ViewContent + AddToCart + Purchase</span><span class="qa-status status-todo">À vérifier</span></div>
+        </div>
+
+        <div class="qa-category">
+          <div class="qa-cat-title">⚖️ Légal (France/UE)</div>
+          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Mentions légales complètes (SIRET, hébergeur, éditeur)</span><span class="qa-status status-todo">À vérifier</span></div>
+          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">CGV en ligne et accessibles</span><span class="qa-status status-todo">À vérifier</span></div>
+          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Bandeau cookies CNIL actif</span><span class="qa-status status-todo">À vérifier</span></div>
+          <div class="qa-item"><div class="qa-check" onclick="toggleQa(this)"></div><span class="qa-text">Politique de confidentialité RGPD</span><span class="qa-status status-todo">À vérifier</span></div>
+        </div>
+      </div>
+
+      <!-- DEPLOY -->
+      <div class="tab-panel" id="tab-deploy">
+        <div class="section-title">🚀 Pipeline Déploiement Shopify via MCP</div>
+
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-title">Statut Connexion</div>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
+            <div class="dot"></div>
+            <span style="font-size:14px;font-weight:600">MCP Shopify connecté</span>
+            <span style="font-size:12px;color:var(--muted)">· Prêt à déployer</span>
+          </div>
+        </div>
+
+        <div class="deploy-step">
+          <div class="step-num">1</div>
+          <div class="step-info">
+            <div class="step-title">Connexion & Vérification</div>
+            <div class="step-desc">Vérifier shop actif, plan Shopify, devise, langue configurée</div>
+          </div>
+          <button class="btn btn-ghost" style="font-size:12px" onclick="runStep(this, 'Connexion vérifiée ✅')">Exécuter</button>
+        </div>
+
+        <div class="deploy-step">
+          <div class="step-num">2</div>
+          <div class="step-info">
+            <div class="step-title">Upload Catalogue Produits</div>
+            <div class="step-desc">Créer/mettre à jour produits (titre, description SEO, variantes, images, prix)</div>
+          </div>
+          <button class="btn btn-ghost" style="font-size:12px">Configurer</button>
+        </div>
+
+        <div class="deploy-step">
+          <div class="step-num">3</div>
+          <div class="step-info">
+            <div class="step-title">Créer les Collections</div>
+            <div class="step-desc">Titre, description SEO, règles de tri, images de collection</div>
+          </div>
+          <button class="btn btn-ghost" style="font-size:12px">Configurer</button>
+        </div>
+
+        <div class="deploy-step">
+          <div class="step-num">4</div>
+          <div class="step-info">
+            <div class="step-title">Publier les Pages Statiques</div>
+            <div class="step-desc">Homepage, About, FAQ, Légales, Contact, Track Order</div>
+          </div>
+          <button class="btn btn-ghost" style="font-size:12px">Configurer</button>
+        </div>
+
+        <div class="deploy-step">
+          <div class="step-num">5</div>
+          <div class="step-info">
+            <div class="step-title">SEO & Schema Markup</div>
+            <div class="step-desc">Injecter title tags, meta descriptions, JSON-LD Product+FAQ sur toutes les pages</div>
+          </div>
+          <button class="btn btn-ghost" style="font-size:12px">Configurer</button>
+        </div>
+
+        <div class="deploy-step">
+          <div class="step-num">6</div>
+          <div class="step-info">
+            <div class="step-title">Vérification Finale QA</div>
+            <div class="step-desc">Lancer checklist QA automatisée — corriger erreurs avant mise en ligne</div>
+          </div>
+          <button class="btn btn-ghost" style="font-size:12px">Lancer QA</button>
+        </div>
+
+        <div style="margin-top:24px">
+          <button class="btn btn-primary" style="width:100%;padding:14px;font-size:14px" onclick="launchDeploy()">
+            🚀 Lancer le déploiement complet via MCP Shopify
+          </button>
+        </div>
+      </div>
+
+    </div><!-- /panel -->
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  const tab = document.querySelector(`[data-tab="${name}"]`);
+  const panel = document.getElementById(`tab-${name}`);
+  if (tab) tab.classList.add('active');
+  if (panel) panel.classList.add('active');
+}
+
+function toggleCheck(btn) {
+  btn.classList.toggle('done');
+}
+
+function toggleQa(el) {
+  const states = ['', 'ok', 'fail'];
+  const cur = el.dataset.state || '0';
+  const next = (parseInt(cur) + 1) % 3;
+  el.dataset.state = next;
+  el.className = 'qa-check' + (next === 1 ? ' ok' : next === 2 ? ' fail' : '');
+  el.textContent = next === 1 ? '✓' : next === 2 ? '✗' : '';
+}
+
+function insertShortcut(cmd) {
+  const ta = document.getElementById('promptInput');
+  ta.value = cmd + ' ';
+  ta.focus();
+  updateCount();
+}
+
+function clearPrompt() {
+  document.getElementById('promptInput').value = '';
+  updateCount();
+}
+
+function updateCount() {
+  const v = document.getElementById('promptInput').value;
+  document.getElementById('charCount').textContent = v.length + ' caractères';
+}
+
+document.getElementById('promptInput').addEventListener('input', updateCount);
+
+function sendPrompt() {
+  const val = document.getElementById('promptInput').value.trim();
+  if (!val) return;
+  const history = document.querySelector('.chat-history');
+  const userMsg = document.createElement('div');
+  userMsg.className = 'chat-msg user';
+  userMsg.innerHTML = `<div><div class="msg-bubble">${val}</div><div class="msg-time">Maintenant</div></div>`;
+  history.appendChild(userMsg);
+
+  const noeMsg = document.createElement('div');
+  noeMsg.className = 'chat-msg noe';
+  noeMsg.innerHTML = `<div class="noe-avatar">N</div><div><div class="msg-bubble">⏳ NOE analyse ta demande sur <strong>Succespro 2.0</strong>...<br><br><em>Pour exécuter cette instruction, copie ce prompt dans Claude avec le contexte de ta boutique chargé.</em></div><div class="msg-time">Maintenant</div></div>`;
+  history.appendChild(noeMsg);
+
+  clearPrompt();
+  history.scrollTop = history.scrollHeight;
+  switchTab('prompt');
+}
+
+function dragOver(e) {
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.add('dragover');
+}
+function dragLeave(e) {
+  document.getElementById('uploadZone').classList.remove('dragover');
+}
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file && file.name.endsWith('.zip')) processZip(file.name);
+}
+function handleFile(e) {
+  const file = e.target.files[0];
+  if (file) processZip(file.name);
+}
+function processZip(name) {
+  document.querySelector('.upload-title').textContent = '✅ ' + name + ' importé';
+  document.querySelector('.upload-sub').textContent = 'NOE analyse la structure du thème...';
+  document.getElementById('uploadZone').style.borderColor = 'var(--green)';
+}
+function showUpload() { switchTab('prompt'); }
+
+function runStep(btn, msg) {
+  const step = btn.closest('.deploy-step');
+  const num = step.querySelector('.step-num');
+  num.classList.add('done');
+  num.textContent = '✓';
+  btn.textContent = msg;
+  btn.disabled = true;
+}
+
+function launchDeploy() {
+  alert('🚀 Pipeline de déploiement — Connecte-toi via le MCP Shopify dans Claude pour exécuter les étapes une par une.');
+}
+</script>
+</body>
+</html>

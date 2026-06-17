@@ -554,6 +554,169 @@ body {
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor; mask-composite: exclude; pointer-events:none;
 }
+
+/* ─── ASSISTANT IA ─── */
+.ai-layout { display: grid; grid-template-columns: 240px 1fr; gap: 16px; height: calc(100vh - 210px); min-height: 500px; }
+.ai-sidebar {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px;
+  display: flex; flex-direction: column; gap: 12px; overflow-y: auto;
+}
+.ai-sidebar-section { margin-bottom: 4px; }
+.ai-sb-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.model-option {
+  display: flex; align-items: center; gap: 8px; padding: 8px 10px;
+  border-radius: var(--radius-sm); cursor: pointer; font-size: 12px;
+  border: 1px solid transparent; transition: all .12s; margin-bottom: 2px; color: var(--muted2);
+}
+.model-option:hover { background: var(--bg3); color: var(--text); }
+.model-option.selected { background: rgba(99,102,241,.1); border-color: rgba(99,102,241,.35); color: #a5b4fc; font-weight: 600; }
+.model-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.model-claude { background: linear-gradient(135deg,#6366f1,#ec4899); }
+.model-openai { background: #10b981; }
+.agent-prompt-btn {
+  display: block; width: 100%; text-align: left; padding: 7px 10px;
+  border-radius: var(--radius-sm); font-size: 11px; cursor: pointer;
+  border: 1px solid var(--border); background: var(--bg3); color: var(--muted2);
+  font-family: var(--font); transition: all .12s; margin-bottom: 2px;
+}
+.agent-prompt-btn:hover { border-color: var(--p1); color: #a5b4fc; }
+.agent-prompt-btn.active { background: rgba(99,102,241,.1); border-color: rgba(99,102,241,.35); color: #a5b4fc; font-weight: 600; }
+.api-key-section { padding: 10px; background: var(--bg3); border-radius: var(--radius-sm); }
+.api-key-input {
+  width: 100%; padding: 7px 10px; background: var(--card);
+  border: 1px solid var(--border2); border-radius: 6px;
+  color: var(--text); font-size: 11px; outline: none; font-family: var(--mono);
+  margin-bottom: 5px;
+}
+.api-key-input:focus { border-color: var(--p1); }
+.api-key-status { font-size: 10px; display: flex; align-items: center; gap: 5px; }
+.ai-chat-area { display: flex; flex-direction: column; height: 100%; }
+.ai-messages {
+  flex: 1; overflow-y: auto; padding: 4px 0 12px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.ai-msg { display: flex; gap: 10px; }
+.ai-msg.user { flex-direction: row-reverse; }
+.ai-bubble {
+  max-width: 85%; padding: 12px 15px; font-size: 13px; line-height: 1.7;
+  border-radius: 14px; position: relative;
+}
+.ai-msg.assistant .ai-bubble {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 4px 14px 14px 14px;
+}
+.ai-msg.user .ai-bubble {
+  background: rgba(99,102,241,.15); border: 1px solid rgba(99,102,241,.3);
+  border-radius: 14px 4px 14px 14px;
+}
+.ai-avatar {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 14px;
+}
+.ai-avatar.noe { background: linear-gradient(135deg,var(--p1),var(--pink)); }
+.ai-avatar.user-av { background: linear-gradient(135deg,#334155,#475569); }
+.ai-msg-meta { font-size: 10px; color: var(--muted); margin-top: 4px; }
+.cursor-blink { display: inline-block; width: 2px; height: 14px; background: var(--p1); margin-left: 2px; animation: blink .7s infinite; vertical-align: middle; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+.ai-input-area {
+  display: flex; gap: 10px; padding: 12px 0 4px;
+  border-top: 1px solid var(--border);
+}
+.ai-textarea {
+  flex: 1; padding: 11px 14px; background: var(--card);
+  border: 1px solid var(--border2); border-radius: var(--radius);
+  color: var(--text); font-size: 13px; resize: none; outline: none;
+  font-family: var(--font); line-height: 1.6; min-height: 46px; max-height: 120px;
+  transition: border-color .15s;
+}
+.ai-textarea:focus { border-color: var(--p1); }
+.ai-send-btn {
+  width: 46px; height: 46px; border-radius: var(--radius); border: none;
+  background: linear-gradient(135deg,var(--p1),var(--p2)); color: #fff;
+  cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center;
+  transition: all .15s; flex-shrink: 0;
+  box-shadow: 0 0 14px rgba(99,102,241,.35);
+}
+.ai-send-btn:hover { opacity: .9; transform: translateY(-1px); }
+.ai-send-btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+
+/* ─── PREVIEW SHOP ─── */
+.preview-layout { display: grid; grid-template-columns: 200px 1fr 260px; gap: 14px; height: calc(100vh - 210px); min-height: 500px; }
+.preview-nav {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px; overflow-y: auto;
+}
+.preview-page-btn {
+  display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 10px;
+  border-radius: var(--radius-sm); font-size: 12px; cursor: pointer;
+  border: 1px solid transparent; background: none; color: var(--muted2);
+  font-family: var(--font); transition: all .12s; margin-bottom: 2px; text-align: left;
+}
+.preview-page-btn:hover { background: var(--bg3); color: var(--text); }
+.preview-page-btn.active { background: rgba(99,102,241,.1); border-color: rgba(99,102,241,.3); color: #a5b4fc; font-weight: 600; }
+.preview-canvas {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow-y: auto; padding: 20px;
+}
+.preview-section-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 14px; margin-bottom: 10px;
+  transition: all .15s; cursor: pointer;
+}
+.preview-section-card:hover { border-color: var(--border2); }
+.preview-section-card.editing { border-color: var(--p1); box-shadow: 0 0 0 1px rgba(99,102,241,.2); }
+.preview-sec-hd {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;
+}
+.preview-sec-name { font-size: 12px; font-weight: 700; }
+.status-badge {
+  font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px;
+}
+.sb-pending  { background: rgba(100,116,139,.15); color: var(--muted2); }
+.sb-review   { background: rgba(245,158,11,.12); color: var(--orange); }
+.sb-approved { background: rgba(16,185,129,.12); color: var(--green); }
+.sb-deploy   { background: rgba(99,102,241,.12); color: #a5b4fc; }
+.preview-field { margin-bottom: 8px; }
+.preview-field label { font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 3px; display: block; }
+.preview-input {
+  width: 100%; padding: 7px 10px; background: var(--bg3);
+  border: 1px solid var(--border2); border-radius: 6px;
+  color: var(--text); font-size: 12px; outline: none; font-family: var(--font);
+}
+.preview-input:focus { border-color: var(--p1); }
+.preview-textarea {
+  width: 100%; padding: 7px 10px; background: var(--bg3);
+  border: 1px solid var(--border2); border-radius: 6px;
+  color: var(--text); font-size: 12px; outline: none; font-family: var(--font);
+  resize: vertical; min-height: 60px; line-height: 1.5;
+}
+.preview-textarea:focus { border-color: var(--p1); }
+.preview-actions { display: flex; gap: 6px; margin-top: 10px; }
+.preview-btn {
+  padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600;
+  cursor: pointer; border: 1px solid var(--border2); background: var(--bg3);
+  color: var(--muted2); font-family: var(--font); transition: all .12s;
+}
+.preview-btn:hover { border-color: var(--border2); color: var(--text); }
+.preview-btn.approve { background: rgba(16,185,129,.1); border-color: var(--green); color: var(--green); }
+.preview-btn.approve:hover { background: rgba(16,185,129,.2); }
+.preview-panel {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px; overflow-y: auto;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.mcp-cmd-box {
+  background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: var(--radius-sm); padding: 10px; font-family: var(--mono);
+  font-size: 11px; color: #a5b4fc; white-space: pre-wrap; word-break: break-all;
+}
+.approved-item {
+  display: flex; align-items: flex-start; gap: 8px; padding: 8px 10px;
+  background: rgba(16,185,129,.05); border: 1px solid rgba(16,185,129,.2);
+  border-radius: var(--radius-sm); font-size: 11px;
+}
+.approved-item .ai { color: var(--green); font-size: 13px; flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -681,6 +844,8 @@ body {
         <div class="tab" onclick="openTab('apps')"><span class="tab-icon">📦</span>Apps Stack</div>
         <div class="tab" onclick="openTab('qa')"><span class="tab-icon">✅</span>QA Auto</div>
         <div class="tab" onclick="openTab('deploy')"><span class="tab-icon">🚀</span>Déploiement</div>
+        <div class="tab" onclick="openTab('ai')"><span class="tab-icon">💬</span>Assistant IA</div>
+        <div class="tab" onclick="openTab('preview')"><span class="tab-icon">👁️</span>Preview Shop</div>
       </div>
     </div>
 
@@ -1236,6 +1401,153 @@ body {
         </div>
       </div>
 
+
+      <!-- ══════════ TAB: ASSISTANT IA ══════════ -->
+      <div class="tab-panel" id="panel-ai">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div>
+            <h2 style="font-size:16px;font-weight:800;margin-bottom:3px">💬 Assistant IA — NOE & Agents</h2>
+            <p style="font-size:12px;color:var(--muted)">Chat multi-LLM avec streaming réel · Claude + GPT-4o · Agents spécialisés</p>
+          </div>
+          <button class="btn-sm btn-ghost" onclick="clearAIChat()" style="font-size:11px">🗑 Réinitialiser</button>
+        </div>
+
+        <div class="ai-layout">
+          <!-- Sidebar gauche -->
+          <div class="ai-sidebar">
+            <div class="ai-sidebar-section">
+              <div class="ai-sb-label">Modèle</div>
+              <div class="model-option selected" data-model="claude-sonnet-4-6" onclick="selectAIModel('claude-sonnet-4-6')">
+                <div class="model-dot model-claude"></div><span>Claude Sonnet 4.6</span>
+              </div>
+              <div class="model-option" data-model="claude-opus-4-8" onclick="selectAIModel('claude-opus-4-8')">
+                <div class="model-dot model-claude"></div><span>Claude Opus 4.8</span>
+              </div>
+              <div class="model-option" data-model="claude-haiku-4-5-20251001" onclick="selectAIModel('claude-haiku-4-5-20251001')">
+                <div class="model-dot model-claude"></div><span>Claude Haiku 4.5</span>
+              </div>
+              <div class="model-option" data-model="gpt-4o" onclick="selectAIModel('gpt-4o')">
+                <div class="model-dot model-openai"></div><span>GPT-4o</span>
+              </div>
+              <div class="model-option" data-model="gpt-4o-mini" onclick="selectAIModel('gpt-4o-mini')">
+                <div class="model-dot model-openai"></div><span>GPT-4o Mini</span>
+              </div>
+            </div>
+
+            <div class="ai-sidebar-section">
+              <div class="ai-sb-label">Agent actif</div>
+              <button class="agent-prompt-btn active" data-agent="NOE" onclick="selectAIAgent('NOE')">🧠 NOE — Orchestrateur</button>
+              <button class="agent-prompt-btn" data-agent="BRAND" onclick="selectAIAgent('BRAND')">🎨 BRAND & COPY</button>
+              <button class="agent-prompt-btn" data-agent="SEO" onclick="selectAIAgent('SEO')">🔍 SEO & GEO</button>
+              <button class="agent-prompt-btn" data-agent="CRO" onclick="selectAIAgent('CRO')">📈 CRO & UX</button>
+              <button class="agent-prompt-btn" data-agent="ADS" onclick="selectAIAgent('ADS')">📣 ADS & MARKETING</button>
+              <button class="agent-prompt-btn" data-agent="TECH" onclick="selectAIAgent('TECH')">⚙️ TECH & SHOPIFY</button>
+              <button class="agent-prompt-btn" data-agent="DATA" onclick="selectAIAgent('DATA')">📊 ANALYTICS & DATA</button>
+            </div>
+
+            <div class="ai-sidebar-section">
+              <div class="ai-sb-label">Clés API</div>
+              <div class="api-key-section" style="margin-bottom:8px">
+                <div style="font-size:10px;font-weight:700;color:var(--muted);margin-bottom:5px">ANTHROPIC (Claude)</div>
+                <input class="api-key-input" id="anthropic-key-input" type="password" placeholder="sk-ant-api03-..." onblur="saveApiKey('anthropic')">
+                <div class="api-key-status" id="anthropic-key-status"><span style="color:var(--muted)">○ Non configuré</span></div>
+              </div>
+              <div class="api-key-section">
+                <div style="font-size:10px;font-weight:700;color:var(--muted);margin-bottom:5px">OPENAI (GPT-4o)</div>
+                <input class="api-key-input" id="openai-key-input" type="password" placeholder="sk-proj-..." onblur="saveApiKey('openai')">
+                <div class="api-key-status" id="openai-key-status"><span style="color:var(--muted)">○ Non configuré</span></div>
+              </div>
+              <div style="font-size:10px;color:var(--muted);margin-top:8px;line-height:1.5">
+                Les clés sont stockées localement dans votre navigateur (localStorage) et ne sont jamais envoyées à nos serveurs.
+              </div>
+            </div>
+          </div>
+
+          <!-- Zone chat -->
+          <div class="ai-chat-area">
+            <div class="ai-messages" id="ai-messages">
+              <div class="ai-msg assistant">
+                <div class="ai-avatar noe">🧠</div>
+                <div>
+                  <div class="ai-bubble">Bonjour ! Je suis <strong>NOE, votre orchestrateur IA Shopify</strong>.<br><br>Je peux vous aider à optimiser votre boutique Succespro 2.0 : copywriting, SEO/GEO, CRO, publicités, tech Liquid ou analytics. Commencez par saisir votre API key dans le panneau gauche, puis posez votre question !</div>
+                  <div class="ai-msg-meta">NOE — Orchestrateur · maintenant</div>
+                </div>
+              </div>
+            </div>
+            <div class="ai-input-area">
+              <textarea class="ai-textarea" id="ai-input" placeholder="Ex: /pdp-copy pour la formation Succespro, optimise le titre et la description..." rows="1" onkeydown="aiKeydown(event)" oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
+              <button class="ai-send-btn" id="ai-send-btn" onclick="sendAIMessage()">➤</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════ TAB: PREVIEW SHOP ══════════ -->
+      <div class="tab-panel" id="panel-preview">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div>
+            <h2 style="font-size:16px;font-weight:800;margin-bottom:3px">👁️ Preview Shop — Éditeur avant MCP</h2>
+            <p style="font-size:12px;color:var(--muted)">Visualisez et éditez vos sections · Approuvez avant déploiement MCP Shopify</p>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn-sm btn-ghost" onclick="deployAllApproved()" style="font-size:11px;border-color:var(--green);color:var(--green)">🚀 Déployer approuvés</button>
+          </div>
+        </div>
+
+        <div class="preview-layout">
+          <!-- Navigation pages -->
+          <div class="preview-nav">
+            <div class="ai-sb-label" style="margin-bottom:10px">Pages</div>
+            <button class="preview-page-btn active" data-page="home" onclick="renderPreviewPage('home')">🏠 Homepage</button>
+            <button class="preview-page-btn" data-page="pdp" onclick="renderPreviewPage('pdp')">📦 Fiche Produit</button>
+            <button class="preview-page-btn" data-page="collection" onclick="renderPreviewPage('collection')">🗂️ Collection</button>
+            <button class="preview-page-btn" data-page="faq" onclick="renderPreviewPage('faq')">❓ FAQ</button>
+            <button class="preview-page-btn" data-page="contact" onclick="renderPreviewPage('contact')">📨 Contact</button>
+
+            <div style="margin-top:16px">
+              <div class="ai-sb-label" style="margin-bottom:8px">Légende</div>
+              <div style="font-size:11px;display:flex;flex-direction:column;gap:5px">
+                <span><span class="status-badge sb-pending">Pending</span> — À faire</span>
+                <span><span class="status-badge sb-review">En révision</span> — MCP généré</span>
+                <span><span class="status-badge sb-approved">Approuvé</span> — Prêt deploy</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Canvas éditeur -->
+          <div class="preview-canvas" id="preview-canvas">
+            <!-- Rendu dynamiquement par JS -->
+          </div>
+
+          <!-- Panneau approbations + MCP -->
+          <div class="preview-panel">
+            <div>
+              <div class="ai-sb-label" style="margin-bottom:8px">Sections Approuvées</div>
+              <div id="approved-list">
+                <div style="font-size:12px;color:var(--muted);text-align:center;padding:12px 0">Aucune section approuvée</div>
+              </div>
+            </div>
+
+            <div id="mcp-cmd-wrap" style="display:none">
+              <div class="ai-sb-label" style="margin-bottom:8px">Commande MCP Générée</div>
+              <div class="mcp-cmd-box" id="mcp-cmd-output"></div>
+              <button class="btn-sm btn-ghost" style="width:100%;margin-top:8px;font-size:11px" onclick="navigator.clipboard.writeText(document.getElementById('mcp-cmd-output').textContent).then(()=>this.textContent='✅ Copié!').catch(()=>{})">📋 Copier</button>
+            </div>
+
+            <div>
+              <div class="ai-sb-label" style="margin-bottom:8px">Actions Groupées</div>
+              <button class="btn-sm btn-ghost" style="width:100%;margin-bottom:6px;font-size:11px" onclick="deployAllApproved()">⚡ Générer commandes MCP</button>
+              <button class="btn-sm btn-ghost" style="width:100%;font-size:11px" onclick="openTab('deploy')">🚀 Aller au déploiement</button>
+            </div>
+
+            <div class="info-banner ib-blue" style="font-size:11px;padding:10px 12px">
+              <span>💡</span>
+              <span>Approuvez chaque section puis utilisez le MCP Shopify pour déployer directement sur votre boutique.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div><!-- /panel -->
   </div><!-- /content -->
 </div><!-- /main -->
@@ -1434,13 +1746,537 @@ function scrollAgent(name) {
 // ─── INIT ───
 document.addEventListener('DOMContentLoaded', () => {
   updateQWCount();
-  // Animate score bars
   setTimeout(() => {
     document.querySelectorAll('.progress-fill').forEach(el => {
       el.style.transition = 'width 1.2s cubic-bezier(.4,0,.2,1)';
     });
   }, 300);
+  loadApiKeys();
+  renderPreviewPage('home');
 });
+
+// ══════════════════════════════════════════
+// ─── ASSISTANT IA — MULTI-LLM STREAMING ───
+// ══════════════════════════════════════════
+
+const AI_MODELS = {
+  'claude-sonnet-4-6':       { label: 'Claude Sonnet 4.6', provider: 'anthropic', dot: 'model-claude' },
+  'claude-opus-4-8':         { label: 'Claude Opus 4.8',   provider: 'anthropic', dot: 'model-claude' },
+  'claude-haiku-4-5-20251001':{ label: 'Claude Haiku 4.5', provider: 'anthropic', dot: 'model-claude' },
+  'gpt-4o':                  { label: 'GPT-4o',            provider: 'openai',    dot: 'model-openai' },
+  'gpt-4o-mini':             { label: 'GPT-4o Mini',       provider: 'openai',    dot: 'model-openai' },
+};
+
+const AGENT_PROMPTS = {
+  'NOE': {
+    label: '🧠 NOE — Orchestrateur',
+    prompt: `Tu es NOE, l'agent IA orchestrateur expert Shopify de TR7 Agency Studio. Tu pilotes 6 agents spécialisés (BRAND, SEO, CRO, ADS, TECH, DATA) et tu traduis les objectifs business en actions concrètes sur la boutique Shopify. Tu parles français, tu es direct, précis et orienté résultats. Pour chaque demande, tu identifies l'agent le plus pertinent, tu proposes un plan d'action et tu génères les livrables Liquid/JSON-LD/copy nécessaires.`
+  },
+  'BRAND': {
+    label: '🎨 BRAND & COPY',
+    prompt: `Tu es l'agent BRAND & COPY de TR7 Agency Studio. Expert en stratégie de marque, naming, copywriting e-commerce et brand voice. Tu rédiges les fiches produits, pages CMS, taglines et scripts vidéo en optimisant pour la conversion et la mémorabilité. Tu parles français.`
+  },
+  'SEO': {
+    label: '🔍 SEO & GEO',
+    prompt: `Tu es l'agent SEO & GEO de TR7 Agency Studio. Expert en référencement naturel, GEO/AEO (optimisation pour les moteurs IA : ChatGPT, Perplexity), schema JSON-LD et contenu sémantique. Tu génères les meta tags, structures de données et stratégies de contenu pour maximiser la visibilité organique et dans les résultats d'IA. Tu parles français.`
+  },
+  'CRO': {
+    label: '📈 CRO & UX',
+    prompt: `Tu es l'agent CRO & UX de TR7 Agency Studio. Expert en optimisation du taux de conversion, design UX, A/B testing (scoring ICE) et psychologie comportementale e-commerce. Tu audites les pages selon le modèle LIFT et proposes des wireframes et tests prioritaires. Tu parles français.`
+  },
+  'ADS': {
+    label: '📣 ADS & MARKETING',
+    prompt: `Tu es l'agent ADS & MARKETING de TR7 Agency Studio. Expert en publicités Meta (structure 3:2:2), Google Shopping, TikTok Ads, email marketing Klaviyo et attribution UTM. Tu génères des briefs créatifs, flux produits optimisés et séquences d'emails. Tu parles français.`
+  },
+  'TECH': {
+    label: '⚙️ TECH & SHOPIFY',
+    prompt: `Tu es l'agent TECH & SHOPIFY de TR7 Agency Studio. Expert en développement Liquid, déploiement MCP Shopify, snippets de sections, performance Core Web Vitals et API GraphQL Shopify. Tu génères du code Liquid propre et des mutations GraphQL prêtes à l'emploi. Tu parles français.`
+  },
+  'DATA': {
+    label: '📊 ANALYTICS & DATA',
+    prompt: `Tu es l'agent ANALYTICS & DATA de TR7 Agency Studio. Expert en GA4, GTM, Meta Pixel, KPIs e-commerce, analyse cohorte/LTV/RFM et Core Web Vitals. Tu génères des dataLayer snippets, configurations GTM et tableaux de bord de suivi. Tu parles français.`
+  }
+};
+
+let aiState = {
+  model: 'claude-sonnet-4-6',
+  agent: 'NOE',
+  messages: [],
+  streaming: false,
+  anthropicKey: '',
+  openaiKey: ''
+};
+
+function loadApiKeys() {
+  aiState.anthropicKey = localStorage.getItem('tr7_anthropic_key') || '';
+  aiState.openaiKey    = localStorage.getItem('tr7_openai_key') || '';
+  const el1 = document.getElementById('anthropic-key-input');
+  const el2 = document.getElementById('openai-key-input');
+  if (el1) el1.value = aiState.anthropicKey ? '••••••••••••••••' : '';
+  if (el2) el2.value = aiState.openaiKey ? '••••••••••••••••' : '';
+  updateKeyStatuses();
+}
+
+function saveApiKey(provider) {
+  if (provider === 'anthropic') {
+    const val = document.getElementById('anthropic-key-input').value.trim();
+    if (val && !val.startsWith('•')) {
+      localStorage.setItem('tr7_anthropic_key', val);
+      aiState.anthropicKey = val;
+      document.getElementById('anthropic-key-input').value = '••••••••••••••••';
+    }
+  } else {
+    const val = document.getElementById('openai-key-input').value.trim();
+    if (val && !val.startsWith('•')) {
+      localStorage.setItem('tr7_openai_key', val);
+      aiState.openaiKey = val;
+      document.getElementById('openai-key-input').value = '••••••••••••••••';
+    }
+  }
+  updateKeyStatuses();
+}
+
+function clearApiKey(provider) {
+  if (provider === 'anthropic') {
+    localStorage.removeItem('tr7_anthropic_key');
+    aiState.anthropicKey = '';
+    document.getElementById('anthropic-key-input').value = '';
+  } else {
+    localStorage.removeItem('tr7_openai_key');
+    aiState.openaiKey = '';
+    document.getElementById('openai-key-input').value = '';
+  }
+  updateKeyStatuses();
+}
+
+function updateKeyStatuses() {
+  const claudeOk  = !!aiState.anthropicKey;
+  const openaiOk  = !!aiState.openaiKey;
+  const el1 = document.getElementById('anthropic-key-status');
+  const el2 = document.getElementById('openai-key-status');
+  if (el1) el1.innerHTML = claudeOk ? '<span style="color:var(--green)">● Connecté</span>' : '<span style="color:var(--muted)">○ Non configuré</span>';
+  if (el2) el2.innerHTML = openaiOk  ? '<span style="color:var(--green)">● Connecté</span>' : '<span style="color:var(--muted)">○ Non configuré</span>';
+}
+
+function selectAIModel(modelId) {
+  aiState.model = modelId;
+  document.querySelectorAll('.model-option').forEach(el => {
+    el.classList.toggle('selected', el.dataset.model === modelId);
+  });
+}
+
+function selectAIAgent(agentId) {
+  aiState.agent = agentId;
+  aiState.messages = [];
+  document.querySelectorAll('.agent-prompt-btn').forEach(el => {
+    el.classList.toggle('active', el.dataset.agent === agentId);
+  });
+  const msgs = document.getElementById('ai-messages');
+  if (msgs) msgs.innerHTML = '';
+  appendAIMessage('assistant', `Bonjour ! Je suis **${AGENT_PROMPTS[agentId].label.replace(/^[^ ]+ /, '')}**. Comment puis-je vous aider avec votre boutique Shopify ?`);
+}
+
+function appendAIMessage(role, text, streaming = false) {
+  const msgs = document.getElementById('ai-messages');
+  if (!msgs) return null;
+  const id = 'msg-' + Date.now();
+  const isUser = role === 'user';
+  const time = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'});
+  const cursor = streaming ? '<span class="cursor-blink"></span>' : '';
+  const avatarHtml = isUser
+    ? `<div class="ai-avatar user-av">👤</div>`
+    : `<div class="ai-avatar noe">🧠</div>`;
+  const formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/`(.*?)`/g, `<code style="font-family:var(--mono);font-size:11px;background:var(--bg3);padding:1px 5px;border-radius:4px">$1</code>`);
+  msgs.insertAdjacentHTML('beforeend', `
+    <div class="ai-msg ${isUser ? 'user' : 'assistant'}" id="${id}">
+      ${!isUser ? avatarHtml : ''}
+      <div>
+        <div class="ai-bubble" id="bubble-${id}">${formattedText}${cursor}</div>
+        <div class="ai-msg-meta">${isUser ? 'Vous' : AGENT_PROMPTS[aiState.agent]?.label || 'NOE'} · ${time}</div>
+      </div>
+      ${isUser ? avatarHtml : ''}
+    </div>`);
+  msgs.scrollTop = msgs.scrollHeight;
+  return id;
+}
+
+function updateStreamingBubble(msgId, fullText) {
+  const bubble = document.getElementById('bubble-' + msgId);
+  if (!bubble) return;
+  const formatted = fullText
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/`(.*?)`/g, `<code style="font-family:var(--mono);font-size:11px;background:var(--bg3);padding:1px 5px;border-radius:4px">$1</code>`)
+    .replace(/\n/g, '<br>');
+  bubble.innerHTML = formatted + '<span class="cursor-blink"></span>';
+  const msgs = document.getElementById('ai-messages');
+  if (msgs) msgs.scrollTop = msgs.scrollHeight;
+}
+
+function finalizeStreamingBubble(msgId, fullText) {
+  const bubble = document.getElementById('bubble-' + msgId);
+  if (!bubble) return;
+  const formatted = fullText
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/`(.*?)`/g, `<code style="font-family:var(--mono);font-size:11px;background:var(--bg3);padding:1px 5px;border-radius:4px">$1</code>`)
+    .replace(/\n/g, '<br>');
+  bubble.innerHTML = formatted;
+}
+
+async function sendAIMessage() {
+  if (aiState.streaming) return;
+  const ta = document.getElementById('ai-input');
+  const text = ta.value.trim();
+  if (!text) return;
+
+  const model = aiState.model;
+  const info = AI_MODELS[model];
+  const isAnthropic = info.provider === 'anthropic';
+  const apiKey = isAnthropic ? aiState.anthropicKey : aiState.openaiKey;
+
+  if (!apiKey) {
+    appendAIMessage('assistant', `⚠️ **Clé API manquante.** Configurez votre clé ${isAnthropic ? 'Anthropic' : 'OpenAI'} dans le panneau de gauche pour utiliser **${info.label}**.`);
+    return;
+  }
+
+  ta.value = '';
+  ta.style.height = 'auto';
+  aiState.messages.push({ role: 'user', content: text });
+  appendAIMessage('user', text);
+
+  const sendBtn = document.getElementById('ai-send-btn');
+  sendBtn.disabled = true;
+  aiState.streaming = true;
+
+  const systemPrompt = AGENT_PROMPTS[aiState.agent]?.prompt || AGENT_PROMPTS.NOE.prompt;
+
+  // Stratégie : essayer le backend local d'abord, fallback direct browser
+  const useBackend = await checkBackend();
+  let msgId = null;
+  let fullText = '';
+
+  try {
+    if (useBackend) {
+      msgId = appendAIMessage('assistant', '...', true);
+      const resp = await fetch('http://localhost:3700/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: aiState.messages, model, systemPrompt, apiKey })
+      });
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const lines = decoder.decode(value).split('\n');
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          const raw = line.slice(6).trim();
+          if (raw === '[DONE]') break;
+          try {
+            const evt = JSON.parse(raw);
+            if (evt.text) { fullText += evt.text; updateStreamingBubble(msgId, fullText); }
+            if (evt.error) { fullText += '\n⚠️ Erreur: ' + evt.error; }
+          } catch {}
+        }
+      }
+    } else if (isAnthropic) {
+      msgId = appendAIMessage('assistant', '...', true);
+      const resp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-allow-browser': 'true'
+        },
+        body: JSON.stringify({
+          model, max_tokens: 4096, stream: true,
+          system: systemPrompt,
+          messages: aiState.messages.map(m => ({ role: m.role, content: m.content }))
+        })
+      });
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      let buf = '';
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buf += decoder.decode(value);
+        const lines = buf.split('\n');
+        buf = lines.pop();
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          const raw = line.slice(6).trim();
+          if (!raw) continue;
+          try {
+            const evt = JSON.parse(raw);
+            if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') {
+              fullText += evt.delta.text;
+              updateStreamingBubble(msgId, fullText);
+            }
+          } catch {}
+        }
+      }
+    } else {
+      msgId = appendAIMessage('assistant', '...', true);
+      const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+        body: JSON.stringify({
+          model, stream: true, max_tokens: 4096,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            ...aiState.messages.map(m => ({ role: m.role, content: m.content }))
+          ]
+        })
+      });
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      let buf = '';
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buf += decoder.decode(value);
+        const lines = buf.split('\n');
+        buf = lines.pop();
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          const raw = line.slice(6).trim();
+          if (raw === '[DONE]') break;
+          try {
+            const evt = JSON.parse(raw);
+            const chunk = evt.choices?.[0]?.delta?.content;
+            if (chunk) { fullText += chunk; updateStreamingBubble(msgId, fullText); }
+          } catch {}
+        }
+      }
+    }
+
+    if (fullText) {
+      aiState.messages.push({ role: 'assistant', content: fullText });
+      finalizeStreamingBubble(msgId, fullText);
+    }
+  } catch (err) {
+    if (msgId) finalizeStreamingBubble(msgId, `⚠️ Erreur de connexion : ${err.message}`);
+    else appendAIMessage('assistant', `⚠️ Erreur : ${err.message}`);
+  } finally {
+    aiState.streaming = false;
+    sendBtn.disabled = false;
+    ta.focus();
+  }
+}
+
+async function checkBackend() {
+  try {
+    const resp = await fetch('http://localhost:3700/api/health', { signal: AbortSignal.timeout(1500) });
+    return resp.ok;
+  } catch { return false; }
+}
+
+function aiKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendAIMessage(); }
+}
+
+function clearAIChat() {
+  aiState.messages = [];
+  const msgs = document.getElementById('ai-messages');
+  if (msgs) msgs.innerHTML = '';
+  selectAIAgent(aiState.agent);
+}
+
+// ══════════════════════════════════════════
+// ─── PREVIEW SHOP ─────────────────────────
+// ══════════════════════════════════════════
+
+const PREVIEW_PAGES = {
+  home: {
+    label: '🏠 Homepage',
+    sections: [
+      { id: 'hero', name: 'Hero Banner', fields: { title: 'Succespro — Réussissez Plus Vite', subtitle: 'La formation et les outils qui accélèrent votre succès.', cta: 'Découvrir la boutique' }, status: 'review' },
+      { id: 'bestsellers', name: 'Bestsellers', fields: { title: 'Nos Produits Phares', count: '6', label: 'Voir tout' }, status: 'pending' },
+      { id: 'social-proof', name: 'Social Proof Bar', fields: { stat1: '12 000+ clients', stat2: '4.9 ⭐ (824 avis)', stat3: 'Livraison en 48h' }, status: 'pending' },
+      { id: 'newsletter', name: 'Email Capture', fields: { headline: 'Rejoignez 10 000 entrepreneurs', offer: '-10% sur votre première commande' }, status: 'approved' },
+    ]
+  },
+  pdp: {
+    label: '📦 Fiche Produit',
+    sections: [
+      { id: 'title-price', name: 'Titre + Prix', fields: { title: 'Formation Succespro Pro', price: '97.00', comparePrice: '197.00' }, status: 'review' },
+      { id: 'description', name: 'Description Produit', fields: { headline: 'Passez au niveau supérieur en 30 jours', body: 'Accédez à plus de 50 modules vidéo HD, des templates prêts à l\'emploi et un support communautaire 7j/7.' }, status: 'pending' },
+      { id: 'reviews', name: 'Avis Clients (Loox)', fields: { count: '824', rating: '4.9', source: 'Loox UGC' }, status: 'approved' },
+      { id: 'faq', name: 'FAQ Produit (JSON-LD)', fields: { q1: 'Combien de temps ai-je accès ?', a1: 'Accès à vie — toutes les mises à jour incluses.' }, status: 'pending' },
+    ]
+  },
+  collection: {
+    label: '🗂️ Collection',
+    sections: [
+      { id: 'collection-hero', name: 'En-tête Collection', fields: { title: 'Toutes nos Formations', description: 'Choisissez votre parcours de croissance' }, status: 'pending' },
+      { id: 'filters', name: 'Filtres Produits', fields: { filterBy: 'Prix, Thème, Niveau', sort: 'Plus vendus' }, status: 'pending' },
+      { id: 'product-grid', name: 'Grille Produits', fields: { perRow: '3', showBadge: 'Oui', badgeText: 'Bestseller' }, status: 'approved' },
+    ]
+  },
+  faq: {
+    label: '❓ Page FAQ',
+    sections: [
+      { id: 'faq-hero', name: 'En-tête FAQ', fields: { title: 'Questions Fréquentes', subtitle: 'Trouvez les réponses à vos questions' }, status: 'pending' },
+      { id: 'faq-content', name: 'Bloc FAQ (JSON-LD)', fields: { questionsCount: '12', schemaType: 'FAQPage' }, status: 'review' },
+    ]
+  },
+  contact: {
+    label: '📨 Contact',
+    sections: [
+      { id: 'contact-form', name: 'Formulaire Contact', fields: { email: 'support@succespro.fr', responseTime: '< 24h' }, status: 'pending' },
+    ]
+  }
+};
+
+let previewState = {
+  page: 'home',
+  editing: null,
+  approved: []
+};
+
+function renderPreviewPage(pageId) {
+  previewState.page = pageId;
+  previewState.editing = null;
+
+  document.querySelectorAll('.preview-page-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.page === pageId);
+  });
+
+  const page = PREVIEW_PAGES[pageId];
+  if (!page) return;
+  const canvas = document.getElementById('preview-canvas');
+  if (!canvas) return;
+
+  canvas.innerHTML = `<div class="sec-title">${page.label}</div>`;
+
+  page.sections.forEach(sec => {
+    const statusClass = `sb-${sec.status}`;
+    const statusLabel = { pending: 'Pending', review: 'En révision', approved: 'Approuvé', deploy: 'Déployé' }[sec.status] || sec.status;
+    const fieldsHtml = Object.entries(sec.fields).map(([key, val]) => `
+      <div class="preview-field">
+        <label>${key.replace(/([A-Z])/g,' $1').replace(/^./,s=>s.toUpperCase())}</label>
+        ${val.length > 60
+          ? `<textarea class="preview-textarea" id="field-${sec.id}-${key}" onchange="updateField('${pageId}','${sec.id}','${key}',this.value)">${val}</textarea>`
+          : `<input class="preview-input" id="field-${sec.id}-${key}" value="${val.replace(/"/g,'&quot;')}" onchange="updateField('${pageId}','${sec.id}','${key}',this.value)">`}
+      </div>`).join('');
+
+    canvas.insertAdjacentHTML('beforeend', `
+      <div class="preview-section-card" id="prevsec-${sec.id}" onclick="editSection('${pageId}','${sec.id}')">
+        <div class="preview-sec-hd">
+          <span class="preview-sec-name">${sec.name}</span>
+          <span class="status-badge ${statusClass}" id="badge-${sec.id}">${statusLabel}</span>
+        </div>
+        <div id="fields-${sec.id}" style="display:none">${fieldsHtml}
+          <div class="preview-actions">
+            <button class="preview-btn" onclick="event.stopPropagation();setStatus('${pageId}','${sec.id}','review')">📋 Révision</button>
+            <button class="preview-btn approve" onclick="event.stopPropagation();setStatus('${pageId}','${sec.id}','approved')">✅ Approuver</button>
+            <button class="preview-btn" onclick="event.stopPropagation();generateMCPCmd('${pageId}','${sec.id}')" style="border-color:var(--cyan);color:var(--cyan)">⚡ MCP</button>
+          </div>
+        </div>
+      </div>`);
+  });
+
+  updatePreviewPanel();
+}
+
+function editSection(pageId, secId) {
+  const prev = previewState.editing;
+  if (prev) {
+    const prevFields = document.getElementById('fields-' + prev);
+    if (prevFields) prevFields.style.display = 'none';
+    const prevCard = document.getElementById('prevsec-' + prev);
+    if (prevCard) prevCard.classList.remove('editing');
+  }
+  if (prev === secId) { previewState.editing = null; return; }
+  previewState.editing = secId;
+  const fields = document.getElementById('fields-' + secId);
+  if (fields) fields.style.display = 'block';
+  const card = document.getElementById('prevsec-' + secId);
+  if (card) card.classList.add('editing');
+}
+
+function updateField(pageId, secId, key, value) {
+  const page = PREVIEW_PAGES[pageId];
+  if (!page) return;
+  const sec = page.sections.find(s => s.id === secId);
+  if (sec) sec.fields[key] = value;
+}
+
+function setStatus(pageId, secId, status) {
+  const page = PREVIEW_PAGES[pageId];
+  if (!page) return;
+  const sec = page.sections.find(s => s.id === secId);
+  if (sec) {
+    sec.status = status;
+    const badge = document.getElementById('badge-' + secId);
+    const statusClass = `sb-${status}`;
+    const statusLabel = { pending: 'Pending', review: 'En révision', approved: 'Approuvé', deploy: 'Déployé' }[status];
+    if (badge) { badge.className = `status-badge ${statusClass}`; badge.textContent = statusLabel; }
+    if (status === 'approved') {
+      if (!previewState.approved.find(a => a.id === secId)) {
+        previewState.approved.push({ id: secId, name: sec.name, page: pageId });
+      }
+    } else {
+      previewState.approved = previewState.approved.filter(a => a.id !== secId);
+    }
+    updatePreviewPanel();
+  }
+}
+
+function generateMCPCmd(pageId, secId) {
+  const page = PREVIEW_PAGES[pageId];
+  if (!page) return;
+  const sec = page.sections.find(s => s.id === secId);
+  if (!sec) return;
+  const cmd = `// MCP Command — ${sec.name}\n// Page: ${pageId} | Section: ${secId}\n\nshopify.graphql_mutation({\n  mutation: \`mutation UpdateSection {\n    # Insérez votre mutation GraphQL Shopify ici\n    # Section: ${sec.name}\n    # Champs: ${Object.keys(sec.fields).join(', ')}\n  }\`\n})`;
+  const box = document.getElementById('mcp-cmd-output');
+  if (box) {
+    box.textContent = cmd;
+    box.parentElement.style.display = 'block';
+  }
+  setStatus(pageId, secId, 'review');
+}
+
+function updatePreviewPanel() {
+  const panel = document.getElementById('approved-list');
+  if (!panel) return;
+  const allApproved = [];
+  Object.entries(PREVIEW_PAGES).forEach(([pid, page]) => {
+    page.sections.forEach(sec => {
+      if (sec.status === 'approved') allApproved.push({ ...sec, pageName: page.label });
+    });
+  });
+  if (allApproved.length === 0) {
+    panel.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:12px 0">Aucune section approuvée</div>';
+    return;
+  }
+  panel.innerHTML = allApproved.map(s => `
+    <div class="approved-item">
+      <span class="ai">✅</span>
+      <div>
+        <div style="font-size:12px;font-weight:600">${s.name}</div>
+        <div style="font-size:10px;color:var(--muted)">${s.pageName}</div>
+      </div>
+    </div>`).join('');
+}
+
+function deployAllApproved() {
+  const allApproved = [];
+  Object.entries(PREVIEW_PAGES).forEach(([pid, page]) => {
+    page.sections.forEach(sec => {
+      if (sec.status === 'approved') allApproved.push(sec);
+    });
+  });
+  if (allApproved.length === 0) { alert('Aucune section approuvée à déployer.'); return; }
+  const box = document.getElementById('mcp-cmd-output');
+  if (box) {
+    box.textContent = `// Déploiement groupé — ${allApproved.length} sections approuvées\n// Exécuter via MCP Shopify :\n\n` +
+      allApproved.map(s => `// ${s.name}: ${JSON.stringify(s.fields)}`).join('\n');
+    box.parentElement.style.display = 'block';
+  }
+}
 </script>
 </body>
 </html>

@@ -3,6 +3,7 @@ const cors = require('cors');
 const path = require('path');
 const qaRoutes = require('./routes/qa');
 const agentsRoutes = require('./routes/agents');
+const chatRoutes = require('./routes/chat');
 
 const app = express();
 const PORT = process.env.PORT || 3700;
@@ -16,12 +17,13 @@ app.use(express.static(path.join(__dirname, '..')));
 // Routes API
 app.use('/api/qa', qaRoutes);
 app.use('/api/agents', agentsRoutes);
+app.use('/api/chat', chatRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
-    version: '1.0.0',
+    version: '1.1.0',
     project: 'TR7 Shop Builder',
     timestamp: new Date().toISOString(),
     endpoints: [
@@ -30,6 +32,8 @@ app.get('/api/health', (req, res) => {
       'GET  /api/qa/report/:id',
       'GET  /api/agents/list',
       'GET  /api/agents/:name',
+      'POST /api/chat',
+      'GET  /api/chat/models',
     ]
   });
 });

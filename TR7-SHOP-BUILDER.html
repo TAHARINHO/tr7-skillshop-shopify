@@ -812,6 +812,136 @@ body {
 }
 .approved-item .ai { color: var(--green); font-size: 13px; flex-shrink: 0; }
 
+/* ─── SHOP PREVIEW ─── */
+.preview-shop-toolbar {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 10px 14px; margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.preview-device-btn {
+  padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 600;
+  cursor: pointer; border: 1px solid var(--border2); background: var(--bg3);
+  color: var(--muted2); font-family: var(--font); transition: all .12s;
+}
+.preview-device-btn.active { background: rgba(99,102,241,.15); border-color: var(--p1); color: #a5b4fc; }
+.shop-browser-frame {
+  border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+  background: #f1f5f9; margin-bottom: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,.15);
+}
+.shop-browser-bar {
+  display: flex; align-items: center; gap: 12px; padding: 10px 14px;
+  background: #e2e8f0; border-bottom: 1px solid #cbd5e1;
+}
+.browser-dots { display: flex; gap: 6px; }
+.browser-dots span {
+  width: 10px; height: 10px; border-radius: 50%; display: block;
+}
+.browser-dots span:nth-child(1) { background: #ef4444; }
+.browser-dots span:nth-child(2) { background: #f59e0b; }
+.browser-dots span:nth-child(3) { background: #10b981; }
+.browser-address {
+  flex: 1; background: white; border-radius: 6px; padding: 4px 12px;
+  font-size: 12px; color: #475569; font-family: var(--mono);
+  border: 1px solid #cbd5e1; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;
+}
+.shop-browser-content {
+  background: #ffffff; height: 520px; overflow-y: auto;
+  transition: max-width .3s ease; font-family: 'Inter', -apple-system, sans-serif;
+}
+.shop-browser-content.mobile-mode {
+  max-width: 375px; margin: 0 auto; border-left: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0;
+}
+/* Shop preview internal styles */
+.sp-header {
+  padding: 0 24px; display: flex; align-items: center; justify-content: space-between;
+  height: 64px; border-bottom: 1px solid #e2e8f0;
+}
+.sp-header-left { display: flex; flex-direction: column; }
+.sp-shop-name { font-size: 18px; font-weight: 800; color: #0f172a; letter-spacing: -.5px; }
+.sp-tagline { font-size: 11px; color: #64748b; font-style: italic; }
+.sp-header-nav { display: flex; gap: 20px; }
+.sp-header-nav a {
+  font-size: 13px; color: #475569; text-decoration: none; font-weight: 500;
+  cursor: default;
+}
+.sp-hero {
+  padding: 64px 24px; text-align: center; color: white;
+  position: relative; overflow: hidden;
+}
+.sp-hero-eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; opacity: .85; margin-bottom: 16px; }
+.sp-hero-title { font-size: 38px; font-weight: 900; line-height: 1.15; margin-bottom: 16px; letter-spacing: -.5px; }
+.sp-hero-sub { font-size: 15px; opacity: .9; margin-bottom: 32px; max-width: 480px; margin-left: auto; margin-right: auto; }
+.sp-cta-btn {
+  display: inline-block; padding: 14px 32px; border-radius: 8px;
+  background: white; font-size: 14px; font-weight: 700; cursor: default;
+  text-decoration: none; transition: opacity .15s;
+}
+.sp-section { padding: 48px 24px; }
+.sp-section-title { font-size: 22px; font-weight: 800; color: #0f172a; margin-bottom: 8px; text-align: center; }
+.sp-section-sub { font-size: 14px; color: #64748b; text-align: center; margin-bottom: 32px; }
+.sp-products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
+.sp-product-card {
+  border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden;
+  background: #f8fafc; transition: box-shadow .15s;
+}
+.sp-product-img { height: 160px; display: flex; align-items: center; justify-content: center; font-size: 40px; background: #f1f5f9; }
+.sp-product-info { padding: 12px; }
+.sp-product-name { font-size: 13px; font-weight: 700; color: #0f172a; margin-bottom: 4px; }
+.sp-product-price { font-size: 14px; font-weight: 800; }
+.sp-product-btn {
+  width: 100%; margin-top: 10px; padding: 8px; border-radius: 6px;
+  border: none; font-size: 12px; font-weight: 700; cursor: default; color: white;
+}
+.sp-trust-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 16px; }
+.sp-trust-card {
+  text-align: center; padding: 20px 12px; background: #f8fafc;
+  border-radius: 10px; border: 1px solid #e2e8f0;
+}
+.sp-trust-icon { font-size: 28px; margin-bottom: 8px; }
+.sp-trust-title { font-size: 12px; font-weight: 700; color: #0f172a; margin-bottom: 4px; }
+.sp-trust-desc { font-size: 11px; color: #64748b; line-height: 1.4; }
+.sp-footer {
+  background: #0f172a; color: #94a3b8; padding: 32px 24px;
+}
+.sp-footer-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
+.sp-footer-brand { font-size: 16px; font-weight: 800; color: white; margin-bottom: 4px; }
+.sp-footer-tagline { font-size: 11px; color: #64748b; }
+.sp-footer-links { display: flex; gap: 16px; flex-wrap: wrap; }
+.sp-footer-links a { font-size: 12px; color: #94a3b8; text-decoration: none; cursor: default; }
+.sp-footer-bottom { border-top: 1px solid #1e293b; padding-top: 16px; font-size: 11px; text-align: center; }
+/* Sub-tabs */
+.preview-subtabs-wrap { margin-top: 4px; }
+.preview-subtabs {
+  display: flex; gap: 2px; border-bottom: 2px solid var(--border);
+  margin-bottom: 14px;
+}
+.preview-subtab {
+  padding: 8px 16px; font-size: 12px; font-weight: 600; cursor: pointer;
+  border: none; background: none; color: var(--muted2); font-family: var(--font);
+  border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all .12s;
+}
+.preview-subtab:hover { color: var(--text); }
+.preview-subtab.active { color: #a5b4fc; border-bottom-color: var(--p1); }
+.preview-subpanel { display: none; }
+.preview-subpanel.active { display: block; }
+.preview-subpanel-header {
+  font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase;
+  letter-spacing: .5px; margin-bottom: 8px;
+}
+.preview-sub-textarea {
+  width: 100%; min-height: 180px; padding: 12px; background: var(--bg3);
+  border: 1px solid var(--border2); border-radius: var(--radius-sm);
+  color: var(--text); font-size: 12px; line-height: 1.6; outline: none;
+  font-family: var(--font); resize: vertical; box-sizing: border-box;
+}
+.preview-sub-textarea:focus { border-color: var(--p1); }
+.preview-no-data {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  height: 100%; gap: 12px; color: #64748b; padding: 40px;
+}
+
 /* ─── RESPONSIVE MOBILE ─── */
 @media (max-width: 768px) {
   .main { flex-direction: column; height: auto; min-height: calc(100vh - 56px); }
@@ -2189,68 +2319,78 @@ body.density-compact { font-size: 13px; }
 
       <!-- ══════════ TAB: PREVIEW SHOP ══════════ -->
       <div class="tab-panel" id="panel-preview">
+        <!-- Header -->
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
           <div>
-            <h2 style="font-size:16px;font-weight:800;margin-bottom:3px">👁️ Preview Shop — Éditeur avant MCP</h2>
-            <p style="font-size:12px;color:var(--muted)">Visualisez et éditez vos sections · Approuvez avant déploiement MCP Shopify</p>
+            <h2 style="font-size:16px;font-weight:800;margin-bottom:3px">👁️ Preview Shop</h2>
+            <p style="font-size:12px;color:var(--muted)">Visualisez votre boutique telle qu'elle apparaîtra aux visiteurs</p>
           </div>
-          <div style="display:flex;gap:8px">
-            <button class="btn-sm btn-ghost" onclick="deployAllApproved()" style="font-size:11px;border-color:var(--green);color:var(--green)">🚀 Déployer approuvés</button>
+          <span id="preview-agent-count" style="font-size:11px;padding:4px 12px;border-radius:99px;background:rgba(99,102,241,.1);color:#a5b4fc;font-weight:600">Données: 0/6 agents</span>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="preview-shop-toolbar">
+          <div style="display:flex;gap:6px">
+            <button class="preview-device-btn active" id="btn-desktop" onclick="togglePreviewDevice('desktop')">🖥️ Desktop</button>
+            <button class="preview-device-btn" id="btn-mobile" onclick="togglePreviewDevice('mobile')">📱 Mobile</button>
+          </div>
+          <button class="btn-sm btn-ghost" onclick="refreshShopPreview()" style="font-size:11px">🔄 Rafraîchir</button>
+          <button class="btn-sm btn-ghost" onclick="deployAllApproved()" style="font-size:11px;border-color:var(--green);color:var(--green)">🚀 Déployer MCP</button>
+        </div>
+
+        <!-- Browser frame -->
+        <div class="shop-browser-frame">
+          <div class="shop-browser-bar">
+            <div class="browser-dots"><span></span><span></span><span></span></div>
+            <div class="browser-address" id="preview-url">https://votre-boutique.myshopify.com</div>
+            <div style="width:60px"></div>
+          </div>
+          <div class="shop-browser-content" id="shop-browser-content">
+            <div class="preview-no-data">
+              <div style="font-size:48px">🏪</div>
+              <div style="font-size:16px;font-weight:700">Aucune boutique sélectionnée</div>
+              <div style="font-size:13px;text-align:center">Créez d'abord une boutique et lancez les agents pour voir le preview</div>
+            </div>
           </div>
         </div>
 
-        <div class="preview-layout">
-          <!-- Navigation pages -->
-          <div class="preview-nav">
-            <div class="ai-sb-label" style="margin-bottom:10px">Pages</div>
-            <button class="preview-page-btn active" data-page="home" onclick="renderPreviewPage('home')">🏠 Homepage</button>
-            <button class="preview-page-btn" data-page="pdp" onclick="renderPreviewPage('pdp')">📦 Fiche Produit</button>
-            <button class="preview-page-btn" data-page="collection" onclick="renderPreviewPage('collection')">🗂️ Collection</button>
-            <button class="preview-page-btn" data-page="faq" onclick="renderPreviewPage('faq')">❓ FAQ</button>
-            <button class="preview-page-btn" data-page="contact" onclick="renderPreviewPage('contact')">📨 Contact</button>
-
-            <div style="margin-top:16px">
-              <div class="ai-sb-label" style="margin-bottom:8px">Légende</div>
-              <div style="font-size:11px;display:flex;flex-direction:column;gap:5px">
-                <span><span class="status-badge sb-pending">Pending</span> — À faire</span>
-                <span><span class="status-badge sb-review">En révision</span> — MCP généré</span>
-                <span><span class="status-badge sb-approved">Approuvé</span> — Prêt deploy</span>
-              </div>
-            </div>
+        <!-- Sub-tabs -->
+        <div class="preview-subtabs-wrap">
+          <div class="preview-subtabs">
+            <button class="preview-subtab active" onclick="switchPreviewSubTab('home', this)">🏠 Homepage</button>
+            <button class="preview-subtab" onclick="switchPreviewSubTab('pdp', this)">📦 Fiche Produit</button>
+            <button class="preview-subtab" onclick="switchPreviewSubTab('collections', this)">📑 Collections</button>
+            <button class="preview-subtab" onclick="switchPreviewSubTab('pages', this)">📄 Pages</button>
           </div>
 
-          <!-- Canvas éditeur -->
-          <div class="preview-canvas" id="preview-canvas">
-            <!-- Rendu dynamiquement par JS -->
+          <div class="preview-subpanel active" id="subpanel-home">
+            <div class="preview-subpanel-header">🏠 Contenu Homepage — extrait des agents NOE &amp; CRO</div>
+            <textarea class="preview-sub-textarea" id="subtab-home-content" placeholder="Lancez les agents pour voir le contenu de la homepage..."></textarea>
           </div>
-
-          <!-- Panneau approbations + MCP -->
-          <div class="preview-panel">
-            <div>
-              <div class="ai-sb-label" style="margin-bottom:8px">Sections Approuvées</div>
-              <div id="approved-list">
-                <div style="font-size:12px;color:var(--muted);text-align:center;padding:12px 0">Aucune section approuvée</div>
-              </div>
-            </div>
-
-            <div id="mcp-cmd-wrap" style="display:none">
-              <div class="ai-sb-label" style="margin-bottom:8px">Commande MCP Générée</div>
-              <div class="mcp-cmd-box" id="mcp-cmd-output"></div>
-              <button class="btn-sm btn-ghost" style="width:100%;margin-top:8px;font-size:11px" onclick="navigator.clipboard.writeText(document.getElementById('mcp-cmd-output').textContent).then(()=>this.textContent='✅ Copié!').catch(()=>{})">📋 Copier</button>
-            </div>
-
-            <div>
-              <div class="ai-sb-label" style="margin-bottom:8px">Actions Groupées</div>
-              <button class="btn-sm btn-ghost" style="width:100%;margin-bottom:6px;font-size:11px" onclick="deployAllApproved()">⚡ Générer commandes MCP</button>
-              <button class="btn-sm btn-ghost" style="width:100%;font-size:11px" onclick="openTab('deploy')">🚀 Aller au déploiement</button>
-            </div>
-
-            <div class="info-banner ib-blue" style="font-size:11px;padding:10px 12px">
-              <span>💡</span>
-              <span>Approuvez chaque section puis utilisez le MCP Shopify pour déployer directement sur votre boutique.</span>
-            </div>
+          <div class="preview-subpanel" id="subpanel-pdp">
+            <div class="preview-subpanel-header">📦 Template Fiche Produit — agent CRO</div>
+            <textarea class="preview-sub-textarea" id="subtab-pdp-content" placeholder="Lancez l'agent CRO pour voir les recommandations PDP..."></textarea>
+          </div>
+          <div class="preview-subpanel" id="subpanel-collections">
+            <div class="preview-subpanel-header">📑 Structure des Collections — agent SEO</div>
+            <textarea class="preview-sub-textarea" id="subtab-collections-content" placeholder="Lancez l'agent SEO pour voir la structure des collections..."></textarea>
+          </div>
+          <div class="preview-subpanel" id="subpanel-pages">
+            <div class="preview-subpanel-header">📄 Pages (About, FAQ, Contact, Mentions légales) — agent BRAND &amp; NOE</div>
+            <textarea class="preview-sub-textarea" id="subtab-pages-content" placeholder="Lancez les agents pour voir le contenu des pages..."></textarea>
           </div>
         </div>
+
+        <!-- Hidden MCP elements (kept for deployAllApproved compatibility) -->
+        <div id="mcp-cmd-wrap" style="display:none">
+          <div class="ai-sb-label" style="margin-bottom:8px;margin-top:12px">Commande MCP Générée</div>
+          <div class="mcp-cmd-box" id="mcp-cmd-output"></div>
+          <button class="btn-sm btn-ghost" style="width:100%;margin-top:8px;font-size:11px" onclick="navigator.clipboard.writeText(document.getElementById('mcp-cmd-output').textContent).then(()=>this.textContent='✅ Copié!').catch(()=>{})">📋 Copier</button>
+        </div>
+        <!-- Hidden approved-list for deployAllApproved compatibility -->
+        <div id="approved-list" style="display:none"></div>
+        <!-- Hidden preview-canvas for renderPreviewPage compatibility -->
+        <div id="preview-canvas" style="display:none"></div>
       </div>
 
 
@@ -2723,6 +2863,7 @@ function openTab(name) {
   if (panel) panel.classList.add('active');
   const tabs = document.querySelectorAll('.tab');
   tabs.forEach(t => { if (t.getAttribute('onclick')?.includes(name)) t.classList.add('active'); });
+  if (name === 'preview') { setTimeout(refreshShopPreview, 50); }
 }
 
 // ─── QUICK WINS ───
@@ -3710,6 +3851,288 @@ let previewState = {
   editing: null,
   approved: []
 };
+
+// ══════════════════════════════════════════
+// ─── SHOP VISUAL PREVIEW ───────────────
+// ══════════════════════════════════════════
+
+let previewDeviceMode = 'desktop';
+
+function extractColorsFromBrandResult(text) {
+  if (!text) return {};
+  const hexMatches = text.match(/#([0-9A-Fa-f]{6})\b/g) || [];
+  const unique = [...new Set(hexMatches)];
+  return {
+    primary:    unique[0] || '#6366f1',
+    secondary:  unique[1] || '#a5b4fc',
+    accent:     unique[2] || '#10b981',
+    background: unique[3] || '#f8fafc',
+    text:       unique[4] || '#0f172a'
+  };
+}
+
+function extractBrandInfo(brandText) {
+  if (!brandText) return {};
+  const info = {};
+  // Tagline patterns
+  const taglineMatch = brandText.match(/tagline[^\n:]*[:]\s*["']?([^\n"']{4,120})["']?/i)
+    || brandText.match(/slogan[^\n:]*[:]\s*["']?([^\n"']{4,120})["']?/i);
+  if (taglineMatch) info.tagline = taglineMatch[1].trim();
+
+  // USP
+  const uspMatch = brandText.match(/(?:USP|valeur unique|proposition)[^\n:]*[:]\s*([^\n]{10,200})/i);
+  if (uspMatch) info.usp = uspMatch[1].trim();
+
+  // Tone of voice
+  const toneMatch = brandText.match(/tone of voice[^\n:]*[:]\s*([^\n]{4,120})/i);
+  if (toneMatch) info.tone = toneMatch[1].trim();
+
+  return info;
+}
+
+function extractHeroContent(croText, noeText) {
+  if (!croText && !noeText) return {};
+  const src = croText || noeText || '';
+  const info = {};
+
+  // Hero title / headline
+  const h1Match = src.match(/(?:titre principal|hero title|headline|H1)[^\n:]*[:]\s*["']?([^\n"']{8,120})["']?/i);
+  if (h1Match) info.heroTitle = h1Match[1].trim();
+
+  // Hero subtitle
+  const subMatch = src.match(/(?:sous-titre|subtitle|hero sub)[^\n:]*[:]\s*["']?([^\n"']{8,200})["']?/i);
+  if (subMatch) info.heroSub = subMatch[1].trim();
+
+  // Trust signals — grab bullet points after "trust"
+  const trustIdx = src.toLowerCase().indexOf('trust');
+  if (trustIdx > -1) {
+    const trustSection = src.slice(trustIdx, trustIdx + 800);
+    const bullets = trustSection.match(/[•\-\*]\s*([^\n]{8,100})/g) || [];
+    info.trustSignals = bullets.slice(0, 4).map(b => b.replace(/^[•\-\*]\s*/, '').trim());
+  }
+
+  return info;
+}
+
+function getProductEmojis(niche) {
+  if (!niche) return ['📦', '🛍️', '✨', '💎'];
+  const n = niche.toLowerCase();
+  if (n.includes('mode') || n.includes('fashion') || n.includes('vêtement')) return ['👗', '👠', '👜', '🧥'];
+  if (n.includes('beauté') || n.includes('cosmé') || n.includes('soin')) return ['💄', '🧴', '✨', '🌸'];
+  if (n.includes('sport') || n.includes('fitness')) return ['🏋️', '👟', '🎽', '🏃'];
+  if (n.includes('tech') || n.includes('électronique') || n.includes('gadget')) return ['📱', '💻', '🎧', '⌚'];
+  if (n.includes('enfant') || n.includes('bébé') || n.includes('jouet')) return ['🧸', '🎀', '🪀', '🎠'];
+  if (n.includes('food') || n.includes('alimentation') || n.includes('gourmet')) return ['🍫', '☕', '🍷', '🫙'];
+  if (n.includes('maison') || n.includes('déco') || n.includes('home')) return ['🏠', '🪴', '🕯️', '🛋️'];
+  if (n.includes('animal') || n.includes('pet') || n.includes('chien') || n.includes('chat')) return ['🐾', '🦴', '🐕', '🐱'];
+  return ['📦', '🛍️', '✨', '💎'];
+}
+
+function generateShopPreviewHTML(store, agents) {
+  const colors = extractColorsFromBrandResult(agents.BRAND && agents.BRAND.result);
+  const brandInfo = extractBrandInfo(agents.BRAND && agents.BRAND.result);
+  const heroInfo = extractHeroContent(agents.CRO && agents.CRO.result, agents.NOE && agents.NOE.result);
+  const emojis = getProductEmojis(store.niche);
+
+  const shopName = store.name || 'Ma Boutique';
+  const tagline = brandInfo.tagline || (store.niche ? `La référence ${store.niche}` : 'Découvrez notre univers');
+  const heroTitle = heroInfo.heroTitle || `La boutique ${store.niche || ''} qui vous ressemble`;
+  const heroSub = heroInfo.heroSub || brandInfo.usp || `Des produits sélectionnés avec soin pour vous offrir la meilleure expérience.`;
+
+  const trustSignals = heroInfo.trustSignals && heroInfo.trustSignals.length
+    ? heroInfo.trustSignals
+    : ['Livraison gratuite dès 49€', 'Retours gratuits 30 jours', 'Paiement 100% sécurisé', 'Support client 7j/7'];
+
+  const productNames = store.niche
+    ? [`${store.niche} Premium`, `Collection ${store.niche}`, `${store.niche} Essentiel`, `Best-seller ${store.niche}`]
+    : ['Produit Premium', 'Collection Signature', 'Édition Limitée', 'Best-Seller'];
+
+  const prices = ['39,90 €', '59,90 €', '24,90 €', '49,90 €'];
+
+  const heroGradient = `linear-gradient(135deg, ${colors.primary} 0%, ${colors.secondary} 100%)`;
+  const ctaColor = colors.accent;
+  const ctaTextColor = '#ffffff';
+
+  return `
+<div style="min-height:100%;font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;color:#0f172a;background:#ffffff">
+
+  <!-- Header -->
+  <header style="padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px;border-bottom:1px solid #e2e8f0;position:sticky;top:0;background:white;z-index:10">
+    <div>
+      <div style="font-size:18px;font-weight:800;color:${colors.primary};letter-spacing:-.5px">${shopName}</div>
+      <div style="font-size:11px;color:#64748b;font-style:italic">${tagline}</div>
+    </div>
+    <nav style="display:flex;gap:20px">
+      <a href="#" style="font-size:13px;color:#475569;text-decoration:none;font-weight:500" onclick="return false">Catalogue</a>
+      <a href="#" style="font-size:13px;color:#475569;text-decoration:none;font-weight:500" onclick="return false">Promotions</a>
+      <a href="#" style="font-size:13px;color:#475569;text-decoration:none;font-weight:500" onclick="return false">À propos</a>
+    </nav>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span style="font-size:20px;cursor:default">🔍</span>
+      <span style="font-size:20px;cursor:default">🛒</span>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section style="padding:64px 24px;text-align:center;background:${heroGradient};color:white;position:relative;overflow:hidden">
+    <div style="position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.07)"></div>
+    <div style="position:absolute;bottom:-40px;left:-40px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.05)"></div>
+    <div style="position:relative;z-index:1;max-width:600px;margin:0 auto">
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;opacity:.85;margin-bottom:16px">${store.niche || 'Boutique Shopify'}</div>
+      <h1 style="font-size:clamp(26px,4vw,38px);font-weight:900;line-height:1.15;margin:0 0 16px;letter-spacing:-.5px">${heroTitle}</h1>
+      <p style="font-size:15px;opacity:.9;margin:0 0 32px;line-height:1.6">${heroSub}</p>
+      <a href="#" onclick="return false" style="display:inline-block;padding:14px 36px;border-radius:8px;background:white;color:${colors.primary};font-size:14px;font-weight:800;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.15)">Découvrir →</a>
+    </div>
+  </section>
+
+  <!-- Produits -->
+  <section style="padding:48px 24px;background:#f8fafc">
+    <div style="text-align:center;margin-bottom:32px">
+      <h2 style="font-size:22px;font-weight:800;color:#0f172a;margin:0 0 8px">Nos Produits Phares</h2>
+      <p style="font-size:14px;color:#64748b;margin:0">Sélectionnés pour vous, approuvés par nos clients</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;max-width:800px;margin:0 auto">
+      ${productNames.map((name, i) => `
+      <div style="border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;background:white;box-shadow:0 1px 3px rgba(0,0,0,.06)">
+        <div style="height:140px;display:flex;align-items:center;justify-content:center;font-size:48px;background:linear-gradient(135deg,${colors.background},#f1f5f9)">${emojis[i % emojis.length]}</div>
+        <div style="padding:12px">
+          <div style="font-size:13px;font-weight:700;color:#0f172a;margin-bottom:4px">${name}</div>
+          <div style="font-size:14px;font-weight:800;color:${colors.primary}">${prices[i]}</div>
+          <button onclick="return false" style="width:100%;margin-top:10px;padding:8px;border-radius:6px;border:none;background:${colors.primary};color:white;font-size:12px;font-weight:700;cursor:default">Ajouter au panier</button>
+        </div>
+      </div>`).join('')}
+    </div>
+  </section>
+
+  <!-- Trust signals -->
+  <section style="padding:40px 24px;background:white">
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:16px;max-width:700px;margin:0 auto">
+      ${trustSignals.map((signal, i) => {
+        const icons = ['🚚', '↩️', '🔒', '💬'];
+        return `<div style="text-align:center;padding:20px 12px;background:#f8fafc;border-radius:10px;border:1px solid #e2e8f0">
+          <div style="font-size:28px;margin-bottom:8px">${icons[i % icons.length]}</div>
+          <div style="font-size:12px;font-weight:700;color:#0f172a;line-height:1.4">${signal}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="background:#0f172a;color:#94a3b8;padding:32px 24px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:16px">
+      <div>
+        <div style="font-size:16px;font-weight:800;color:white;margin-bottom:4px">${shopName}</div>
+        <div style="font-size:11px;color:#64748b">${tagline}</div>
+      </div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap">
+        <a href="#" onclick="return false" style="font-size:12px;color:#94a3b8;text-decoration:none">Politique de confidentialité</a>
+        <a href="#" onclick="return false" style="font-size:12px;color:#94a3b8;text-decoration:none">CGV</a>
+        <a href="#" onclick="return false" style="font-size:12px;color:#94a3b8;text-decoration:none">Contact</a>
+        <a href="#" onclick="return false" style="font-size:12px;color:#94a3b8;text-decoration:none">FAQ</a>
+      </div>
+    </div>
+    <div style="border-top:1px solid #1e293b;padding-top:16px;font-size:11px;text-align:center">
+      © ${new Date().getFullYear()} ${shopName} — Tous droits réservés · Propulsé par Shopify
+    </div>
+  </footer>
+</div>`;
+}
+
+function refreshShopPreview() {
+  const stores = (() => { try { return JSON.parse(localStorage.getItem('tr7_stores') || '[]'); } catch { return []; } })();
+  const store = currentStoreId ? stores.find(s => s.id === currentStoreId) : stores[0];
+
+  const browserContent = document.getElementById('shop-browser-content');
+  const urlBar = document.getElementById('preview-url');
+  const agentCount = document.getElementById('preview-agent-count');
+
+  if (!browserContent) return;
+
+  if (!store) {
+    browserContent.innerHTML = `<div class="preview-no-data"><div style="font-size:48px">🏪</div><div style="font-size:16px;font-weight:700">Aucune boutique sélectionnée</div><div style="font-size:13px;text-align:center">Créez d'abord une boutique et lancez les agents pour voir le preview</div></div>`;
+    if (urlBar) urlBar.textContent = 'https://votre-boutique.myshopify.com';
+    if (agentCount) agentCount.textContent = 'Données: 0/6 agents';
+    return;
+  }
+
+  const agents = store.agents || {};
+  const doneCount = Object.values(agents).filter(a => a && a.status === 'done').length;
+  const shopSlug = (store.name || 'ma-boutique').toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+
+  if (urlBar) urlBar.textContent = `https://${shopSlug}.myshopify.com`;
+  if (agentCount) agentCount.textContent = `Données: ${doneCount}/6 agents`;
+
+  if (doneCount === 0) {
+    browserContent.innerHTML = `<div class="preview-no-data"><div style="font-size:48px">⏳</div><div style="font-size:16px;font-weight:700">Agents pas encore lancés</div><div style="font-size:13px;text-align:center">Lancez le pipeline d'agents pour générer le preview de <strong>${store.name}</strong></div></div>`;
+  } else {
+    browserContent.innerHTML = generateShopPreviewHTML(store, agents);
+  }
+
+  // Apply device mode
+  if (previewDeviceMode === 'mobile') browserContent.classList.add('mobile-mode');
+  else browserContent.classList.remove('mobile-mode');
+
+  // Populate sub-tabs
+  const homeContent = document.getElementById('subtab-home-content');
+  if (homeContent) {
+    const noeResult = (agents.NOE && agents.NOE.result) || '';
+    const croResult = (agents.CRO && agents.CRO.result) || '';
+    homeContent.value = [
+      noeResult ? '=== NOE — Plan d\'action ===\n' + noeResult : '',
+      croResult ? '\n\n=== CRO — Structure Homepage ===\n' + croResult : ''
+    ].filter(Boolean).join('') || 'Aucun contenu disponible. Lancez les agents NOE et CRO.';
+  }
+
+  const pdpContent = document.getElementById('subtab-pdp-content');
+  if (pdpContent) {
+    const croResult = (agents.CRO && agents.CRO.result) || '';
+    pdpContent.value = croResult ? '=== CRO — Fiche Produit (PDP) ===\n' + croResult : 'Aucun contenu disponible. Lancez l\'agent CRO.';
+  }
+
+  const collectionsContent = document.getElementById('subtab-collections-content');
+  if (collectionsContent) {
+    const seoResult = (agents.SEO && agents.SEO.result) || '';
+    collectionsContent.value = seoResult ? '=== SEO — Structure Collections ===\n' + seoResult : 'Aucun contenu disponible. Lancez l\'agent SEO.';
+  }
+
+  const pagesContent = document.getElementById('subtab-pages-content');
+  if (pagesContent) {
+    const brandResult = (agents.BRAND && agents.BRAND.result) || '';
+    const noeResult = (agents.NOE && agents.NOE.result) || '';
+    pagesContent.value = [
+      brandResult ? '=== BRAND — Identité & Pages ===\n' + brandResult : '',
+      noeResult ? '\n\n=== NOE — Plan général ===\n' + noeResult : ''
+    ].filter(Boolean).join('') || 'Aucun contenu disponible. Lancez les agents BRAND et NOE.';
+  }
+}
+
+function togglePreviewDevice(mode) {
+  previewDeviceMode = mode;
+  const content = document.getElementById('shop-browser-content');
+  const btnDesktop = document.getElementById('btn-desktop');
+  const btnMobile = document.getElementById('btn-mobile');
+  if (mode === 'mobile') {
+    if (content) content.classList.add('mobile-mode');
+    if (btnDesktop) btnDesktop.classList.remove('active');
+    if (btnMobile) btnMobile.classList.add('active');
+  } else {
+    if (content) content.classList.remove('mobile-mode');
+    if (btnDesktop) btnDesktop.classList.add('active');
+    if (btnMobile) btnMobile.classList.remove('active');
+  }
+}
+
+function switchPreviewSubTab(tab, btn) {
+  document.querySelectorAll('.preview-subtab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.preview-subpanel').forEach(p => p.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  const panel = document.getElementById('subpanel-' + tab);
+  if (panel) panel.classList.add('active');
+}
+
+// ══════════════════════════════════════════
+// ─── LEGACY PREVIEW PAGE (EDITOR) ────────
+// ══════════════════════════════════════════
 
 function renderPreviewPage(pageId) {
   previewState.page = pageId;

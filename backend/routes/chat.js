@@ -15,10 +15,15 @@ function isAnthropicModel(model) { return model.startsWith('claude'); }
 
 // POST /api/chat — Streaming LLM (SSE)
 router.post('/', async (req, res) => {
-  const { messages = [], model = 'claude-sonnet-4-6', systemPrompt = '', apiKey } = req.body;
+  const { messages = [], model = 'claude-sonnet-4-6', systemPrompt = '' } = req.body;
+
+  // Use client key if provided, otherwise fallback to server env key
+  const apiKey = req.body.apiKey
+    || (isAnthropicModel(model) ? process.env.ANTHROPIC_API_KEY : process.env.OPENAI_API_KEY)
+    || null;
 
   if (!apiKey) {
-    return res.status(400).json({ error: 'apiKey requis dans le body' });
+    return res.status(400).json({ error: 'apiKey requis — configurez ANTHROPIC_API_KEY dans .env ou envoyez apiKey dans le body' });
   }
 
   res.setHeader('Content-Type', 'text/event-stream');

@@ -810,12 +810,79 @@ body {
   border-radius: var(--radius-sm); font-size: 11px;
 }
 .approved-item .ai { color: var(--green); font-size: 13px; flex-shrink: 0; }
+
+/* ─── RESPONSIVE MOBILE ─── */
+@media (max-width: 768px) {
+  .main { flex-direction: column; height: auto; min-height: calc(100vh - 56px); }
+  .sidebar {
+    width: 100%; min-width: 100%;
+    border-right: none; border-bottom: 1px solid var(--border);
+    max-height: 0; overflow: hidden;
+    transition: max-height .3s ease;
+  }
+  .sidebar.mobile-open {
+    max-height: 80vh; overflow-y: auto;
+  }
+  .content { min-height: 0; flex: 1; overflow-y: auto; }
+  .store-header { flex-wrap: wrap; gap: 8px; }
+  .tabs { overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; gap: 0; }
+  .tab { font-size: 11px; padding: 8px 10px; flex-shrink: 0; }
+  .tab-body { padding: 16px 12px; }
+
+  /* Cards grids */
+  .quick-wins-list,
+  .apps-grid,
+  .design-grid,
+  .qa-sections { display: flex; flex-direction: column; }
+
+  /* AI chat layout */
+  .ai-layout { flex-direction: column; }
+  .ai-sidebar { width: 100%; min-width: 100%; max-height: 180px; overflow-y: auto;
+    border-right: none; border-bottom: 1px solid var(--border); }
+  .ai-main { min-height: 300px; }
+  .ai-input-row textarea { font-size: 14px; }
+
+  /* Score cards */
+  .overview-scores { display: flex; flex-direction: column; gap: 10px; }
+  .score-card { min-width: 100%; }
+
+  /* Deploy pipeline */
+  .deploy-steps { flex-direction: column; }
+
+  /* Settings */
+  .settings-row { flex-direction: column; gap: 4px; }
+  .settings-row-right { width: 100%; }
+  .settings-input, .settings-select { width: 100%; }
+
+  /* Preview layout */
+  .preview-layout { flex-direction: column; }
+  .preview-sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); max-height: 200px; }
+
+  /* Mobile menu toggle */
+  .mobile-menu-btn { display: flex !important; }
+}
+
+@media (min-width: 769px) {
+  .mobile-menu-btn { display: none !important; }
+}
+
+.mobile-menu-btn {
+  display: none;
+  align-items: center; justify-content: center;
+  width: 36px; height: 36px;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); cursor: pointer;
+  color: var(--text); font-size: 18px;
+  transition: all .15s;
+}
+.mobile-menu-btn:hover { background: var(--bg2); border-color: var(--p1); }
 </style>
 </head>
 <body>
 
 <!-- TOPBAR -->
 <div class="topbar">
+  <button class="mobile-menu-btn" onclick="document.querySelector('.sidebar').classList.toggle('mobile-open')">☰</button>
   <div class="logo">
     <div class="logo-mark">🏪</div>
     <span class="logo-name">TR7 Shop Builder</span>
@@ -1729,7 +1796,7 @@ body {
                   </div>
                   <div class="settings-row-ctrl">
                     <div class="key-row">
-                      <input class="settings-input mono" id="s-backend-url" type="text" value="http://localhost:3700" placeholder="http://localhost:3700">
+                      <input class="settings-input mono" id="s-backend-url" type="text" value="http://72.62.28.182:3700" placeholder="http://72.62.28.182:3700">
                       <span class="key-status-pill ksp-no" id="s-backend-status">Non testé</span>
                     </div>
                     <div style="display:flex;gap:6px;margin-top:6px">
@@ -2307,7 +2374,7 @@ const AGENT_PROMPTS = {
 
 const DEFAULT_SETTINGS = {
   anthropicKey: '', openaiKey: '',
-  backendUrl: 'http://localhost:3700', prodUrl: '',
+  backendUrl: 'http://72.62.28.182:3700', prodUrl: 'http://72.62.28.182:3700',
   env: 'local', port: 3700,
   storeName: 'Succespro 2.0', storeUrl: '', storeNiche: '', currency: 'EUR', cvrTarget: '3',
   defaultModel: 'claude-sonnet-4-6', defaultAgent: 'NOE',
@@ -2347,7 +2414,7 @@ function saveAllSettings() {
   if (rawAnthropicKey && !rawAnthropicKey.startsWith('•')) appSettings.anthropicKey = rawAnthropicKey;
   if (rawOpenaiKey    && !rawOpenaiKey.startsWith('•'))    appSettings.openaiKey    = rawOpenaiKey;
 
-  appSettings.backendUrl    = read('s-backend-url')    || 'http://localhost:3700';
+  appSettings.backendUrl    = read('s-backend-url')    || 'http://72.62.28.182:3700';
   appSettings.prodUrl       = read('s-prod-url')       || '';
   appSettings.env           = read('s-env')            || 'local';
   appSettings.port          = parseInt(read('s-port'))  || 3700;

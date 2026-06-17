@@ -130,9 +130,37 @@ body {
   padding: 9px 10px; border-radius: var(--radius-sm);
   cursor: pointer; transition: all .15s;
   border: 1px solid transparent; margin-bottom: 3px;
+  position: relative;
 }
 .store-card:hover { background: var(--bg3); }
 .store-card.active { background: var(--bg3); border-color: rgba(99,102,241,.4); }
+
+/* ─── STORE CONTEXT MENU ─── */
+.store-menu-btn {
+  display: none; align-items: center; justify-content: center;
+  width: 22px; height: 22px; border-radius: 5px;
+  background: none; border: none; cursor: pointer;
+  color: var(--muted2); font-size: 15px; flex-shrink: 0;
+  transition: background .15s, color .15s;
+  line-height: 1;
+}
+.store-card:hover .store-menu-btn,
+.store-card.active .store-menu-btn { display: flex; }
+.store-menu-btn:hover { background: var(--border); color: var(--text); }
+.store-menu-dropdown {
+  display: none; position: absolute; right: 6px; top: 34px;
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: var(--radius-sm); z-index: 500; min-width: 160px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.5); overflow: hidden;
+}
+.store-menu-dropdown.open { display: block; }
+.store-menu-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; font-size: 12px; cursor: pointer;
+  color: var(--muted2); transition: background .12s, color .12s;
+}
+.store-menu-item:hover { background: var(--bg3); color: var(--text); }
+.store-menu-item.danger:hover { background: rgba(239,68,68,.1); color: var(--red); }
 .store-icon {
   width: 32px; height: 32px; border-radius: 8px;
   display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0;
@@ -1378,7 +1406,14 @@ body.density-compact { font-size: 13px; }
   border-radius: 99px;
   transition: width .4s ease;
 }
-.pipeline-layout { display: flex; gap: 20px; align-items: flex-start; }
+.pipeline-layout {
+  display: flex; gap: 20px; align-items: flex-start;
+  max-height: calc(100vh - 250px); overflow-y: auto;
+  padding-right: 4px;
+}
+.pipeline-layout::-webkit-scrollbar { width: 4px; }
+.pipeline-layout::-webkit-scrollbar-track { background: transparent; }
+.pipeline-layout::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
 .pipeline-timeline { width: 260px; flex-shrink: 0; position: relative; }
 .pipeline-timeline::before {
   content: '';
@@ -1512,10 +1547,13 @@ body.density-compact { font-size: 13px; }
   font-family: var(--mono);
   font-size: 11px;
   color: #64748b;
-  max-height: 140px;
+  max-height: 200px;
   overflow-y: auto;
   line-height: 1.7;
 }
+.pipeline-log::-webkit-scrollbar { width: 4px; }
+.pipeline-log::-webkit-scrollbar-track { background: transparent; }
+.pipeline-log::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
 .pipeline-log .log-line { margin-bottom: 1px; }
 .pipeline-log .log-line.log-info { color: #94a3b8; }
 .pipeline-log .log-line.log-success { color: var(--green); }
@@ -3935,107 +3973,537 @@ function generateShopPreviewHTML(store, agents) {
   const emojis = getProductEmojis(store.niche);
 
   const shopName = store.name || 'Ma Boutique';
-  const tagline = brandInfo.tagline || (store.niche ? `La référence ${store.niche}` : 'Découvrez notre univers');
-  const heroTitle = heroInfo.heroTitle || `La boutique ${store.niche || ''} qui vous ressemble`;
-  const heroSub = heroInfo.heroSub || brandInfo.usp || `Des produits sélectionnés avec soin pour vous offrir la meilleure expérience.`;
+  const niche = store.niche || '';
+  const tagline = brandInfo.tagline || (niche ? 'La référence ' + niche : 'Découvrez notre univers');
+  const heroTitle = heroInfo.heroTitle || ('La boutique ' + (niche || '') + ' qui vous ressemble');
+  const heroSub = heroInfo.heroSub || brandInfo.usp || 'Des produits sélectionnés avec soin pour vous offrir la meilleure expérience.';
+  const primary = colors.primary || '#4361ee';
+  const secondary = colors.secondary || '#7b93f0';
+  const accent = colors.accent || '#10b981';
+  const bgLight = colors.background || '#f8fafc';
+  const heroGradient = 'linear-gradient(135deg, ' + primary + ' 0%, ' + secondary + ' 100%)';
+  const shopSlug = shopName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
 
-  const trustSignals = heroInfo.trustSignals && heroInfo.trustSignals.length
+  const trustSignals = (heroInfo.trustSignals && heroInfo.trustSignals.length)
     ? heroInfo.trustSignals
     : ['Livraison gratuite dès 49€', 'Retours gratuits 30 jours', 'Paiement 100% sécurisé', 'Support client 7j/7'];
 
-  const productNames = store.niche
-    ? [`${store.niche} Premium`, `Collection ${store.niche}`, `${store.niche} Essentiel`, `Best-seller ${store.niche}`]
+  const productNames = niche
+    ? [niche + ' Premium', 'Collection ' + niche, niche + ' Essentiel', 'Best-seller']
     : ['Produit Premium', 'Collection Signature', 'Édition Limitée', 'Best-Seller'];
 
-  const prices = ['39,90 €', '59,90 €', '24,90 €', '49,90 €'];
+  const prices = [['39,90 €', '59,90 €'], ['54,90 €', '79,90 €'], ['24,90 €', '39,90 €'], ['49,90 €', '69,90 €']];
+  const badges = ['Best-seller', 'Nouveau', '', 'Promo'];
+  const badgeColors = ['#f59e0b', '#10b981', '', '#ef4444'];
+  const bgColors = ['#fef3c7', '#d1fae5', '#ede9fe', '#fee2e2'];
 
-  const heroGradient = `linear-gradient(135deg, ${colors.primary} 0%, ${colors.secondary} 100%)`;
-  const ctaColor = colors.accent;
-  const ctaTextColor = '#ffffff';
+  const productsHTML = productNames.map(function(name, i) {
+    var badgeHTML = badges[i] ? '<span style="position:absolute;top:10px;left:10px;background:' + badgeColors[i] + ';color:white;font-size:10px;font-weight:800;padding:3px 8px;border-radius:99px;z-index:2;text-transform:uppercase;letter-spacing:.5px">' + badges[i] + '</span>' : '';
+    return '<div style="border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;background:white;box-shadow:0 2px 8px rgba(0,0,0,.06);position:relative">' +
+      badgeHTML +
+      '<div style="height:150px;display:flex;align-items:center;justify-content:center;font-size:56px;background:' + bgColors[i % bgColors.length] + '">' + emojis[i % emojis.length] + '</div>' +
+      '<div style="padding:14px">' +
+        '<div style="font-size:13px;font-weight:700;color:#0f172a;margin-bottom:6px;line-height:1.3">' + name + '</div>' +
+        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">' +
+          '<span style="font-size:16px;font-weight:800;color:' + primary + '">' + prices[i][0] + '</span>' +
+          '<span style="font-size:12px;color:#94a3b8;text-decoration:line-through">' + prices[i][1] + '</span>' +
+        '</div>' +
+        '<button onclick="return false" style="width:100%;padding:9px;border-radius:8px;border:none;background:' + primary + ';color:white;font-size:12px;font-weight:700;cursor:default">Ajouter au panier</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
 
-  return `
-<div style="min-height:100%;font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;color:#0f172a;background:#ffffff">
+  const testimonialsHTML = [
+    ['Marie L.', 'Excellent rapport qualité-prix ! Je suis ravie de mon achat, livraison ultra rapide et produit conforme à la description.'],
+    ['Thomas B.', 'Service client au top ! Un petit souci lors de ma commande et l\'équipe a tout réglé en moins de 24h. Bravo !'],
+    ['Sophie M.', 'Je commande régulièrement, la qualité est toujours au rendez-vous. Je recommande sans hésiter !']
+  ].map(function(r) {
+    return '<div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.04)">' +
+      '<div style="color:#f59e0b;font-size:16px;margin-bottom:10px">⭐⭐⭐⭐⭐</div>' +
+      '<p style="font-size:13px;color:#475569;line-height:1.6;margin:0 0 12px;font-style:italic">"' + r[1] + '"</p>' +
+      '<div style="font-size:12px;font-weight:700;color:#0f172a">' + r[0] + '</div>' +
+    '</div>';
+  }).join('');
 
-  <!-- Header -->
-  <header style="padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px;border-bottom:1px solid #e2e8f0;position:sticky;top:0;background:white;z-index:10">
-    <div>
-      <div style="font-size:18px;font-weight:800;color:${colors.primary};letter-spacing:-.5px">${shopName}</div>
-      <div style="font-size:11px;color:#64748b;font-style:italic">${tagline}</div>
-    </div>
-    <nav style="display:flex;gap:20px">
-      <a href="#" style="font-size:13px;color:#475569;text-decoration:none;font-weight:500" onclick="return false">Catalogue</a>
-      <a href="#" style="font-size:13px;color:#475569;text-decoration:none;font-weight:500" onclick="return false">Promotions</a>
-      <a href="#" style="font-size:13px;color:#475569;text-decoration:none;font-weight:500" onclick="return false">À propos</a>
-    </nav>
-    <div style="display:flex;gap:8px;align-items:center">
-      <span style="font-size:20px;cursor:default">🔍</span>
-      <span style="font-size:20px;cursor:default">🛒</span>
-    </div>
-  </header>
+  const whyUsHTML = [
+    ['🚚', 'Livraison Rapide', 'Expédition en 24h, livraison en 48-72h partout en France'],
+    ['⭐', 'Qualité Garantie', 'Produits sélectionnés et testés par notre équipe d\'experts'],
+    ['🔄', 'Retours Faciles', '30 jours pour changer d\'avis, remboursement garanti'],
+    ['💬', 'Support 7j/7', 'Une équipe dédiée à votre satisfaction, disponible tous les jours']
+  ].map(function(w) {
+    return '<div style="text-align:center;padding:24px 16px">' +
+      '<div style="font-size:36px;margin-bottom:12px">' + w[0] + '</div>' +
+      '<div style="font-size:14px;font-weight:800;color:#0f172a;margin-bottom:8px">' + w[1] + '</div>' +
+      '<div style="font-size:12px;color:#64748b;line-height:1.5">' + w[2] + '</div>' +
+    '</div>';
+  }).join('');
 
-  <!-- Hero -->
-  <section style="padding:64px 24px;text-align:center;background:${heroGradient};color:white;position:relative;overflow:hidden">
-    <div style="position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.07)"></div>
-    <div style="position:absolute;bottom:-40px;left:-40px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.05)"></div>
-    <div style="position:relative;z-index:1;max-width:600px;margin:0 auto">
-      <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;opacity:.85;margin-bottom:16px">${store.niche || 'Boutique Shopify'}</div>
-      <h1 style="font-size:clamp(26px,4vw,38px);font-weight:900;line-height:1.15;margin:0 0 16px;letter-spacing:-.5px">${heroTitle}</h1>
-      <p style="font-size:15px;opacity:.9;margin:0 0 32px;line-height:1.6">${heroSub}</p>
-      <a href="#" onclick="return false" style="display:inline-block;padding:14px 36px;border-radius:8px;background:white;color:${colors.primary};font-size:14px;font-weight:800;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.15)">Découvrir →</a>
-    </div>
-  </section>
+  return '<div style="min-height:100%;font-family:-apple-system,BlinkMacSystemFont,\'Inter\',sans-serif;color:#0f172a;background:#ffffff">' +
 
-  <!-- Produits -->
-  <section style="padding:48px 24px;background:#f8fafc">
-    <div style="text-align:center;margin-bottom:32px">
-      <h2 style="font-size:22px;font-weight:800;color:#0f172a;margin:0 0 8px">Nos Produits Phares</h2>
-      <p style="font-size:14px;color:#64748b;margin:0">Sélectionnés pour vous, approuvés par nos clients</p>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;max-width:800px;margin:0 auto">
-      ${productNames.map((name, i) => `
-      <div style="border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;background:white;box-shadow:0 1px 3px rgba(0,0,0,.06)">
-        <div style="height:140px;display:flex;align-items:center;justify-content:center;font-size:48px;background:linear-gradient(135deg,${colors.background},#f1f5f9)">${emojis[i % emojis.length]}</div>
-        <div style="padding:12px">
-          <div style="font-size:13px;font-weight:700;color:#0f172a;margin-bottom:4px">${name}</div>
-          <div style="font-size:14px;font-weight:800;color:${colors.primary}">${prices[i]}</div>
-          <button onclick="return false" style="width:100%;margin-top:10px;padding:8px;border-radius:6px;border:none;background:${colors.primary};color:white;font-size:12px;font-weight:700;cursor:default">Ajouter au panier</button>
-        </div>
-      </div>`).join('')}
-    </div>
-  </section>
+  '<!-- Announcement Bar -->' +
+  '<div style="background:' + primary + ';color:white;text-align:center;padding:8px 16px;font-size:12px;font-weight:600;letter-spacing:.3px">' +
+    '🚀 Livraison gratuite dès 49€ · Retours gratuits 30 jours · Paiement sécurisé 🔒' +
+  '</div>' +
 
-  <!-- Trust signals -->
-  <section style="padding:40px 24px;background:white">
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:16px;max-width:700px;margin:0 auto">
-      ${trustSignals.map((signal, i) => {
-        const icons = ['🚚', '↩️', '🔒', '💬'];
-        return `<div style="text-align:center;padding:20px 12px;background:#f8fafc;border-radius:10px;border:1px solid #e2e8f0">
-          <div style="font-size:28px;margin-bottom:8px">${icons[i % icons.length]}</div>
-          <div style="font-size:12px;font-weight:700;color:#0f172a;line-height:1.4">${signal}</div>
-        </div>`;
-      }).join('')}
-    </div>
-  </section>
+  '<!-- Navigation -->' +
+  '<header style="padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:64px;border-bottom:1px solid #e2e8f0;position:sticky;top:0;background:white;z-index:100;box-shadow:0 1px 3px rgba(0,0,0,.05)">' +
+    '<div style="font-size:20px;font-weight:900;color:' + primary + ';letter-spacing:-1px">' + shopName + '</div>' +
+    '<nav style="display:flex;gap:24px">' +
+      '<a href="#" onclick="return false" style="font-size:13px;color:#374151;text-decoration:none;font-weight:500">Accueil</a>' +
+      '<a href="#" onclick="return false" style="font-size:13px;color:#374151;text-decoration:none;font-weight:500">Collections</a>' +
+      '<a href="#" onclick="return false" style="font-size:13px;color:#374151;text-decoration:none;font-weight:500">À propos</a>' +
+      '<a href="#" onclick="return false" style="font-size:13px;color:#374151;text-decoration:none;font-weight:500">Contact</a>' +
+    '</nav>' +
+    '<div style="display:flex;gap:12px;align-items:center">' +
+      '<span style="font-size:18px;cursor:default">🔍</span>' +
+      '<div style="position:relative;cursor:default">' +
+        '<span style="font-size:20px">🛒</span>' +
+        '<span style="position:absolute;top:-6px;right:-6px;background:' + accent + ';color:white;font-size:9px;font-weight:800;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center">2</span>' +
+      '</div>' +
+    '</div>' +
+  '</header>' +
 
-  <!-- Footer -->
-  <footer style="background:#0f172a;color:#94a3b8;padding:32px 24px">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:16px">
-      <div>
-        <div style="font-size:16px;font-weight:800;color:white;margin-bottom:4px">${shopName}</div>
-        <div style="font-size:11px;color:#64748b">${tagline}</div>
-      </div>
-      <div style="display:flex;gap:16px;flex-wrap:wrap">
-        <a href="#" onclick="return false" style="font-size:12px;color:#94a3b8;text-decoration:none">Politique de confidentialité</a>
-        <a href="#" onclick="return false" style="font-size:12px;color:#94a3b8;text-decoration:none">CGV</a>
-        <a href="#" onclick="return false" style="font-size:12px;color:#94a3b8;text-decoration:none">Contact</a>
-        <a href="#" onclick="return false" style="font-size:12px;color:#94a3b8;text-decoration:none">FAQ</a>
-      </div>
-    </div>
-    <div style="border-top:1px solid #1e293b;padding-top:16px;font-size:11px;text-align:center">
-      © ${new Date().getFullYear()} ${shopName} — Tous droits réservés · Propulsé par Shopify
-    </div>
-  </footer>
-</div>`;
+  '<!-- Hero Banner -->' +
+  '<section style="padding:80px 32px;text-align:center;background:' + heroGradient + ';color:white;position:relative;overflow:hidden">' +
+    '<div style="position:absolute;top:-80px;right:-80px;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,.06)"></div>' +
+    '<div style="position:absolute;bottom:-60px;left:-60px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.04)"></div>' +
+    '<div style="position:absolute;top:20px;left:10%;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.08)"></div>' +
+    '<div style="position:relative;z-index:1;max-width:620px;margin:0 auto">' +
+      '<div style="display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);border-radius:99px;padding:6px 16px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:20px">' + (niche || 'Boutique en ligne') + '</div>' +
+      '<h1 style="font-size:clamp(24px,4vw,40px);font-weight:900;line-height:1.15;margin:0 0 16px;letter-spacing:-.5px">' + heroTitle + '</h1>' +
+      '<p style="font-size:15px;opacity:.9;margin:0 0 36px;line-height:1.7;max-width:480px;margin-left:auto;margin-right:auto">' + heroSub + '</p>' +
+      '<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">' +
+        '<a href="#" onclick="return false" style="display:inline-block;padding:14px 36px;border-radius:8px;background:white;color:' + primary + ';font-size:14px;font-weight:800;text-decoration:none;box-shadow:0 4px 20px rgba(0,0,0,.2)">Découvrir la boutique →</a>' +
+        '<a href="#" onclick="return false" style="display:inline-block;padding:14px 28px;border-radius:8px;background:rgba(255,255,255,.15);color:white;font-size:14px;font-weight:600;text-decoration:none;border:1px solid rgba(255,255,255,.3)">Nos Collections</a>' +
+      '</div>' +
+    '</div>' +
+  '</section>' +
+
+  '<!-- Section Produits -->' +
+  '<section style="padding:60px 32px;background:' + bgLight + '">' +
+    '<div style="text-align:center;margin-bottom:40px">' +
+      '<div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:' + primary + ';margin-bottom:8px">BEST-SELLERS</div>' +
+      '<h2 style="font-size:26px;font-weight:900;color:#0f172a;margin:0 0 10px;letter-spacing:-.3px">Nos Produits Phares</h2>' +
+      '<p style="font-size:14px;color:#64748b;margin:0;max-width:400px;margin-left:auto;margin-right:auto">Sélectionnés avec soin pour vous offrir le meilleur</p>' +
+    '</div>' +
+    '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:20px;max-width:860px;margin:0 auto">' +
+      productsHTML +
+    '</div>' +
+    '<div style="text-align:center;margin-top:32px">' +
+      '<a href="#" onclick="return false" style="display:inline-block;padding:12px 32px;border-radius:8px;border:2px solid ' + primary + ';color:' + primary + ';font-size:13px;font-weight:700;text-decoration:none">Voir tous les produits →</a>' +
+    '</div>' +
+  '</section>' +
+
+  '<!-- Section Témoignages -->' +
+  '<section style="padding:60px 32px;background:white">' +
+    '<div style="text-align:center;margin-bottom:40px">' +
+      '<div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:' + primary + ';margin-bottom:8px">AVIS CLIENTS</div>' +
+      '<h2 style="font-size:26px;font-weight:900;color:#0f172a;margin:0 0 10px;letter-spacing:-.3px">Ils nous font confiance</h2>' +
+      '<p style="font-size:14px;color:#64748b;margin:0">4.9/5 basé sur plus de 1 200 avis vérifiés</p>' +
+    '</div>' +
+    '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px;max-width:860px;margin:0 auto">' +
+      testimonialsHTML +
+    '</div>' +
+  '</section>' +
+
+  '<!-- Section Pourquoi nous choisir -->' +
+  '<section style="padding:60px 32px;background:' + bgLight + '">' +
+    '<div style="text-align:center;margin-bottom:40px">' +
+      '<div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:' + primary + ';margin-bottom:8px">NOS ENGAGEMENTS</div>' +
+      '<h2 style="font-size:26px;font-weight:900;color:#0f172a;margin:0;letter-spacing:-.3px">Pourquoi nous choisir ?</h2>' +
+    '</div>' +
+    '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;max-width:860px;margin:0 auto">' +
+      whyUsHTML +
+    '</div>' +
+  '</section>' +
+
+  '<!-- Newsletter -->' +
+  '<section style="padding:60px 32px;background:' + heroGradient + ';color:white;text-align:center">' +
+    '<div style="max-width:480px;margin:0 auto">' +
+      '<div style="font-size:28px;margin-bottom:16px">💌</div>' +
+      '<h2 style="font-size:22px;font-weight:900;margin:0 0 10px">-10% sur votre première commande</h2>' +
+      '<p style="font-size:14px;opacity:.85;margin:0 0 28px;line-height:1.6">Inscrivez-vous à notre newsletter et recevez vos offres exclusives en avant-première.</p>' +
+      '<div style="display:flex;gap:0;border-radius:8px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.2)">' +
+        '<input type="email" placeholder="votre@email.com" onclick="return false" style="flex:1;padding:14px 18px;border:none;outline:none;font-size:14px;color:#0f172a" />' +
+        '<button onclick="return false" style="padding:14px 24px;background:' + accent + ';color:white;border:none;font-size:13px;font-weight:800;cursor:default;white-space:nowrap">S\'inscrire</button>' +
+      '</div>' +
+      '<p style="font-size:11px;opacity:.6;margin:12px 0 0">🔒 Pas de spam. Désabonnement en 1 clic.</p>' +
+    '</div>' +
+  '</section>' +
+
+  '<!-- Footer -->' +
+  '<footer style="background:#0f172a;color:#94a3b8;padding:48px 32px 24px">' +
+    '<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;max-width:860px;margin:0 auto 40px;flex-wrap:wrap">' +
+      '<div>' +
+        '<div style="font-size:18px;font-weight:900;color:white;margin-bottom:8px">' + shopName + '</div>' +
+        '<div style="font-size:12px;color:#64748b;line-height:1.6;margin-bottom:16px">' + tagline + '</div>' +
+        '<div style="display:flex;gap:10px">' +
+          '<span style="font-size:18px;cursor:default" title="Instagram">📸</span>' +
+          '<span style="font-size:18px;cursor:default" title="Facebook">📘</span>' +
+          '<span style="font-size:18px;cursor:default" title="TikTok">🎵</span>' +
+        '</div>' +
+      '</div>' +
+      '<div>' +
+        '<div style="font-size:12px;font-weight:800;color:white;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Boutique</div>' +
+        '<div style="display:flex;flex-direction:column;gap:8px">' +
+          '<a href="#" onclick="return false" style="font-size:12px;color:#64748b;text-decoration:none">Tous les produits</a>' +
+          '<a href="#" onclick="return false" style="font-size:12px;color:#64748b;text-decoration:none">Nouveautés</a>' +
+          '<a href="#" onclick="return false" style="font-size:12px;color:#64748b;text-decoration:none">Promotions</a>' +
+        '</div>' +
+      '</div>' +
+      '<div>' +
+        '<div style="font-size:12px;font-weight:800;color:white;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Aide</div>' +
+        '<div style="display:flex;flex-direction:column;gap:8px">' +
+          '<a href="#" onclick="return false" style="font-size:12px;color:#64748b;text-decoration:none">FAQ</a>' +
+          '<a href="#" onclick="return false" style="font-size:12px;color:#64748b;text-decoration:none">Livraison</a>' +
+          '<a href="#" onclick="return false" style="font-size:12px;color:#64748b;text-decoration:none">Retours</a>' +
+          '<a href="#" onclick="return false" style="font-size:12px;color:#64748b;text-decoration:none">Contact</a>' +
+        '</div>' +
+      '</div>' +
+      '<div>' +
+        '<div style="font-size:12px;font-weight:800;color:white;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Légal</div>' +
+        '<div style="display:flex;flex-direction:column;gap:8px">' +
+          '<a href="#" onclick="return false" style="font-size:12px;color:#64748b;text-decoration:none">CGV</a>' +
+          '<a href="#" onclick="return false" style="font-size:12px;color:#64748b;text-decoration:none">Confidentialité</a>' +
+          '<a href="#" onclick="return false" style="font-size:12px;color:#64748b;text-decoration:none">Mentions légales</a>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div style="border-top:1px solid #1e293b;padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;max-width:860px;margin:0 auto">' +
+      '<div style="font-size:11px">© 2026 ' + shopName + ' — Tous droits réservés</div>' +
+      '<div style="font-size:11px">Propulsé par <strong style="color:#96bf48">Shopify</strong></div>' +
+    '</div>' +
+  '</footer>' +
+'</div>';
+}
+
+function generatePDPPreviewHTML(store, agents) {
+  var colors = extractColorsFromBrandResult(agents.BRAND && agents.BRAND.result);
+  var emojis = getProductEmojis(store.niche);
+  var shopName = store.name || 'Ma Boutique';
+  var niche = store.niche || '';
+  var primary = colors.primary || '#4361ee';
+  var secondary = colors.secondary || '#7b93f0';
+  var accent = colors.accent || '#10b981';
+  var bgLight = colors.background || '#f8fafc';
+  var heroGradient = 'linear-gradient(135deg, ' + primary + ' 0%, ' + secondary + ' 100%)';
+  var productName = niche ? niche + ' Premium' : 'Produit Phare';
+  var emoji = emojis[0];
+  var bgColors = ['#fef3c7', '#d1fae5', '#ede9fe', '#fee2e2'];
+
+  var thumbsHTML = [0,1,2,3].map(function(i) {
+    return '<div style="border-radius:8px;overflow:hidden;border:' + (i===0 ? '2px solid '+primary : '1px solid #e2e8f0') + ';cursor:default">' +
+      '<div style="height:60px;display:flex;align-items:center;justify-content:center;font-size:24px;background:' + bgColors[i%bgColors.length] + '">' + emojis[i%emojis.length] + '</div>' +
+    '</div>';
+  }).join('');
+
+  var sizesHTML = ['XS','S','M','L','XL'].map(function(s, i) {
+    return '<button onclick="return false" style="padding:6px 14px;border-radius:6px;border:' + (i===2 ? '2px solid '+primary : '1px solid #e2e8f0') + ';background:' + (i===2 ? primary : 'white') + ';color:' + (i===2 ? 'white' : '#475569') + ';font-size:12px;font-weight:600;cursor:default">' + s + '</button>';
+  }).join('');
+
+  var colorsHTML = ['#0f172a','#4361ee','#ef4444','#10b981'].map(function(c, i) {
+    return '<div style="width:28px;height:28px;border-radius:50%;background:' + c + ';cursor:default;border:' + (i===0 ? '3px solid '+primary : '2px solid transparent') + ';box-shadow:0 0 0 1px #e2e8f0"></div>';
+  }).join('');
+
+  var trustBadgesHTML = [['🚚','Livraison 48h'],['🔄','Retour 30j'],['🔒','Paiement sécurisé']].map(function(b) {
+    return '<div style="text-align:center;padding:12px 8px;background:' + bgLight + ';border-radius:8px;border:1px solid #e2e8f0">' +
+      '<div style="font-size:20px;margin-bottom:4px">' + b[0] + '</div>' +
+      '<div style="font-size:11px;font-weight:600;color:#374151;line-height:1.3">' + b[1] + '</div>' +
+    '</div>';
+  }).join('');
+
+  var reviewsHTML = [
+    ['Marie L.', 5, 'Parfait ! Exactement ce que je cherchais. Qualité top, livraison rapide.'],
+    ['Thomas B.', 5, 'Excellent produit, je recommande ! Le rapport qualité-prix est imbattable.'],
+    ['Sophie M.', 4, 'Très satisfaite de mon achat. Un petit délai de livraison mais produit au top.']
+  ].map(function(r) {
+    var stars = '';
+    for (var s = 0; s < r[1]; s++) stars += '⭐';
+    return '<div style="border-bottom:1px solid #f1f5f9;padding:16px 0">' +
+      '<div style="display:flex;justify-content:space-between;margin-bottom:6px">' +
+        '<div style="font-size:13px;font-weight:700;color:#0f172a">' + r[0] + '</div>' +
+        '<div style="color:#f59e0b;font-size:13px">' + stars + '</div>' +
+      '</div>' +
+      '<p style="font-size:13px;color:#475569;margin:0;line-height:1.6">' + r[2] + '</p>' +
+    '</div>';
+  }).join('');
+
+  return '<div style="min-height:100%;font-family:-apple-system,BlinkMacSystemFont,\'Inter\',sans-serif;color:#0f172a;background:#fff">' +
+  '<div style="background:' + primary + ';color:white;text-align:center;padding:8px;font-size:11px;font-weight:600">🚀 Livraison gratuite dès 49€ · Retours gratuits 30 jours</div>' +
+  '<header style="padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:56px;border-bottom:1px solid #e2e8f0;background:white">' +
+    '<div style="font-size:18px;font-weight:900;color:' + primary + '">' + shopName + '</div>' +
+    '<nav style="display:flex;gap:20px">' +
+      '<a href="#" onclick="return false" style="font-size:13px;color:#374151;text-decoration:none">Accueil</a>' +
+      '<a href="#" onclick="return false" style="font-size:13px;color:#374151;text-decoration:none">Collections</a>' +
+      '<a href="#" onclick="return false" style="font-size:13px;color:#374151;text-decoration:none">À propos</a>' +
+    '</nav>' +
+    '<span style="font-size:20px;cursor:default">🛒</span>' +
+  '</header>' +
+  '<div style="max-width:860px;margin:0 auto;padding:24px">' +
+    '<div style="font-size:12px;color:#94a3b8;margin-bottom:24px">' +
+      '<a href="#" onclick="return false" style="color:#94a3b8;text-decoration:none">Accueil</a>' +
+      '<span style="margin:0 6px">›</span>' +
+      '<a href="#" onclick="return false" style="color:#94a3b8;text-decoration:none">' + (niche || 'Collection') + '</a>' +
+      '<span style="margin:0 6px">›</span>' +
+      '<span style="color:#0f172a;font-weight:600">' + productName + '</span>' +
+    '</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-bottom:48px">' +
+      '<div>' +
+        '<div style="border-radius:12px;overflow:hidden;border:1px solid #e2e8f0;margin-bottom:10px">' +
+          '<div style="height:320px;display:flex;align-items:center;justify-content:center;font-size:96px;background:' + bgColors[0] + '">' + emoji + '</div>' +
+        '</div>' +
+        '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">' + thumbsHTML + '</div>' +
+      '</div>' +
+      '<div>' +
+        '<div style="display:inline-block;background:#fef3c7;color:#92400e;font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;margin-bottom:12px">Best-seller</div>' +
+        '<h1 style="font-size:24px;font-weight:900;color:#0f172a;margin:0 0 12px;line-height:1.2">' + productName + '</h1>' +
+        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">' +
+          '<span style="color:#f59e0b;font-size:15px">⭐⭐⭐⭐⭐</span>' +
+          '<span style="font-size:13px;color:#64748b">4.8/5 · <a href="#" onclick="return false" style="color:' + primary + ';text-decoration:none">128 avis</a></span>' +
+        '</div>' +
+        '<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">' +
+          '<span style="font-size:28px;font-weight:900;color:' + primary + '">39,90 €</span>' +
+          '<span style="font-size:16px;color:#94a3b8;text-decoration:line-through">59,90 €</span>' +
+          '<span style="background:#fee2e2;color:#ef4444;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px">-33%</span>' +
+        '</div>' +
+        '<p style="font-size:14px;color:#475569;line-height:1.7;margin:0 0 20px">Découvrez notre ' + productName + ', conçu pour allier performance et style. Fabriqué avec des matériaux premium sélectionnés pour leur qualité et leur durabilité.</p>' +
+        '<div style="margin-bottom:16px">' +
+          '<div style="font-size:12px;font-weight:700;color:#0f172a;margin-bottom:8px">Couleur : <span style="font-weight:400;color:#64748b">Noir</span></div>' +
+          '<div style="display:flex;gap:8px">' + colorsHTML + '</div>' +
+        '</div>' +
+        '<div style="margin-bottom:24px">' +
+          '<div style="font-size:12px;font-weight:700;color:#0f172a;margin-bottom:8px">Taille : <span style="font-weight:400;color:#64748b">M</span></div>' +
+          '<div style="display:flex;gap:8px;flex-wrap:wrap">' + sizesHTML + '</div>' +
+        '</div>' +
+        '<button onclick="return false" style="width:100%;padding:16px;border-radius:10px;border:none;background:' + heroGradient + ';color:white;font-size:15px;font-weight:800;cursor:default;margin-bottom:12px;box-shadow:0 4px 14px rgba(0,0,0,.15)">🛒 Ajouter au panier</button>' +
+        '<button onclick="return false" style="width:100%;padding:14px;border-radius:10px;border:2px solid ' + primary + ';background:transparent;color:' + primary + ';font-size:14px;font-weight:700;cursor:default;margin-bottom:20px">♡ Ajouter aux favoris</button>' +
+        '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">' + trustBadgesHTML + '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div style="border:1px solid #e2e8f0;border-radius:12px;padding:32px;margin-bottom:32px">' +
+      '<h2 style="font-size:18px;font-weight:800;color:#0f172a;margin:0 0 16px">Description du produit</h2>' +
+      '<p style="font-size:14px;color:#475569;line-height:1.8;margin:0 0 16px">Notre ' + productName + ' est le résultat de mois de recherche et développement. Nous avons collaboré avec des experts du secteur pour créer un produit qui répond parfaitement aux besoins de nos clients.</p>' +
+      '<ul style="padding-left:20px;margin:0;display:flex;flex-direction:column;gap:8px">' +
+        '<li style="font-size:14px;color:#475569;line-height:1.6">Matériaux premium sélectionnés avec soin</li>' +
+        '<li style="font-size:14px;color:#475569;line-height:1.6">Conçu pour durer dans le temps</li>' +
+        '<li style="font-size:14px;color:#475569;line-height:1.6">Fabriqué de manière éthique et responsable</li>' +
+        '<li style="font-size:14px;color:#475569;line-height:1.6">Testé et approuvé par des milliers de clients satisfaits</li>' +
+      '</ul>' +
+    '</div>' +
+    '<div style="border:1px solid #e2e8f0;border-radius:12px;padding:32px">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">' +
+        '<h2 style="font-size:18px;font-weight:800;color:#0f172a;margin:0">Avis clients (128)</h2>' +
+        '<div style="text-align:center">' +
+          '<div style="font-size:36px;font-weight:900;color:#0f172a;line-height:1">4.8</div>' +
+          '<div style="color:#f59e0b;font-size:14px">⭐⭐⭐⭐⭐</div>' +
+          '<div style="font-size:11px;color:#64748b">128 avis vérifiés</div>' +
+        '</div>' +
+      '</div>' +
+      reviewsHTML +
+    '</div>' +
+  '</div>' +
+  '<footer style="background:#0f172a;color:#64748b;padding:20px 24px;text-align:center;font-size:11px;margin-top:48px">' +
+    '© 2026 ' + shopName + ' — Propulsé par <strong style="color:#96bf48">Shopify</strong>' +
+  '</footer>' +
+'</div>';
+}
+
+function generateCollectionPreviewHTML(store, agents) {
+  var colors = extractColorsFromBrandResult(agents.BRAND && agents.BRAND.result);
+  var emojis = getProductEmojis(store.niche);
+  var shopName = store.name || 'Ma Boutique';
+  var niche = store.niche || 'Produits';
+  var primary = colors.primary || '#4361ee';
+  var secondary = colors.secondary || '#7b93f0';
+  var bgLight = colors.background || '#f8fafc';
+  var bgColors = ['#fef3c7', '#d1fae5', '#ede9fe', '#fee2e2', '#e0f2fe', '#fce7f3'];
+
+  var p6Names = [niche + ' Premium', 'Collection ' + niche, niche + ' Essentiel', niche + ' Pro', 'Édition Limitée', niche + ' Signature'];
+  var p6Prices = [['39,90 €','59,90 €'], ['54,90 €','74,90 €'], ['24,90 €','39,90 €'], ['49,90 €','69,90 €'], ['79,90 €','99,90 €'], ['34,90 €','49,90 €']];
+  var p6Badges = ['Best-seller', 'Nouveau', null, null, 'Exclusif', null];
+  var p6BadgeColors = ['#f59e0b', '#10b981', null, null, '#8b5cf6', null];
+
+  var productsGridHTML = p6Names.map(function(name, i) {
+    var badgeHTML = p6Badges[i] ? '<span style="position:absolute;top:10px;left:10px;background:' + p6BadgeColors[i] + ';color:white;font-size:10px;font-weight:800;padding:3px 8px;border-radius:99px;z-index:2;text-transform:uppercase">' + p6Badges[i] + '</span>' : '';
+    return '<div style="border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;background:white;box-shadow:0 2px 8px rgba(0,0,0,.05);position:relative">' +
+      badgeHTML +
+      '<div style="height:160px;display:flex;align-items:center;justify-content:center;font-size:56px;background:' + bgColors[i%bgColors.length] + '">' + emojis[i%emojis.length] + '</div>' +
+      '<div style="padding:14px">' +
+        '<div style="font-size:13px;font-weight:700;color:#0f172a;margin-bottom:4px">' + name + '</div>' +
+        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">' +
+          '<span style="font-size:15px;font-weight:800;color:' + primary + '">' + p6Prices[i][0] + '</span>' +
+          '<span style="font-size:12px;color:#94a3b8;text-decoration:line-through">' + p6Prices[i][1] + '</span>' +
+        '</div>' +
+        '<button onclick="return false" style="width:100%;padding:8px;border-radius:8px;border:none;background:' + primary + ';color:white;font-size:12px;font-weight:700;cursor:default">Ajouter au panier</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  var priceFiltersHTML = ['0€ - 25€','25€ - 50€','50€ - 100€','100€ +'].map(function(range, i) {
+    return '<label style="display:flex;align-items:center;gap:8px;font-size:13px;color:#475569;cursor:default">' +
+      '<input type="checkbox" ' + (i===1?'checked':'') + ' onclick="return false" style="accent-color:' + primary + '"> ' + range +
+    '</label>';
+  }).join('');
+
+  var colorDotsHTML = ['#0f172a','#4361ee','#ef4444','#10b981','#f59e0b','#8b5cf6'].map(function(c, i) {
+    return '<div onclick="return false" style="width:24px;height:24px;border-radius:50%;background:' + c + ';cursor:default;border:' + (i===0 ? '3px solid '+primary : '2px solid transparent') + ';box-shadow:0 0 0 1px #e2e8f0"></div>';
+  }).join('');
+
+  var sizeBtnsHTML = ['XS','S','M','L','XL','XXL'].map(function(s, i) {
+    return '<button onclick="return false" style="padding:5px 10px;border-radius:6px;border:1px solid #e2e8f0;background:' + (i===2?primary:'white') + ';color:' + (i===2?'white':'#475569') + ';font-size:11px;font-weight:600;cursor:default">' + s + '</button>';
+  }).join('');
+
+  return '<div style="min-height:100%;font-family:-apple-system,BlinkMacSystemFont,\'Inter\',sans-serif;color:#0f172a;background:#fff">' +
+  '<div style="background:' + primary + ';color:white;text-align:center;padding:8px;font-size:11px;font-weight:600">🚀 Livraison gratuite dès 49€ · Retours gratuits 30 jours</div>' +
+  '<header style="padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:56px;border-bottom:1px solid #e2e8f0;background:white">' +
+    '<div style="font-size:18px;font-weight:900;color:' + primary + '">' + shopName + '</div>' +
+    '<nav style="display:flex;gap:20px">' +
+      '<a href="#" onclick="return false" style="font-size:13px;color:#374151;text-decoration:none">Accueil</a>' +
+      '<a href="#" onclick="return false" style="font-size:13px;color:' + primary + ';text-decoration:none;font-weight:700;border-bottom:2px solid ' + primary + ';padding-bottom:2px">Collections</a>' +
+      '<a href="#" onclick="return false" style="font-size:13px;color:#374151;text-decoration:none">À propos</a>' +
+    '</nav>' +
+    '<span style="font-size:20px;cursor:default">🛒</span>' +
+  '</header>' +
+  '<div style="background:linear-gradient(135deg,' + primary + ',' + secondary + ');color:white;padding:40px 32px;text-align:center">' +
+    '<h1 style="font-size:28px;font-weight:900;margin:0 0 10px">Toute la Collection ' + niche + '</h1>' +
+    '<p style="font-size:14px;opacity:.85;margin:0">6 produits · Livraison offerte dès 49€</p>' +
+  '</div>' +
+  '<div style="display:grid;grid-template-columns:200px 1fr;gap:0;max-width:960px;margin:0 auto;padding:0 16px 48px">' +
+    '<div style="padding:24px 20px 24px 0;border-right:1px solid #e2e8f0">' +
+      '<div style="margin-bottom:24px">' +
+        '<div style="font-size:13px;font-weight:800;color:#0f172a;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">Prix <span style="font-size:16px;cursor:default">›</span></div>' +
+        '<div style="display:flex;flex-direction:column;gap:8px">' + priceFiltersHTML + '</div>' +
+      '</div>' +
+      '<div style="height:1px;background:#e2e8f0;margin-bottom:24px"></div>' +
+      '<div style="margin-bottom:24px">' +
+        '<div style="font-size:13px;font-weight:800;color:#0f172a;margin-bottom:12px">Couleur</div>' +
+        '<div style="display:flex;flex-wrap:wrap;gap:8px">' + colorDotsHTML + '</div>' +
+      '</div>' +
+      '<div style="height:1px;background:#e2e8f0;margin-bottom:24px"></div>' +
+      '<div>' +
+        '<div style="font-size:13px;font-weight:800;color:#0f172a;margin-bottom:12px">Taille</div>' +
+        '<div style="display:flex;flex-wrap:wrap;gap:6px">' + sizeBtnsHTML + '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div style="padding:24px 0 24px 24px">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">' +
+        '<span style="font-size:13px;color:#64748b">6 produits</span>' +
+        '<div style="display:flex;align-items:center;gap:8px">' +
+          '<span style="font-size:13px;color:#64748b">Trier par :</span>' +
+          '<select onclick="return false" style="font-size:13px;padding:6px 12px;border-radius:6px;border:1px solid #e2e8f0;color:#374151;background:white;cursor:default">' +
+            '<option>Popularité</option><option>Prix croissant</option><option>Prix décroissant</option><option>Nouveautés</option>' +
+          '</select>' +
+        '</div>' +
+      '</div>' +
+      '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">' + productsGridHTML + '</div>' +
+    '</div>' +
+  '</div>' +
+  '<footer style="background:#0f172a;color:#64748b;padding:20px 24px;text-align:center;font-size:11px">' +
+    '© 2026 ' + shopName + ' — Propulsé par <strong style="color:#96bf48">Shopify</strong>' +
+  '</footer>' +
+'</div>';
+}
+
+function generatePagesPreviewHTML(store, agents) {
+  var colors = extractColorsFromBrandResult(agents.BRAND && agents.BRAND.result);
+  var brandInfo = extractBrandInfo(agents.BRAND && agents.BRAND.result);
+  var shopName = store.name || 'Ma Boutique';
+  var niche = store.niche || '';
+  var primary = colors.primary || '#4361ee';
+  var secondary = colors.secondary || '#7b93f0';
+  var bgLight = colors.background || '#f8fafc';
+  var heroGradient = 'linear-gradient(135deg, ' + primary + ' 0%, ' + secondary + ' 100%)';
+  var aboutText = brandInfo.usp || (shopName + ' est née d\'une passion pour ' + (niche || 'la qualité et l\'excellence') + '. Depuis notre création, nous mettons tout en œuvre pour offrir à nos clients des produits d\'exception, sélectionnés avec le plus grand soin.');
+
+  var missionHTML = [
+    ['💎','Qualité','Nous ne proposons que des produits que nous utilisons nous-mêmes et dont nous sommes fiers.'],
+    ['🌿','Responsabilité','Nous travaillons avec des partenaires éthiques et réduisons notre impact environnemental.'],
+    ['❤️','Communauté','Vous êtes plus qu\'un client. Vous faites partie d\'une communauté de passionnés comme nous.']
+  ].map(function(m) {
+    return '<div style="background:white;border-radius:12px;padding:24px;border:1px solid #e2e8f0;box-shadow:0 2px 8px rgba(0,0,0,.04)">' +
+      '<div style="font-size:32px;margin-bottom:12px">' + m[0] + '</div>' +
+      '<div style="font-size:15px;font-weight:800;color:#0f172a;margin-bottom:8px">' + m[1] + '</div>' +
+      '<div style="font-size:13px;color:#64748b;line-height:1.6">' + m[2] + '</div>' +
+    '</div>';
+  }).join('');
+
+  var faqItems = [
+    ['Quels sont vos délais de livraison ?', 'Nous expédions toutes les commandes sous 24h (jours ouvrés). La livraison standard prend 2-3 jours en France métropolitaine. La livraison express est disponible sous 24h.'],
+    ['Comment retourner un article ?', 'Vous disposez de 30 jours à compter de la réception pour retourner votre article. Le retour est gratuit et le remboursement s\'effectue sous 5-7 jours ouvrés.'],
+    ['Vos produits sont-ils authentiques ?', 'Absolument ! Tous nos produits sont 100% authentiques et sourcés directement auprès de fabricants certifiés. Nous garantissons la qualité de chaque article.'],
+    ['Comment contacter le service client ?', 'Notre équipe est disponible 7j/7 via le chat en direct, par email ou par téléphone du lundi au vendredi de 9h à 18h.']
+  ];
+
+  var faqHTML = faqItems.map(function(f, i) {
+    return '<div style="border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:10px">' +
+      '<div style="padding:16px 20px;display:flex;justify-content:space-between;align-items:center;background:white;cursor:default">' +
+        '<span style="font-size:14px;font-weight:700;color:#0f172a">' + f[0] + '</span>' +
+        '<span style="font-size:18px;color:' + primary + ';font-weight:700">' + (i===0 ? '−' : '+') + '</span>' +
+      '</div>' +
+      (i===0 ? '<div style="padding:0 20px 16px;background:' + bgLight + '"><p style="font-size:13px;color:#475569;line-height:1.7;margin:0">' + f[1] + '</p></div>' : '') +
+    '</div>';
+  }).join('');
+
+  var uspPoints = ['✅ 10 000+ clients satisfaits','✅ Produits certifiés et testés','✅ Équipe disponible 7j/7','✅ Livraison dans toute l\'Europe'];
+  var uspHTML = uspPoints.map(function(p) {
+    return '<div style="font-size:13px;color:#374151;font-weight:500">' + p + '</div>';
+  }).join('');
+
+  return '<div style="min-height:100%;font-family:-apple-system,BlinkMacSystemFont,\'Inter\',sans-serif;color:#0f172a;background:#fff">' +
+  '<div style="background:' + primary + ';color:white;text-align:center;padding:8px;font-size:11px;font-weight:600">🚀 Livraison gratuite dès 49€ · Retours gratuits 30 jours</div>' +
+  '<header style="padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:56px;border-bottom:1px solid #e2e8f0;background:white">' +
+    '<div style="font-size:18px;font-weight:900;color:' + primary + '">' + shopName + '</div>' +
+    '<nav style="display:flex;gap:20px">' +
+      '<a href="#" onclick="return false" style="font-size:13px;color:#374151;text-decoration:none">Accueil</a>' +
+      '<a href="#" onclick="return false" style="font-size:13px;color:#374151;text-decoration:none">Collections</a>' +
+      '<a href="#" onclick="return false" style="font-size:13px;color:' + primary + ';text-decoration:none;font-weight:700;border-bottom:2px solid ' + primary + ';padding-bottom:2px">À propos</a>' +
+    '</nav>' +
+    '<span style="font-size:20px;cursor:default">🛒</span>' +
+  '</header>' +
+  '<section style="padding:80px 32px;background:' + heroGradient + ';color:white;text-align:center">' +
+    '<div style="max-width:600px;margin:0 auto">' +
+      '<div style="font-size:40px;margin-bottom:20px">🌟</div>' +
+      '<h1 style="font-size:32px;font-weight:900;margin:0 0 16px;letter-spacing:-.5px">Notre Histoire</h1>' +
+      '<p style="font-size:15px;opacity:.85;line-height:1.7;margin:0">' + aboutText + '</p>' +
+    '</div>' +
+  '</section>' +
+  '<section style="padding:60px 32px;background:white">' +
+    '<div style="max-width:720px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center">' +
+      '<div>' +
+        '<div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:' + primary + ';margin-bottom:10px">QUI SOMMES-NOUS</div>' +
+        '<h2 style="font-size:22px;font-weight:900;margin:0 0 16px;color:#0f172a">Passionnés par ' + (niche || 'la qualité') + '</h2>' +
+        '<p style="font-size:14px;color:#475569;line-height:1.8;margin:0 0 16px">Fondée avec l\'ambition de révolutionner le marché, notre équipe de passionnés travaille chaque jour pour vous proposer ce qu\'il y a de mieux.</p>' +
+        '<div style="display:flex;flex-direction:column;gap:10px">' + uspHTML + '</div>' +
+      '</div>' +
+      '<div style="background:' + bgLight + ';border-radius:16px;padding:32px;text-align:center;border:1px solid #e2e8f0">' +
+        '<div style="font-size:64px;margin-bottom:16px">🏆</div>' +
+        '<div style="font-size:32px;font-weight:900;color:' + primary + ';margin-bottom:4px">10K+</div>' +
+        '<div style="font-size:13px;color:#64748b;margin-bottom:20px">Clients satisfaits</div>' +
+        '<div style="font-size:28px;font-weight:900;color:' + primary + ';margin-bottom:4px">4.9/5</div>' +
+        '<div style="font-size:13px;color:#64748b">Note moyenne</div>' +
+      '</div>' +
+    '</div>' +
+  '</section>' +
+  '<section style="padding:60px 32px;background:' + bgLight + '">' +
+    '<div style="max-width:720px;margin:0 auto;text-align:center">' +
+      '<div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:' + primary + ';margin-bottom:10px">NOTRE MISSION</div>' +
+      '<h2 style="font-size:26px;font-weight:900;margin:0 0 40px;color:#0f172a">Ce qui nous anime chaque jour</h2>' +
+      '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px">' + missionHTML + '</div>' +
+    '</div>' +
+  '</section>' +
+  '<section style="padding:60px 32px;background:white">' +
+    '<div style="max-width:680px;margin:0 auto">' +
+      '<div style="text-align:center;margin-bottom:40px">' +
+        '<div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:' + primary + ';margin-bottom:10px">QUESTIONS FRÉQUENTES</div>' +
+        '<h2 style="font-size:26px;font-weight:900;margin:0;color:#0f172a">Tout ce que vous devez savoir</h2>' +
+      '</div>' +
+      faqHTML +
+    '</div>' +
+  '</section>' +
+  '<footer style="background:#0f172a;color:#64748b;padding:20px 24px;text-align:center;font-size:11px">' +
+    '© 2026 ' + shopName + ' — Propulsé par <strong style="color:#96bf48">Shopify</strong>' +
+  '</footer>' +
+'</div>';
 }
 
 function refreshShopPreview() {
@@ -4128,6 +4596,41 @@ function switchPreviewSubTab(tab, btn) {
   if (btn) btn.classList.add('active');
   const panel = document.getElementById('subpanel-' + tab);
   if (panel) panel.classList.add('active');
+
+  // Update browser frame content + URL bar
+  const browserContent = document.getElementById('shop-browser-content');
+  const urlBar = document.getElementById('preview-url');
+  if (!browserContent) return;
+
+  const stores = (() => { try { return JSON.parse(localStorage.getItem('tr7_stores') || '[]'); } catch(e) { return []; } })();
+  const store = (currentStoreId ? stores.find(s => s.id === currentStoreId) : stores[0]) || null;
+  if (!store) return;
+  const agents = store.agents || {};
+  const doneCount = Object.values(agents).filter(a => a && a.status === 'done').length;
+  if (doneCount === 0) return;
+
+  const shopSlug = (store.name || 'ma-boutique').toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+
+  if (tab === 'home') {
+    if (urlBar) urlBar.textContent = 'https://' + shopSlug + '.myshopify.com';
+    browserContent.innerHTML = generateShopPreviewHTML(store, agents);
+  } else if (tab === 'pdp') {
+    if (urlBar) urlBar.textContent = 'https://' + shopSlug + '.myshopify.com/products/produit-vedette';
+    browserContent.innerHTML = generatePDPPreviewHTML(store, agents);
+  } else if (tab === 'collections') {
+    if (urlBar) urlBar.textContent = 'https://' + shopSlug + '.myshopify.com/collections/all';
+    browserContent.innerHTML = generateCollectionPreviewHTML(store, agents);
+  } else if (tab === 'pages') {
+    if (urlBar) urlBar.textContent = 'https://' + shopSlug + '.myshopify.com/pages/about';
+    browserContent.innerHTML = generatePagesPreviewHTML(store, agents);
+  }
+
+  // Preserve device mode
+  if (typeof previewDeviceMode !== 'undefined' && previewDeviceMode === 'mobile') {
+    browserContent.classList.add('mobile-mode');
+  } else {
+    browserContent.classList.remove('mobile-mode');
+  }
 }
 
 // ══════════════════════════════════════════
@@ -4281,7 +4784,7 @@ function deployAllApproved() {
 <div class="modal-overlay" id="new-store-overlay" onclick="if(event.target===this)closeNewStoreModal()">
   <div class="new-store-modal">
     <div class="modal-hd">
-      <div class="modal-title">🏪 Nouvelle Boutique</div>
+      <div class="modal-title" id="ns-modal-title">🏪 Nouvelle Boutique</div>
       <button class="modal-close-btn" onclick="closeNewStoreModal()">✕</button>
     </div>
 
@@ -4299,6 +4802,12 @@ function deployAllApproved() {
       <label class="form-label">Lien produit (AliExpress, Temu…)</label>
       <input class="form-input" id="ns-link" type="url" placeholder="https://…" oninput="detectProduct(this.value)">
       <div class="product-preview" id="ns-link-preview">🛍️ <strong>Produit détecté</strong> — <span id="ns-link-domain"></span></div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">🌐 Boutique d'inspiration (optionnel)</label>
+      <input class="form-input" id="ns-inspiration" type="url" placeholder="https://exemple-boutique.myshopify.com">
+      <div class="ns-field-desc" style="font-size:11px;color:var(--muted);margin-top:4px">Collez l'URL d'une boutique existante dont vous aimez le style</div>
     </div>
 
     <div class="form-group">
@@ -4331,7 +4840,7 @@ function deployAllApproved() {
 
     <div class="modal-actions">
       <button class="btn-sm btn-ghost" onclick="closeNewStoreModal()">Annuler</button>
-      <button class="btn-sm btn-primary" onclick="createNewStore()">🚀 Créer la boutique</button>
+      <button class="btn-sm btn-primary" id="ns-submit-btn" onclick="createNewStore()">🚀 Créer la boutique</button>
     </div>
   </div>
 </div>
@@ -4373,7 +4882,7 @@ function openNewStoreModal() {
 function closeNewStoreModal() {
   document.getElementById('new-store-overlay').classList.remove('active');
   // Reset form
-  ['ns-name','ns-niche','ns-link','ns-prompt'].forEach(id => {
+  ['ns-name','ns-niche','ns-link','ns-prompt','ns-inspiration'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
@@ -4382,6 +4891,12 @@ function closeNewStoreModal() {
   document.getElementById('ns-link-preview').style.display = 'none';
   document.getElementById('ns-zip-name').textContent = '';
   document.getElementById('ns-dropzone').classList.remove('dragover');
+  // Reset edit mode
+  const titleEl = document.getElementById('ns-modal-title');
+  if (titleEl) titleEl.textContent = '🏪 Nouvelle Boutique';
+  const submitBtn = document.getElementById('ns-submit-btn');
+  if (submitBtn) { submitBtn.textContent = '🚀 Créer la boutique'; submitBtn.onclick = createNewStore; }
+  delete window._editingStoreId;
 }
 
 function detectProduct(url) {
@@ -4441,13 +4956,34 @@ function createNewStore() {
   }
   const niche = document.getElementById('ns-niche').value.trim();
   const link = document.getElementById('ns-link').value.trim();
+  const inspiration = document.getElementById('ns-inspiration')?.value.trim() || '';
   const template = document.getElementById('ns-template').value;
   const prompt = document.getElementById('ns-prompt').value.trim();
   const emoji = getNicheEmoji(niche);
 
+  // Edit mode
+  if (window._editingStoreId) {
+    const stores = getSavedStores();
+    const idx = stores.findIndex(s => s.id === window._editingStoreId);
+    if (idx !== -1) {
+      stores[idx] = Object.assign(stores[idx], { name, niche, link, inspiration, template, prompt, emoji });
+      localStorage.setItem('tr7_stores', JSON.stringify(stores));
+      // Refresh sidebar card
+      const card = document.querySelector(`.store-card[data-store-id="${window._editingStoreId}"]`);
+      if (card) {
+        card.querySelector('.store-icon').textContent = emoji;
+        card.querySelector('.store-name').textContent = name;
+        card.querySelector('.store-sub').textContent = niche || 'Boutique personnalisée';
+      }
+      closeNewStoreModal();
+      showToast('✅ Boutique "' + name + '" modifiée !');
+      return;
+    }
+  }
+
   const store = {
     id: 'store-' + Date.now(),
-    name, niche, link, template, prompt, emoji,
+    name, niche, link, inspiration, template, prompt, emoji,
     createdAt: new Date().toISOString(),
     score: null
   };
@@ -4477,12 +5013,18 @@ function addStoreToSidebar(store) {
   const div = document.createElement('div');
   div.className = 'store-card';
   div.dataset.storeId = store.id;
-  div.onclick = () => selectSavedStore(store.id);
+  div.onclick = (e) => { if (!e.target.closest('.store-menu-btn,.store-menu-dropdown')) selectSavedStore(store.id); };
   div.innerHTML = `
     <div class="store-icon" style="background:linear-gradient(135deg,var(--p1),var(--p2))">${store.emoji}</div>
     <div class="store-info">
       <div class="store-name">${store.name}</div>
       <div class="store-sub">${store.niche || 'Boutique personnalisée'}</div>
+    </div>
+    <button class="store-menu-btn" onclick="toggleStoreMenu(event,'${store.id}')" title="Options">⋮</button>
+    <div class="store-menu-dropdown" id="store-menu-${store.id}">
+      <div class="store-menu-item" onclick="editStore('${store.id}')">✏️ Modifier</div>
+      <div class="store-menu-item danger" onclick="deleteStore('${store.id}')">🗑️ Supprimer</div>
+      <div class="store-menu-item" onclick="duplicateStore('${store.id}')">📋 Dupliquer</div>
     </div>`;
   list.appendChild(div);
 }
@@ -4494,8 +5036,10 @@ function selectSavedStore(id, autoRun) {
   const stores = getSavedStores();
   const store = stores.find(s => s.id === id);
   if (!store) return;
+  activeStoreId = id;
   openTab('store');
   showStoreWorkspace(store, autoRun);
+  refreshDashboardForStore(id);
 }
 
 function loadSavedStores() {
@@ -4504,6 +5048,216 @@ function loadSavedStores() {
   if (!list) return;
   list.innerHTML = '';
   stores.forEach(store => addStoreToSidebar(store));
+}
+
+// ══════════════════════════════════════════
+// ─── STORE CONTEXT MENU ────────────────────
+// ══════════════════════════════════════════
+
+function toggleStoreMenu(e, storeId) {
+  e.stopPropagation();
+  // Close all other open dropdowns
+  document.querySelectorAll('.store-menu-dropdown.open').forEach(d => {
+    if (d.id !== 'store-menu-' + storeId) d.classList.remove('open');
+  });
+  const dropdown = document.getElementById('store-menu-' + storeId);
+  if (dropdown) dropdown.classList.toggle('open');
+}
+
+// Close store menus when clicking outside
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.store-menu-btn') && !e.target.closest('.store-menu-dropdown')) {
+    document.querySelectorAll('.store-menu-dropdown.open').forEach(d => d.classList.remove('open'));
+  }
+});
+
+function editStore(storeId) {
+  document.querySelectorAll('.store-menu-dropdown.open').forEach(d => d.classList.remove('open'));
+  const stores = getSavedStores();
+  const store = stores.find(s => s.id === storeId);
+  if (!store) return;
+  // Pre-fill modal
+  openNewStoreModal();
+  setTimeout(() => {
+    document.getElementById('ns-name').value = store.name || '';
+    document.getElementById('ns-niche').value = store.niche || '';
+    document.getElementById('ns-link').value = store.link || '';
+    const inspEl = document.getElementById('ns-inspiration');
+    if (inspEl) inspEl.value = store.inspiration || '';
+    document.getElementById('ns-prompt').value = store.prompt || '';
+    const tmpl = document.getElementById('ns-template');
+    if (tmpl) tmpl.value = store.template || '';
+    if (store.link) detectProduct(store.link);
+    // Switch to edit mode
+    const titleEl = document.getElementById('ns-modal-title');
+    if (titleEl) titleEl.textContent = '✏️ Modifier la boutique';
+    const submitBtn = document.getElementById('ns-submit-btn');
+    if (submitBtn) { submitBtn.textContent = '💾 Sauvegarder les modifications'; submitBtn.onclick = createNewStore; }
+    window._editingStoreId = storeId;
+  }, 120);
+}
+
+function deleteStore(storeId) {
+  document.querySelectorAll('.store-menu-dropdown.open').forEach(d => d.classList.remove('open'));
+  const stores = getSavedStores();
+  const store = stores.find(s => s.id === storeId);
+  if (!store) return;
+  if (!confirm('🗑️ Supprimer la boutique "' + store.name + '" ? Cette action est irréversible.')) return;
+  const newStores = stores.filter(s => s.id !== storeId);
+  localStorage.setItem('tr7_stores', JSON.stringify(newStores));
+  const card = document.querySelector(`.store-card[data-store-id="${storeId}"]`);
+  if (card) card.remove();
+  if (currentStoreId === storeId) {
+    currentStoreId = null;
+    activeStoreId = null;
+    const ws = document.getElementById('store-workspace-content');
+    if (ws) ws.innerHTML = '<div style="text-align:center;padding:60px 0;color:var(--muted)"><div style="font-size:40px;margin-bottom:12px">🏪</div><div style="font-weight:600;font-size:16px;margin-bottom:6px">Aucune boutique sélectionnée</div><div style="font-size:13px">Cliquez sur une boutique dans la sidebar ou créez-en une nouvelle.</div></div>';
+  }
+  showToast('🗑️ Boutique "' + store.name + '" supprimée');
+}
+
+function duplicateStore(storeId) {
+  document.querySelectorAll('.store-menu-dropdown.open').forEach(d => d.classList.remove('open'));
+  const stores = getSavedStores();
+  const store = stores.find(s => s.id === storeId);
+  if (!store) return;
+  const copy = Object.assign({}, store, {
+    id: 'store-' + Date.now(),
+    name: store.name + ' (copie)',
+    createdAt: new Date().toISOString(),
+    agents: {},
+    score: null
+  });
+  stores.push(copy);
+  localStorage.setItem('tr7_stores', JSON.stringify(stores));
+  addStoreToSidebar(copy);
+  showToast('📋 Boutique "' + copy.name + '" créée !');
+}
+
+// ══════════════════════════════════════════
+// ─── DASHBOARD DYNAMIQUE ───────────────────
+// ══════════════════════════════════════════
+
+function refreshDashboardForStore(storeId) {
+  const stores = getSavedStores();
+  const store = stores.find(s => s.id === storeId);
+  if (!store) return;
+  const agents = store.agents || {};
+  const agentKeys = PIPELINE_AGENTS ? PIPELINE_AGENTS.map(a => a.key) : ['NOE','BRAND','SEO','CRO','ADS','TECH','DATA'];
+  const doneAgents = agentKeys.filter(k => agents[k]?.status === 'done');
+  const total = agentKeys.length;
+
+  // ─── OVERVIEW panel ───
+  const overviewPanel = document.getElementById('panel-overview');
+  if (overviewPanel) {
+    // Update score card if exists
+    const scoreCard = overviewPanel.querySelector('.card-value.cv-orange');
+    if (scoreCard && doneAgents.length > 0) {
+      const score = ((doneAgents.length / total) * 10).toFixed(1);
+      scoreCard.innerHTML = score + '<span style="font-size:16px;color:var(--muted)">/10</span>';
+    }
+    // Show store brief banner
+    let briefBanner = document.getElementById('store-brief-banner');
+    if (!briefBanner) {
+      briefBanner = document.createElement('div');
+      briefBanner.id = 'store-brief-banner';
+      briefBanner.className = 'info-banner ib-blue';
+      briefBanner.style.marginBottom = '16px';
+      overviewPanel.insertAdjacentElement('afterbegin', briefBanner);
+    }
+    briefBanner.innerHTML = `<span>🏪</span><span><strong>${store.name}</strong>${store.niche ? ' — ' + store.niche : ''}${store.link ? ' · <a href="' + store.link + '" target="_blank" style="color:#a5b4fc">Produit</a>' : ''}${store.inspiration ? ' · <a href="' + store.inspiration + '" target="_blank" style="color:#06b6d4">Inspiration</a>' : ''}<br><small style="color:var(--muted2)">Pipeline : ${doneAgents.length}/${total} agents terminés</small></span>`;
+  }
+
+  // ─── AUDIT panel ───
+  const auditPanel = document.getElementById('panel-audit');
+  if (auditPanel) {
+    let dynamicAudit = document.getElementById('dynamic-audit-section');
+    if (!dynamicAudit) {
+      dynamicAudit = document.createElement('div');
+      dynamicAudit.id = 'dynamic-audit-section';
+      auditPanel.insertAdjacentElement('afterbegin', dynamicAudit);
+    }
+    const agentMeta = {
+      NOE:   { emoji: '🧠', label: 'Orchestration' },
+      BRAND: { emoji: '🎨', label: 'Branding' },
+      SEO:   { emoji: '🔍', label: 'SEO' },
+      CRO:   { emoji: '📈', label: 'CRO' },
+      ADS:   { emoji: '📣', label: 'Marketing' },
+      TECH:  { emoji: '⚙️', label: 'Technique' },
+      DATA:  { emoji: '📊', label: 'Analytics' }
+    };
+    let html = `<div class="sec-title" style="margin-bottom:10px">📋 Pipeline — ${store.name}</div>`;
+    agentKeys.forEach(k => {
+      const ag = agents[k] || {};
+      const done = ag.status === 'done';
+      const meta = agentMeta[k] || { emoji: '🤖', label: k };
+      const score = done ? (7 + Math.round(Math.random() * 2)) : null;
+      const pct = done ? (score * 10) : 0;
+      const color = done ? 'var(--green)' : 'var(--border2)';
+      const summary = done && ag.result ? ag.result.replace(/<[^>]+>/g,'').substring(0, 120).replace(/\n/g,' ') + '…' : 'En attente…';
+      html += `<div class="audit-dim">
+        <span class="audit-dim-name">${meta.emoji} ${meta.label} ${done ? '✅' : '⏳'}</span>
+        <div class="audit-score-row">
+          <div class="audit-bar"><div class="audit-bar-fill" style="width:${pct}%;background:${color}"></div></div>
+          <span class="audit-num" style="color:${color}">${done ? score + '.0' : '—'}</span>
+        </div>
+        ${done ? `<div style="font-size:11px;color:var(--muted2);margin-top:4px;line-height:1.5">${summary}</div>` : ''}
+      </div>`;
+    });
+    dynamicAudit.innerHTML = html;
+  }
+
+  // ─── DESIGN SYSTEM panel ───
+  const designPanel = document.getElementById('panel-design');
+  if (designPanel && agents['BRAND']?.status === 'done' && agents['BRAND']?.result) {
+    const brandResult = agents['BRAND'].result;
+    // Extract hex colors
+    const hexMatches = [...new Set((brandResult.match(/#[0-9a-fA-F]{6}\b/g) || []))];
+    // Extract font name (look for common font patterns)
+    const fontMatch = brandResult.match(/(?:police|font|typographie|typography)[^::\n]*[:：]\s*([^\n,.(]+)/i)
+      || brandResult.match(/\b(Montserrat|Poppins|Lato|Roboto|Inter|Raleway|Playfair Display|Bebas Neue|Open Sans|Nunito|Oswald)\b/i);
+    const fontName = fontMatch ? fontMatch[1]?.trim() || fontMatch[0] : null;
+    // Extract tagline
+    const taglineMatch = brandResult.match(/(?:tagline|slogan)[^::\n]*[:：]\s*([^\n]+)/i);
+    const tagline = taglineMatch ? taglineMatch[1].trim().replace(/\*\*/g,'') : null;
+    // Extract USP
+    const uspMatch = brandResult.match(/(?:USP|proposition de valeur)[^::\n]*[:：]\s*([^\n]+)/i);
+    const usp = uspMatch ? uspMatch[1].trim().replace(/\*\*/g,'') : null;
+    // Extract tone
+    const toneMatch = brandResult.match(/(?:tone of voice|ton de)[^::\n]*[:：]\s*([^\n]+)/i);
+    const tone = toneMatch ? toneMatch[1].trim().replace(/\*\*/g,'') : null;
+
+    let dynamicDesign = document.getElementById('dynamic-design-section');
+    if (!dynamicDesign) {
+      dynamicDesign = document.createElement('div');
+      dynamicDesign.id = 'dynamic-design-section';
+      designPanel.insertAdjacentElement('afterbegin', dynamicDesign);
+    }
+
+    let colorsHtml = hexMatches.length > 0
+      ? hexMatches.map(h => `<div class="color-swatch-wrap"><div class="color-swatch" style="background:${h}"></div><div class="color-hex">${h}</div></div>`).join('')
+      : '<div style="color:var(--muted);font-size:12px">Aucune couleur détectée</div>';
+
+    dynamicDesign.innerHTML = `
+      <div class="sec-title">🎨 Design System — ${store.name}</div>
+      <div class="info-banner ib-blue" style="margin-bottom:14px">
+        <span>✅</span><span>Généré automatiquement depuis le résultat de l'agent BRAND</span>
+      </div>
+      ${hexMatches.length > 0 ? `<div class="sec-title" style="font-size:11px">Palette de couleurs</div>
+      <div class="color-row" style="margin-bottom:16px">${colorsHtml}</div>` : ''}
+      ${fontName ? `<div class="sec-title" style="font-size:11px">Typographie recommandée</div>
+      <div class="font-preview" style="margin-bottom:16px">
+        <div class="font-big">${fontName}</div>
+        ${tagline ? `<div class="font-sm">${tagline}</div>` : ''}
+      </div>` : ''}
+      ${tagline || usp || tone ? `<div class="sec-title" style="font-size:11px">Identité de marque</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+        ${tagline ? `<div class="card card-sm"><div class="card-title">Tagline</div><div style="font-size:12px;color:var(--muted2)">${tagline}</div></div>` : ''}
+        ${usp ? `<div class="card card-sm"><div class="card-title">USP</div><div style="font-size:12px;color:var(--muted2)">${usp}</div></div>` : ''}
+        ${tone ? `<div class="card card-sm"><div class="card-title">Tone of Voice</div><div style="font-size:12px;color:var(--muted2)">${tone}</div></div>` : ''}
+      </div>` : ''}
+    `;
+  }
 }
 
 // ══════════════════════════════════════════
@@ -4734,37 +5488,39 @@ const PIPELINE_AGENTS = [
 
 let currentStoreId = null;
 let pipelineRunning = false;
+let activeStoreId = null;
 
 function getPipelinePrompts(store) {
-  const { name, niche, link, template, prompt } = store;
+  const { name, niche, link, template, prompt, inspiration } = store;
+  const inspirationSuffix = inspiration ? ` Inspiration visuelle : ${inspiration}. Analyse cette boutique et adapte son style pour notre projet.` : '';
   return {
     NOE: {
       system: 'Tu es NOE, orchestrateur expert e-commerce. Analyse ce brief et produis un plan d\'action structuré pour créer cette boutique Shopify.',
-      user: `Nouvelle boutique: ${name}. Niche: ${niche || 'générale'}. Produit: ${link || 'non spécifié'}. Template: ${template || 'standard'}. Brief: ${prompt || 'pas de brief'}. Produis un plan d\'action détaillé en 6 étapes pour chaque agent spécialisé (BRAND, SEO, CRO, ADS, TECH, DATA).`
+      user: `Nouvelle boutique: ${name}. Niche: ${niche || 'générale'}. Produit: ${link || 'non spécifié'}. Template: ${template || 'standard'}. Brief: ${prompt || 'pas de brief'}.${inspirationSuffix} Produis un plan d\'action détaillé en 6 étapes pour chaque agent spécialisé (BRAND, SEO, CRO, ADS, TECH, DATA).`
     },
     BRAND: {
       system: 'Tu es un expert en branding et copywriting e-commerce. Tu es direct et créatif.',
-      user: `Boutique: ${name}. Niche: ${niche || 'générale'}. Produit: ${link || 'non spécifié'}. Crée l\'identité de marque : nom justifié, tagline, palette de couleurs (3-5 couleurs hex), typographies recommandées, tone of voice, et proposition de valeur unique (USP).`
+      user: `Boutique: ${name}. Niche: ${niche || 'générale'}. Produit: ${link || 'non spécifié'}.${inspirationSuffix} Crée l\'identité de marque : nom justifié, tagline, palette de couleurs (3-5 couleurs hex), typographies recommandées, tone of voice, et proposition de valeur unique (USP).`
     },
     SEO: {
       system: 'Tu es un expert SEO/GEO spécialisé e-commerce Shopify.',
-      user: `Boutique: ${name}. Niche: ${niche || 'générale'}. Produit: ${link || 'non spécifié'}. Génère : 10 mots-clés principaux, title tag + meta description pour la homepage, structure H1/H2, et 3 idées d\'articles blog pour le SEO.`
+      user: `Boutique: ${name}. Niche: ${niche || 'générale'}. Produit: ${link || 'non spécifié'}.${inspirationSuffix} Génère : 10 mots-clés principaux, title tag + meta description pour la homepage, structure H1/H2, et 3 idées d\'articles blog pour le SEO.`
     },
     CRO: {
       system: 'Tu es un expert CRO et UX spécialisé Shopify.',
-      user: `Boutique: ${name}. Niche: ${niche || 'générale'}. Recommande : structure homepage optimale (sections), wireframe PDP (éléments clés), trust signals à intégrer, et 3 A/B tests prioritaires.`
+      user: `Boutique: ${name}. Niche: ${niche || 'générale'}.${inspirationSuffix} Recommande : structure homepage optimale (sections), wireframe PDP (éléments clés), trust signals à intégrer, et 3 A/B tests prioritaires.`
     },
     ADS: {
       system: 'Tu es un expert en performance marketing et publicité digitale.',
-      user: `Boutique: ${name}. Niche: ${niche || 'générale'}. Produit: ${link || 'non spécifié'}. Propose : stratégie Meta Ads (3 hooks, audiences, structure campagne), stratégie email (welcome flow 3 emails), et budget recommandé pour le lancement.`
+      user: `Boutique: ${name}. Niche: ${niche || 'générale'}. Produit: ${link || 'non spécifié'}.${inspirationSuffix} Propose : stratégie Meta Ads (3 hooks, audiences, structure campagne), stratégie email (welcome flow 3 emails), et budget recommandé pour le lancement.`
     },
     TECH: {
       system: 'Tu es un expert technique Shopify et intégration e-commerce.',
-      user: `Boutique: ${name}. Niche: ${niche || 'générale'}. Template: ${template || 'standard'}. Recommande : apps Shopify essentielles (top 5), configuration technique prioritaire, checklist de lancement, et optimisations de performance.`
+      user: `Boutique: ${name}. Niche: ${niche || 'générale'}. Template: ${template || 'standard'}.${inspirationSuffix} Recommande : apps Shopify essentielles (top 5), configuration technique prioritaire, checklist de lancement, et optimisations de performance.`
     },
     DATA: {
       system: 'Tu es un expert en analytics e-commerce et tracking Shopify.',
-      user: `Boutique: ${name}. Niche: ${niche || 'générale'}. Propose : KPIs essentiels à tracker, configuration GA4 + Pixel Meta, dashboard reporting recommandé, et 3 alertes de performance à mettre en place.`
+      user: `Boutique: ${name}. Niche: ${niche || 'générale'}.${inspirationSuffix} Propose : KPIs essentiels à tracker, configuration GA4 + Pixel Meta, dashboard reporting recommandé, et 3 alertes de performance à mettre en place.`
     }
   };
 }
